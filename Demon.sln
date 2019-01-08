@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyToProcess", "Assemb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demon", "Demon\Demon.csproj", "{D27EE7F7-7659-41A1-B49C-9D23F6632A57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{971706E5-1F28-43A1-9C7E-B5E01EADB8FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{D27EE7F7-7659-41A1-B49C-9D23F6632A57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D27EE7F7-7659-41A1-B49C-9D23F6632A57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D27EE7F7-7659-41A1-B49C-9D23F6632A57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{971706E5-1F28-43A1-9C7E-B5E01EADB8FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{971706E5-1F28-43A1-9C7E-B5E01EADB8FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{971706E5-1F28-43A1-9C7E-B5E01EADB8FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{971706E5-1F28-43A1-9C7E-B5E01EADB8FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
