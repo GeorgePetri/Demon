@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Fody;
+using Mono.Cecil;
 
 namespace Demon.Fody
 {
@@ -7,12 +8,15 @@ namespace Demon.Fody
     {
         public override void Execute()
         {
-            throw new System.NotImplementedException();
+            var objectType = FindType("System.Object");
+            var objectImport = ModuleDefinition.ImportReference(objectType);
+            ModuleDefinition.Types.Add(new TypeDefinition("MyNamespace", "MyType", TypeAttributes.Public,
+                objectImport));
         }
 
         public override IEnumerable<string> GetAssembliesForScanning()
         {
-            throw new System.NotImplementedException();
+            yield break;
         }
     }
 }
