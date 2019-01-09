@@ -1,4 +1,6 @@
-﻿using Xunit;
+﻿using Demon.Fody;
+using Fody;
+using Xunit;
 
 namespace Tests
 {
@@ -8,6 +10,14 @@ namespace Tests
         public void Sanity()
         {
             Assert.Equal(4, 2 + 2);
+        }
+
+        [Fact]
+        public void Weave()
+        {
+            var weaver = new ModuleWeaver();
+
+            var result = weaver.ExecuteTestRun("AssemblyToProcess.dll");
         }
     }
 }
