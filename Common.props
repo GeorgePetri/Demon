@@ -3,6 +3,4 @@
     <PropertyGroup>
         <Authors>George Petri</Authors>
     </PropertyGroup>
-
-    <Import Project="Common.props"/>
 </Project>
