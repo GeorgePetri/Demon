@@ -21,10 +21,10 @@ namespace Demon.Fody
                 {
                     var target = ResolvePointCut(pointCutExpression);
 
-                    if (!adviceMethod.IsStatic)
-                        throw new WeavingException("Only static advice supported at this time");
-
-                    WeaveStatic(adviceMethod, target);
+                    if (adviceMethod.IsStatic)
+                        WeaveStatic(adviceMethod, target);
+                    else
+                        WeaveInstance(adviceMethod, target);
                 }
             }
         }
@@ -98,6 +98,15 @@ namespace Demon.Fody
             var callAdvice = il.Create(OpCodes.Call, advice);
 
             il.InsertBefore(target.Body.Instructions[0], callAdvice);
+        }
+
+        private static void WeaveInstance(MethodDefinition advice, MethodDefinition target)
+        {
+            //todo replace body precondition to filtering methods without body when resolving pointcuts
+            if (!target.HasBody)
+                throw new WeavingException(target.FullName + " does not have a body");
+
+            //todo impl
         }
     }
 }

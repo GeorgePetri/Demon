@@ -11,6 +11,7 @@ namespace Tests
     {
         private readonly TestResult _result;
 
+        //todo add assemblies for testing weave time validation?
         public AssemblyToProcessTests()
         {
             var weaver = new ModuleWeaver();
