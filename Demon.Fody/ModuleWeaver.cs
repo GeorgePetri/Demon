@@ -17,7 +17,8 @@ namespace Demon.Fody
 
                 foreach (var (adviceMethod, pointCutExpression) in advice)
                 {
-                    ResolvePointCut(pointCutExpression);
+                    var target = ResolvePointCut(pointCutExpression);
+                    WeaveStatic(adviceMethod, target);
                 }
             }
 
@@ -49,7 +50,7 @@ namespace Demon.Fody
         //todo define grammar for pointcuts, only supports execution with no wildcards or types
         //todo can pointcuts be constructed nicer than strings that get parsed?
         //todo don't use exceptions for flow control
-        private TypeDefinition ResolvePointCut(string expression)
+        private MethodDefinition ResolvePointCut(string expression)
         {
             var trimmedExpression = expression.Trim();
             const string executionString = "execution";
@@ -66,7 +67,7 @@ namespace Demon.Fody
         //todo hacky
         //todo handle multiple
         //todo handle wildcards
-        private TypeDefinition ResolveMethodByNamespace(string expression)
+        private MethodDefinition ResolveMethodByNamespace(string expression)
         {
             var trimmed = expression.Trim();
 
@@ -76,9 +77,17 @@ namespace Demon.Fody
 
             var typeFullName = trimmed.Substring(0, trimmed.Length - methodName.Length - 1);
 
-            return ModuleDefinition.Types
-                       .FirstOrDefault(t => t.FullName == typeFullName)
+            var type = ModuleDefinition.Types
+                           .FirstOrDefault(t => t.FullName == typeFullName)
+                       ?? throw new WeavingException(expression + " type not found");
+
+            return type.Methods
+                       .FirstOrDefault(m => m.Name == methodName)
                    ?? throw new WeavingException(expression + " method not found");
+        }
+
+        private void WeaveStatic(MethodDefinition advice, MethodDefinition target)
+        {
         }
     }
 }
