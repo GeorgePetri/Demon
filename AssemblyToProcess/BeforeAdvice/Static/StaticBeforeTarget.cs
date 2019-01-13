@@ -1,4 +1,4 @@
-namespace AssemblyToProcess
+namespace AssemblyToProcess.BeforeAdvice.Static
 {
     public class StaticBeforeTarget
     {

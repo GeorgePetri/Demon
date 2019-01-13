@@ -21,7 +21,7 @@ namespace Tests
         [Fact]
         public void StaticAdvice()
         {
-            var type = _result.Assembly.GetType("AssemblyToProcess.StaticBeforeTarget");
+            var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Static.StaticBeforeTarget");
 
             var instance = (dynamic)Activator.CreateInstance(type);
 
