@@ -6,8 +6,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FodyPackaging" Version="3.3.5" PrivateAssets="All"/>
-        <PackageReference Include="Fody" Version="3.3.5" PrivateAssets="None"/>
+        <PackageReference Include="FodyPackaging" Version="3.3.5" PrivateAssets="All" />
+        <PackageReference Include="Fody" Version="3.3.5" PrivateAssets="None" />
     </ItemGroup>
 
 </Project>
