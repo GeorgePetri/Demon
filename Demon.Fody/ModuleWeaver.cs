@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Fody;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace Demon.Fody
 {
     public class ModuleWeaver : BaseModuleWeaver
     {
+        //todo optimize ils, both manually and with cecil function
         public override void Execute()
         {
             var aspects = GetAspects();
@@ -18,18 +20,13 @@ namespace Demon.Fody
                 foreach (var (adviceMethod, pointCutExpression) in advice)
                 {
                     var target = ResolvePointCut(pointCutExpression);
-                    
-                    if(!adviceMethod.IsStatic)
+
+                    if (!adviceMethod.IsStatic)
                         throw new WeavingException("Only static advice supported at this time");
-                    
+
                     WeaveStatic(adviceMethod, target);
                 }
             }
-
-            var objectType = FindType("System.Object");
-            var objectImport = ModuleDefinition.ImportReference(objectType);
-            ModuleDefinition.Types.Add(new TypeDefinition("MyNamespace", "MyType", TypeAttributes.Public,
-                objectImport));
         }
 
         public override IEnumerable<string> GetAssembliesForScanning()
@@ -90,8 +87,17 @@ namespace Demon.Fody
                    ?? throw new WeavingException(expression + " method not found");
         }
 
-        private void WeaveStatic(MethodDefinition advice, MethodDefinition target)
+        private static void WeaveStatic(MethodDefinition advice, MethodDefinition target)
         {
+            //todo replace body precondition to filtering methods without body when resolving pointcuts
+            if (!target.HasBody)
+                throw new WeavingException(target.FullName + " does not have a body");
+
+            var il = target.Body.GetILProcessor();
+
+            var callAdvice = il.Create(OpCodes.Call, advice);
+
+            il.InsertBefore(target.Body.Instructions[0], callAdvice);
         }
     }
 }
