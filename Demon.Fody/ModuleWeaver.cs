@@ -27,6 +27,14 @@ namespace Demon.Fody
                         WeaveInstance(adviceMethod, target);
                 }
             }
+
+            //todo remove above code
+
+            var aspectsX = AspectDataBuilder.FromTypeDefinitions(ModuleDefinition.Types);
+
+            //todo filter to not run on aspects accidentally
+            foreach (var type in ModuleDefinition.Types)
+                TypeWeaver.Weave(type, aspectsX);
         }
 
         public override IEnumerable<string> GetAssembliesForScanning()

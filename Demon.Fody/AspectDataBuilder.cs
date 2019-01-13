@@ -6,10 +6,11 @@ using Mono.Cecil;
 namespace Demon.Fody
 {
     //todo impl ordering for aspects
-    public class AspectDataBuilder
+    public static class AspectDataBuilder
     {
-        public static List<AspectData> FromTypeDefinition(IEnumerable<TypeDefinition> types) =>
-            types.Where(t => t.CustomAttributes.Any(a => a.AttributeType.FullName == "Demon.Aspect.AspectAttribute"))
+        public static List<AspectData> FromTypeDefinitions(IEnumerable<TypeDefinition> types) =>
+            types.Where(t => t.CustomAttributes
+                    .Any(a => a.AttributeType.FullName == "Demon.Aspect.AspectAttribute"))
                 .Select(MakeAspect)
                 .ToList();
 
