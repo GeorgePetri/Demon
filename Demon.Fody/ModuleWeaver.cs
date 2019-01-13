@@ -18,6 +18,10 @@ namespace Demon.Fody
                 foreach (var (adviceMethod, pointCutExpression) in advice)
                 {
                     var target = ResolvePointCut(pointCutExpression);
+                    
+                    if(!adviceMethod.IsStatic)
+                        throw new WeavingException("Only static advice supported at this time");
+                    
                     WeaveStatic(adviceMethod, target);
                 }
             }
