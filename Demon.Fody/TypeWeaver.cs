@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Demon.Fody.Data;
+using Fody;
 using Mono.Cecil;
+using Mono.Cecil.Cil;
 
 namespace Demon.Fody
 {
-    //todo this call does all the aspect weaving for a type
+    //todo add validation to grammar tokens like execution and within etc
     public class TypeWeaver
     {
         private readonly TypeDefinition _type;
@@ -26,6 +28,7 @@ namespace Demon.Fody
         {
             //todo don't foreach 3 times
             //todo don't match here
+            //todo add instance aspects when needed
             foreach (var method in _type.Methods)
             {
                 foreach (var aspect in _aspects)
@@ -49,23 +52,49 @@ namespace Demon.Fody
 
             var typeName = match.Groups[1];
             var namespaceAndMethod = match.Groups[2];
-            var paramaters = match.Groups[3];
+            var parameters = match.Groups[3];
 
             if ($"{method.DeclaringType.FullName}.{method.Name}" != namespaceAndMethod.Value)
                 return false;
 
             if (typeName.Value != @"*" && typeName.Value != @"**")
                 return false;
-            
-            if (paramaters.Value != @"*" && paramaters.Value != @"**")
+
+            if (parameters.Value != @"*" && parameters.Value != @"**")
                 return false;
 
             return true;
         }
 
+        //todo hardcoded to before advice
         private void ApplyAdvice(MethodDefinition method, AdviceData advice)
         {
-            var x = 0;
+            if (advice.Method.IsStatic)
+                WeaveStatic(method, advice.Method);
+            else
+                WeaveInstance(method, advice.Method);
+        }
+
+        private static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
+        {
+            //todo replace body precondition to filtering methods without body when resolving pointcuts
+            if (!target.HasBody)
+                throw new WeavingException(target.FullName + " does not have a body");
+
+            var il = target.Body.GetILProcessor();
+
+            var callAdvice = il.Create(OpCodes.Call, advice);
+
+            il.InsertBefore(target.Body.Instructions[0], callAdvice);
+        }
+
+        private static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
+        {
+            //todo replace body precondition to filtering methods without body when resolving pointcuts
+            if (!target.HasBody)
+                throw new WeavingException(target.FullName + " does not have a body");
+
+            //todo impl
         }
     }
 }
