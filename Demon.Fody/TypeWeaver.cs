@@ -11,6 +11,8 @@ namespace Demon.Fody
         private readonly TypeDefinition _type;
         private readonly IEnumerable<AspectData> _aspects;
 
+        private readonly Regex _executingRegex = new Regex(@"execution\((\*|\*\*|[a-zA-Z_.<>-]+)\s+([a-zA-Z_.<>-]+)\(([a-zA-Z_.<>\s-]+|\*|\**)\)\)", RegexOptions.Compiled);
+
         public TypeWeaver(TypeDefinition type, IEnumerable<AspectData> aspects) =>
             (_type, _aspects) = (type, aspects);
 
@@ -22,14 +24,48 @@ namespace Demon.Fody
         //todo https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices
         private void Weave()
         {
-            var s = "execution(void AssemblyToProcess.BeforeAdvice.Static.StaticBeforeTarget.Target(Int))";
-            
-            var executingRegex = new Regex(@"execution\((\*|\*\*|[a-zA-Z_.<>-]+)\s+([a-zA-Z_.<>-]+)\(([a-zA-Z_.<>\s-]+|\*|\**)\)\)", RegexOptions.Compiled);
+            //todo don't foreach 3 times
+            //todo don't match here
+            foreach (var method in _type.Methods)
+            {
+                foreach (var aspect in _aspects)
+                {
+                    foreach (var advice in aspect.Advice)
+                    {
+                        if (ShouldApplyExecuting(method, advice.PointCut))
+                            ApplyAdvice(method, advice);
+                    }
+                }
+            }
+        }
 
-            var m = executingRegex.Match(s);
-            var type = m.Groups[1];
-            var namespac = m.Groups[2];
-            var parameters = m.Groups[3];
+        //todo handle nonwildcard typename and parameters
+        private bool ShouldApplyExecuting(MethodDefinition method, string pointcutExpression)
+        {
+            var match = _executingRegex.Match(pointcutExpression);
+
+            if (!match.Success)
+                return false;
+
+            var typeName = match.Groups[1];
+            var namespaceAndMethod = match.Groups[2];
+            var paramaters = match.Groups[3];
+
+            if ($"{method.DeclaringType.FullName}.{method.Name}" != namespaceAndMethod.Value)
+                return false;
+
+            if (typeName.Value != @"*" && typeName.Value != @"**")
+                return false;
+            
+            if (paramaters.Value != @"*" && paramaters.Value != @"**")
+                return false;
+
+            return true;
+        }
+
+        private void ApplyAdvice(MethodDefinition method, AdviceData advice)
+        {
+            var x = 0;
         }
     }
 }

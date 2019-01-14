@@ -11,22 +11,22 @@ namespace Demon.Fody
         //todo optimize ils, both manually and with cecil function
         public override void Execute()
         {
-            var aspects = GetAspects();
-
-            foreach (var aspect in aspects)
-            {
-                var advice = GetBefore(aspect);
-
-                foreach (var (adviceMethod, pointCutExpression) in advice)
-                {
-                    var target = ResolvePointCut(pointCutExpression);
-
-                    if (adviceMethod.IsStatic)
-                        WeaveStatic(adviceMethod, target);
-                    else
-                        WeaveInstance(adviceMethod, target);
-                }
-            }
+//            var aspects = GetAspects();
+//
+//            foreach (var aspect in aspects)
+//            {
+//                var advice = GetBefore(aspect);
+//
+//                foreach (var (adviceMethod, pointCutExpression) in advice)
+//                {
+//                    var target = ResolvePointCut(pointCutExpression);
+//
+//                    if (adviceMethod.IsStatic)
+//                        WeaveStatic(adviceMethod, target);
+//                    else
+//                        WeaveInstance(adviceMethod, target);
+//                }
+//            }
 
             //todo remove above code
 
