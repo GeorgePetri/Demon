@@ -5,7 +5,7 @@ namespace Demon.Aspect
     [AttributeUsage(AttributeTargets.Method)]
     public class BeforeAttribute : Attribute
     {
-        public BeforeAttribute(string pointCutExpression)
+        public BeforeAttribute(string pointcutExpression)
         {
         }
     }

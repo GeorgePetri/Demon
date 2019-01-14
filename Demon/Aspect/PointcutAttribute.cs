@@ -3,9 +3,9 @@ using System;
 namespace Demon.Aspect
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class PointcutAttribute
+    public class PointcutAttribute : Attribute
     {
-        public PointcutAttribute(string pointCutExpression)
+        public PointcutAttribute(string pointcutExpression)
         {
         }
     }
