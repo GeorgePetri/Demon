@@ -2,6 +2,7 @@ using Mono.Cecil;
 
 namespace Demon.Fody.Data
 {
+    //todo define data structure that holds regexes
     public class AdviceData
     {
         public AdviceData(MethodDefinition method, string pointCut, AdviceType type) => 
