@@ -3,6 +3,7 @@ using Xunit;
 
 namespace Tests
 {
+    //todo test proper class, rename
     public class LexerTests
     {
         [Fact]
