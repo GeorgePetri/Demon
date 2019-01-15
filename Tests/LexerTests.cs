@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Demon.Fody.PointcutExpression;
 using Xunit;
 
 namespace Tests
@@ -26,6 +27,13 @@ namespace Tests
             Assert.Equal(@"Within(AssemblyToProcess.Repositories.**)",match[5].Value);
             Assert.Equal(@"||",match[6].Value);
             Assert.Equal(@"&&",match[7].Value);
+        }
+
+        //todo hacky
+        [Fact]
+        public void Wip_ProcessWithin()
+        {
+            Tokenizer.ProcessWithin("Within(*Aa.**  )");
         }
     }
 }
