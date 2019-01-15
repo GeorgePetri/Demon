@@ -13,6 +13,7 @@ namespace Demon.Fody
         private readonly TypeDefinition _type;
         private readonly IEnumerable<AspectData> _aspects;
 
+        //todo dsaible backtracking, validate whitepsaces
         private readonly Regex _executingRegex = new Regex(@"execution\((\*|\*\*|[a-zA-Z_.<>-]+)\s+([a-zA-Z_.<>-]+)\(([a-zA-Z_.<>\s-]+|\*|\**)\)\)", RegexOptions.Compiled);
 
         public TypeWeaver(TypeDefinition type, IEnumerable<AspectData> aspects) =>
@@ -23,7 +24,6 @@ namespace Demon.Fody
             new TypeWeaver(type, aspects).Weave();
 
         //todo
-        //todo https://docs.microsoft.com/en-us/dotnet/standard/base-types/best-practices
         private void Weave()
         {
             //todo don't foreach 3 times
