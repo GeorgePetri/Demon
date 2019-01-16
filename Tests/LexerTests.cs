@@ -33,7 +33,7 @@ namespace Tests
         [Fact]
         public void Wip_ProcessWithin()
         {
-            var r = Tokenizer.ProcessWithin("Within(*Aa.**  )");
+            var r = RegexFactory.TryProcessWithin("Within(*Aa.**  )");
 
             var x = 0;
         }
