@@ -10,16 +10,11 @@ namespace Demon.Fody.PointcutExpression
         {
             var match = ExtractInnerWithin.Match(token);
 
-            //todo test this
             if (!match.Success)
                 return null;
 
             var inner = match.Groups["inner"];
-
-            //todo test this
-            if (!inner.Success)
-                return null;
-
+       
             var escapeDot = inner.Value.Replace(".", @"\.");
 
             var replacedDoubleStar = escapeDot.Replace("**", @"[a-zA-Z1-9.]+");
