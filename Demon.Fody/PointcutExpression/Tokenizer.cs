@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 namespace Demon.Fody.PointcutExpression
 {
     //todo this does very little, might want to move
+    //todo define regexs taking into consideration c# namespace rules
     public class Tokenizer
     {
         private readonly string _expression;
@@ -21,24 +22,31 @@ namespace Demon.Fody.PointcutExpression
         }
 
         //todo move this
-        public static void ProcessWithin(string token)
+        //todo don't use nulls for error handling
+        public static Regex ProcessWithin(string token)
         {
             //todo make static
             var extractInner = new Regex(@"Within\(\s*(?<inner>[a-zA-Z1-9.*]+)\s*\)", RegexOptions.Compiled);
 
-            //todo
             var match = extractInner.Match(token);
 
             //todo test this
             if (!match.Success)
-                return;
+                return null;
 
             var inner = match.Groups["inner"];
             
             //todo test this
             if(!inner.Success)
-                return;
-            var splitByDot = inner.Value.Split('.');
+                return null;
+
+            var escapeDot = inner.Value.Replace(".", @"\.");
+
+            var replacedDoubleStar = escapeDot.Replace("**", @"[a-zA-Z1-9.]+");
+            
+            var replacedSingleStar = replacedDoubleStar.Replace("*", @"[a-zA-Z1-9]+");
+
+            return new Regex(replacedSingleStar, RegexOptions.Compiled);
         }
     }
 }
