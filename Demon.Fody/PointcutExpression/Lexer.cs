@@ -6,20 +6,16 @@ using Fody;
 
 namespace Demon.Fody.PointcutExpression
 {
-    public class Lexer
+    public static class Lexer
     {
-        private readonly string _expression;
-
         private static readonly Regex Regex = new Regex(
             @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<execution>Execution\([^()]+\([^()]+\)\s*\))|(?<within>Within\([^()]+\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
             RegexOptions.Compiled);
 
-        public Lexer(string expression) => _expression = expression;
-
-        public IEnumerable<IToken> Analyse()
+        public static IEnumerable<IToken> Analyse(string expression)
         {
             var matchedCharactersLength = 0;
-            var matches = Regex.Matches(_expression);
+            var matches = Regex.Matches(expression);
             foreach (Match match in matches)
             {
                 var groups = match.Groups;
@@ -67,10 +63,10 @@ namespace Demon.Fody.PointcutExpression
                 }
             }
 
-            var expressionLengthWithoutWhitespace = _expression.Replace(" ", "").Length;
+            var expressionLengthWithoutWhitespace = expression.Replace(" ", "").Length;
 
             if (matchedCharactersLength < expressionLengthWithoutWhitespace)
-                throw new WeavingException($"{_expression} is invalid.");
+                throw new WeavingException($"{expression} is invalid.");
         }
     }
 }

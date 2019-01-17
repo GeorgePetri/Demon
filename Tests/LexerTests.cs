@@ -1,48 +1,40 @@
-using System.Text.RegularExpressions;
+using System.Linq;
 using Demon.Fody.PointcutExpression;
+using Demon.Fody.PointcutExpression.Token;
+using Fody;
 using Xunit;
 
 namespace Tests
 {
-    //todo test proper class, rename
     public class LexerTests
     {
-        //todo test an actual class
-        [Fact]
-        public void Complex()
+        [Theory]
+        [InlineData("Repositories() !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&")]
+        [InlineData(" Repositories()   !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&  ")]
+        public void Analyse_ReturnsTokens_WhenMatchingEverything(string expression)
         {
-            //arrange
-            const string pointcut = @"Repositories() !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&";
-
-            var regex = new Regex(@"(?>&&|\|\||!|Execution\([^()]+\([^()]+\)\s*\)|Within\([^()]+\)|[a-zA-Z0-9]+\(\))", RegexOptions.Compiled);
-
             //act
-            var match = regex.Matches(pointcut);
+            var tokens = Lexer.Analyse(expression).ToList();
 
             //assert
-            Assert.Equal(@"Repositories()", match[0].Value);
-            Assert.Equal(@"!", match[1].Value);
-            Assert.Equal(@"Get()", match[2].Value);
-            Assert.Equal(@"&&", match[3].Value);
-            Assert.Equal(@"Execution(* **(Int,*))", match[4].Value);
-            Assert.Equal(@"Within(AssemblyToProcess.Repositories.**)", match[5].Value);
-            Assert.Equal(@"||", match[6].Value);
-            Assert.Equal(@"&&", match[7].Value);
+            Assert.IsType<PointcutToken>(tokens[0]);
+            Assert.IsType<NotToken>(tokens[1]);
+            Assert.IsType<PointcutToken>(tokens[2]);
+            Assert.IsType<AndAlsoToken>(tokens[3]);
+            Assert.IsType<ExecutionToken>(tokens[4]);
+            Assert.IsType<WithinToken>(tokens[5]);
+            Assert.IsType<OrElseToken>(tokens[6]);
+            Assert.IsType<AndAlsoToken>(tokens[7]);
         }
 
-        [Fact]
-        public void CompileBenchmark()
+        [Theory]
+        [InlineData("Repositories() !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&  55")]
+        [InlineData("Repositories() !Get() && Execution(* **(Int,*)) A( ) Within(AssemblyToProcess.Repositories.**) || &&")]
+        [InlineData(" %% Repositories() !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&")]
+        public void Analyse_Throws_WhenNotMatchingEverything(string expression)
         {
-            var l = new Lexer(@"Get() && ||");
-
-            var ts = l.Analyse();
-
-            foreach (var token in ts)
-            {
-                var x = 0;
-            }
-
-            var y = 0;
+            //assert
+            Assert.Throws<WeavingException>(() => Lexer.Analyse(expression).ToList());
         }
     }
 }
