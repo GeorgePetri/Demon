@@ -6,7 +6,7 @@ using Fody;
 
 namespace Demon.Fody.PointcutExpression
 {
-    public class Tokenizer
+    public class Lexer
     {
         private readonly string _expression;
 
@@ -14,7 +14,7 @@ namespace Demon.Fody.PointcutExpression
             @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<execution>Execution\([^()]+\([^()]+\)\s*\))|(?<within>Within\([^()]+\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
             RegexOptions.Compiled);
 
-        public Tokenizer(string expression) => _expression = expression;
+        public Lexer(string expression) => _expression = expression;
 
         public IEnumerable<IToken> GetTokens()
         {

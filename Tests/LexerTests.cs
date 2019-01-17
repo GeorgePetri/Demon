@@ -33,7 +33,7 @@ namespace Tests
         [Fact]
         public void CompileBenchmark()
         {
-            var l = new Tokenizer(@"Get() && ||");
+            var l = new Lexer(@"Get() && ||");
 
             var ts = l.GetTokens();
 
