@@ -16,7 +16,7 @@ namespace Demon.Fody.PointcutExpression
 
         public Lexer(string expression) => _expression = expression;
 
-        public IEnumerable<IToken> GetTokens()
+        public IEnumerable<IToken> Analyse()
         {
             var matchedCharactersLength = 0;
             var matches = Regex.Matches(_expression);

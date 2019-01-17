@@ -35,7 +35,7 @@ namespace Tests
         {
             var l = new Lexer(@"Get() && ||");
 
-            var ts = l.GetTokens();
+            var ts = l.Analyse();
 
             foreach (var token in ts)
             {
