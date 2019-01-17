@@ -1,7 +1,5 @@
-using System;
-using System.Diagnostics;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
+using Demon.Fody.PointcutExpression;
 using Xunit;
 
 namespace Tests
@@ -35,31 +33,16 @@ namespace Tests
         [Fact]
         public void CompileBenchmark()
         {
-            var regex = new Regex(@"(?>&&|\|\||!|Execution\([^()]+\([^()]+\)\s*\)|Within\([^()]+\)|[a-zA-Z0-9]+\(\))", RegexOptions.Compiled);
+            var l = new Tokenizer(@"Get() && ||");
 
-            var stopWatch = Stopwatch.StartNew();
+            var ts = l.GetTokens();
 
-            var parameter = Expression.Parameter(typeof(string));
-            var constant = Expression.Constant(regex);
+            foreach (var token in ts)
+            {
+                var x = 0;
+            }
 
-            var call = Expression.Call(
-                constant,
-                typeof(Regex)
-                    .GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)})
-                , parameter);
-
-
-            var e = Expression.Lambda<Func<string, bool>>(call, parameter);
-
-            var d = e.Compile();
-
-            var b = d("dwadawda");
-            var b1 = d("&&");
-            var b2 = d("dwadawdaaa");
-
-            stopWatch.Stop();
-
-            var x = stopWatch.Elapsed;
+            var y = 0;
         }
     }
 }

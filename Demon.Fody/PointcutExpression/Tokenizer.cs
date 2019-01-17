@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Demon.Fody.PointcutExpression.Token;
+using Demon.Fody.PointcutExpression.Token.Interface;
+using Fody;
 
 namespace Demon.Fody.PointcutExpression
 {
-    //todo this does very little, might want to move
-    //todo define regexs taking into consideration c# fullname rules
     public class Tokenizer
     {
         private readonly string _expression;
@@ -15,12 +16,61 @@ namespace Demon.Fody.PointcutExpression
 
         public Tokenizer(string expression) => _expression = expression;
 
-        //todo error on invalid expression, by comparing the lenght of all matches to the initial expression without whitespace
-        public IEnumerable<string> GetTokens()
+        public IEnumerable<IToken> GetTokens()
         {
+            var matchedCharactersLength = 0;
             var matches = Regex.Matches(_expression);
             foreach (Match match in matches)
-                yield return match.Value;
+            {
+                var groups = match.Groups;
+
+                var andAlso = groups["andalso"].Value;
+                if (andAlso != "")
+                {
+                    matchedCharactersLength += andAlso.Length;
+                    yield return new AndAlsoToken();
+                }
+
+                var orElse = groups["orelse"].Value;
+                if (orElse != "")
+                {
+                    matchedCharactersLength += orElse.Length;
+                    yield return new OrElseToken();
+                }
+
+                var not = groups["not"].Value;
+                if (not != "")
+                {
+                    matchedCharactersLength += not.Length;
+                    yield return new NotToken();
+                }
+
+                var execution = groups["execution"].Value;
+                if (execution != "")
+                {
+                    matchedCharactersLength += execution.Length;
+                    yield return new ExecutionToken();
+                }
+
+                var within = groups["within"].Value;
+                if (within != "")
+                {
+                    matchedCharactersLength += within.Length;
+                    yield return new WithinToken();
+                }
+
+                var pointcut = groups["pointcut"].Value;
+                if (pointcut != "")
+                {
+                    matchedCharactersLength += pointcut.Length;
+                    yield return new PointcutToken();
+                }
+            }
+
+            var expressionLengthWithoutWhitespace = _expression.Replace(" ", "").Length;
+
+            if (matchedCharactersLength < expressionLengthWithoutWhitespace)
+                throw new WeavingException($"{_expression} is invalid.");
         }
     }
 }
