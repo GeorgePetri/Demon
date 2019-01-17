@@ -3,7 +3,7 @@ using Demon.Fody.PointcutExpression.Token.Interface;
 
 namespace Demon.Fody.PointcutExpression.Token
 {
-    public class WithinToken : IToken
+    public class AndAlsoToken : IToken
     {
         public Expression MakeExpression()
         {
