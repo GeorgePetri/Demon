@@ -9,7 +9,9 @@ namespace Demon.Fody.PointcutExpression
     {
         private readonly string _expression;
 
-        private static readonly Regex Regex = new Regex(@"(?>&&|\|\||!|Execution\([^()]+\([^()]+\)\s*\)|Within\([^()]+\)|[a-zA-Z0-9]+\(\))", RegexOptions.Compiled);
+        private static readonly Regex Regex = new Regex(
+            @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<execution>Execution\([^()]+\([^()]+\)\s*\))|(?<within>Within\([^()]+\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
+            RegexOptions.Compiled);
 
         public Tokenizer(string expression) => _expression = expression;
 
@@ -20,6 +22,5 @@ namespace Demon.Fody.PointcutExpression
             foreach (Match match in matches)
                 yield return match.Value;
         }
-
     }
 }
