@@ -52,7 +52,7 @@ namespace Demon.Fody.PointcutExpression
                 if (within != "")
                 {
                     matchedCharactersLength += within.Length;
-                    yield return new WithinToken();
+                    yield return new WithinToken(within);
                 }
 
                 var pointcut = groups["pointcut"].Value;

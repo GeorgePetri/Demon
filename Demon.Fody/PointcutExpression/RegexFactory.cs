@@ -6,6 +6,7 @@ namespace Demon.Fody.PointcutExpression
     {
         private static readonly Regex ExtractInnerWithin = new Regex(@"Within\(\s*(?<inner>[a-zA-Z1-9.*]+)\s*\)", RegexOptions.Compiled);
         
+        //todo rename without try, don't muse regs, use string manipulation, don't validate
         public static Regex TryProcessWithin(string token)
         {
             var match = ExtractInnerWithin.Match(token);
