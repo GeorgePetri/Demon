@@ -70,7 +70,7 @@ namespace Demon.Fody.PointcutExpression
             var declaringFullName = Expression.Property(declaringType, typeof(TypeDefinition).GetProperty(nameof(TypeDefinition.FullName)));
 
             var formatMethod = typeof(string).GetMethod(nameof(string.Format), new Type[] {typeof(string), typeof(object), typeof(object)});
-            var format = Expression.Constant("{1}.{2}");
+            var format = Expression.Constant("{0}.{1}");
 
             var formated = Expression.Call(formatMethod, format, declaringFullName, name);
 

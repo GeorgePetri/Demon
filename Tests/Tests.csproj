@@ -26,6 +26,7 @@
       <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
       <ProjectReference Include="..\Demon.Fody\Demon.Fody.csproj" />
       <ProjectReference Include="..\Demon\Demon.csproj" />
+      <ProjectReference Include="..\TestDataForCompiler\TestDataForCompiler.csproj" />
     </ItemGroup>
 
 </Project>
