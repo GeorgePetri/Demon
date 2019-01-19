@@ -64,7 +64,8 @@ namespace Demon.Fody.PointcutExpression
         {
             var name = Expression.Property(_parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
 
-            var declaringType = Expression.Property(_parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.DeclaringType)));
+            var declaringType = Expression.Property(_parameter, typeof(MethodDefinition)
+                .GetProperty(nameof(MethodDefinition.DeclaringType), typeof(TypeDefinition)));
 
             var declaringFullName = Expression.Property(declaringType, typeof(TypeDefinition).GetProperty(nameof(TypeDefinition.FullName)));
 
