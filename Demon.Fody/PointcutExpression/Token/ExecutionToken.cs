@@ -1,13 +1,9 @@
-using System.Linq.Expressions;
 using Demon.Fody.PointcutExpression.Token.Interface;
 
 namespace Demon.Fody.PointcutExpression.Token
 {
     public class ExecutionToken : IToken
     {
-        public Expression MakeExpression()
-        {
-            throw new System.NotImplementedException();
-        }
+        public void Accept(ITokenVisitor visitor) => visitor.Visit(this);
     }
 }

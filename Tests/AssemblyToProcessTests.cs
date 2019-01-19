@@ -7,6 +7,7 @@ using Xunit;
 
 namespace Tests
 {
+    //todo split weaving tests in another project
     public class AssemblyToProcessTests
     {
         private readonly TestResult _result;
