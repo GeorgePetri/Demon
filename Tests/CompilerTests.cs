@@ -13,12 +13,12 @@ namespace Tests
     {
         private readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
 
-        [Fact]
-        public void Within_IsFalse_ForNotWithinTarget()
+        [Theory]
+        [InlineData(@"Within(TestDataForCompiler.*)")]
+        [InlineData(@"Within(TestDataForCompiler.NotExisting)")]
+        public void Within_IsFalse_ForNotWithinTarget(string expression)
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.NotExisting)";
-
             var compiler = new Compiler(expression);
 
             //act
@@ -34,7 +34,7 @@ namespace Tests
         public void Within_IsTrue_ForWithinSpecificTarget()
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.Services.UserService)";
+            const string expression = @"Within(TestDataForCompiler.Services.UserService.Get)";
 
             var compiler = new Compiler(expression);
 
@@ -52,7 +52,7 @@ namespace Tests
         public void Within_IsTrue_ForWithinStarTarget()
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.Services.*)";
+            const string expression = @"Within(TestDataForCompiler.Services.*.*)";
 
             var compiler = new Compiler(expression);
 

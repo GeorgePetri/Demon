@@ -21,8 +21,10 @@ namespace Demon.Fody.PointcutExpression
             var replacedDoubleStar = escapeDot.Replace("**", @"[a-zA-Z1-9.]+");
 
             var replacedSingleStar = replacedDoubleStar.Replace("*", @"[a-zA-Z1-9]+");
+            
+            var withEndString = replacedSingleStar + @"$";
 
-            return new Regex(replacedSingleStar, RegexOptions.Compiled);
+            return new Regex(withEndString, RegexOptions.Compiled);
         }
     }
 }

@@ -22,45 +22,45 @@ namespace Tests
         }       
         
         [Theory]
-        [InlineData(@"Within(Assembly.Folder.Class)")]
-        [InlineData(@"Within( Assembly.Folder.Class)")]
-        [InlineData(@"Within(Assembly.Folder.Class )")]
-        [InlineData(@"Within(   Assembly.Folder.Class)")]
-        [InlineData(@"Within(Assembly.Folder.Class   )")]
-        [InlineData(@"Within(   Assembly.Folder.Class   )")]
+        [InlineData(@"Within(Assembly.Class.Method)")]
+        [InlineData(@"Within( Assembly.Class.Method)")]
+        [InlineData(@"Within(Assembly.Class.Method )")]
+        [InlineData(@"Within(   Assembly.Class.Method)")]
+        [InlineData(@"Within(Assembly.Class.Method   )")]
+        [InlineData(@"Within(   Assembly.Class.Method   )")]
         public void TryProcessWithin_ReturnsRegex_WhenMatching_NoStars_VariousWhitespaces(string token)
         {
             //act
             var result = RegexFactory.TryProcessWithin(token);
 
             //assert           
-            Assert.Equal(@"Assembly\.Folder\.Class",result.ToString());
+            Assert.Equal(@"Assembly\.Class\.Method$",result.ToString());
         }
         
         [Fact]
         public void TryProcessWithin_ReturnsRegex_WhenMatching_SingleStar()
         {
             //arrange
-            const string token = @"Within(Assembly.Folder.*Class)";
+            const string token = @"Within(Assembly.Class.*Method)";
             
             //act
             var result = RegexFactory.TryProcessWithin(token);
 
             //assert           
-            Assert.Equal(@"Assembly\.Folder\.[a-zA-Z1-9]+Class",result.ToString());
+            Assert.Equal(@"Assembly\.Class\.[a-zA-Z1-9]+Method$",result.ToString());
         }
         
         [Fact]
         public void TryProcessWithin_ReturnsRegex_WhenMatching_DoubleStar()
         {
             //arrange
-            const string token = @"Within( **.Class)";
+            const string token = @"Within( **.Method)";
             
             //act
             var result = RegexFactory.TryProcessWithin(token);
 
             //assert           
-            Assert.Equal(@"[a-zA-Z1-9.]+\.Class",result.ToString());
+            Assert.Equal(@"[a-zA-Z1-9.]+\.Method$",result.ToString());
         }
     }
 }
