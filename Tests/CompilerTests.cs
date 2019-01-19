@@ -66,6 +66,25 @@ namespace Tests
             Assert.Equal("Get",result[0].Name); 
             Assert.Equal("Get",result[1].Name); 
         }
+        
+        [Fact]
+        public void Within_IsTrue_ForWithinDoubleStarTarget()
+        {
+            //arrange
+            const string expression = @"Within(TestDataForCompiler.**)";
+
+            var compiler = new Compiler(expression);
+
+            //act
+            var func = compiler.Compile();
+
+            var result = FilterModule(func);
+
+            //assert
+            Assert.Equal(2, result.Count); 
+            Assert.Equal("Get",result[0].Name); 
+            Assert.Equal("Get",result[1].Name); 
+        }
 
         private List<MethodDefinition> FilterModule(Func<MethodDefinition, bool> func) =>
             _module.Types
