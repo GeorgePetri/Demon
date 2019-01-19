@@ -48,12 +48,14 @@ namespace Tests
             Assert.Equal("Get",result[0].Name); 
         }
         
-        [Fact]
-        public void Within_IsTrue_ForWithinStarTarget()
+        [Theory]
+        [InlineData(@"Within(*.*.*.*)")]
+        [InlineData(@"Within(TestDataForCompiler.*.*.*)")]
+        [InlineData(@"Within(TestDataForCompiler.Services.*.*)")]
+        [InlineData(@"Within(TestDataForCompiler.Services.*Service.*)")]
+        public void Within_IsTrue_ForWithinStarTarget(string expression)
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.Services.*.*)";
-
             var compiler = new Compiler(expression);
 
             //act
@@ -67,12 +69,15 @@ namespace Tests
             Assert.Equal("Get",result[1].Name); 
         }
         
-        [Fact]
-        public void Within_IsTrue_ForWithinDoubleStarTarget()
+        [Theory]
+        [InlineData(@"Within(TestDataForCompiler**)")]
+        [InlineData(@"Within(TestDataForCompiler.**)")]
+        [InlineData(@"Within(TestDataForCompiler.Services.**)")]
+        [InlineData(@"Within(TestDataForCompiler.Services.**.**)")]
+        [InlineData(@"Within(**Service.*)")]
+        public void Within_IsTrue_ForWithinDoubleStarTarget(string expression)
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.**)";
-
             var compiler = new Compiler(expression);
 
             //act
@@ -86,6 +91,7 @@ namespace Tests
             Assert.Equal("Get",result[1].Name); 
         }
 
+        //todo test for props
         private List<MethodDefinition> FilterModule(Func<MethodDefinition, bool> func) =>
             _module.Types
                 .SelectMany(t => t.Methods)
