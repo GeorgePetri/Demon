@@ -5,12 +5,11 @@ using Demon.Fody.PointcutExpression;
 using Mono.Cecil;
 using Xunit;
 
-namespace Tests
+namespace TestsCompiler
 {
-    //todo split into class that only tests Within
-    //todo impl syntax errors in within
-    public class CompilerTests
+    public class WithinTests
     {
+        //todo impl syntax errors in within
         private readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
 
         [Theory]
@@ -44,10 +43,10 @@ namespace Tests
             var result = FilterModule(func);
 
             //assert
-            Assert.Single(result); 
-            Assert.Equal("Get",result[0].Name); 
+            Assert.Single(result);
+            Assert.Equal("Get", result[0].Name);
         }
-        
+
         [Theory]
         [InlineData(@"Within(*.*.*.*)")]
         [InlineData(@"Within(TestDataForCompiler.*.*.*)")]
@@ -64,11 +63,11 @@ namespace Tests
             var result = FilterModule(func);
 
             //assert
-            Assert.Equal(2, result.Count); 
-            Assert.Equal("Get",result[0].Name); 
-            Assert.Equal("Get",result[1].Name); 
+            Assert.Equal(2, result.Count);
+            Assert.Equal("Get", result[0].Name);
+            Assert.Equal("Get", result[1].Name);
         }
-        
+
         [Theory]
         [InlineData(@"Within(TestDataForCompiler**)")]
         [InlineData(@"Within(TestDataForCompiler.**)")]
@@ -86,9 +85,9 @@ namespace Tests
             var result = FilterModule(func);
 
             //assert
-            Assert.Equal(2, result.Count); 
-            Assert.Equal("Get",result[0].Name); 
-            Assert.Equal("Get",result[1].Name); 
+            Assert.Equal(2, result.Count);
+            Assert.Equal("Get", result[0].Name);
+            Assert.Equal("Get", result[1].Name);
         }
 
         //todo test for props
