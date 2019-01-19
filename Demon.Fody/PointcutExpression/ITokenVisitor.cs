@@ -2,18 +2,18 @@ using Demon.Fody.PointcutExpression.Token;
 
 namespace Demon.Fody.PointcutExpression
 {
-    public interface ITokenVisitor
+    public interface ITokenVisitor<out T>
     {
-        void Visit(AndAlsoToken andAlso);
+        T Visit(AndAlsoToken andAlso);
         
-        void Visit(ExecutionToken execution);
+        T Visit(ExecutionToken execution);
         
-        void Visit(NotToken not);
+        T Visit(NotToken not);
         
-        void Visit(OrElseToken orElse);
+        T Visit(OrElseToken orElse);
         
-        void Visit(PointcutToken pointcut);
+        T Visit(PointcutToken pointcut);
         
-        void Visit(WithinToken withinToken);
+        T Visit(WithinToken withinToken);
     }
 }

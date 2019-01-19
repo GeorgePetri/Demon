@@ -2,6 +2,6 @@ namespace Demon.Fody.PointcutExpression.Token.Interface
 {
     public interface IToken
     {
-        void Accept(ITokenVisitor visitor);
+        T Accept<T>(ITokenVisitor<T> visitor);
     }
 }
