@@ -7,6 +7,8 @@ using Xunit;
 
 namespace Tests
 {
+    //todo split into class that only tests Within
+    //todo impl syntax errors in within
     public class CompilerTests
     {
         private readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
@@ -44,6 +46,25 @@ namespace Tests
             //assert
             Assert.Single(result); 
             Assert.Equal("Get",result[0].Name); 
+        }
+        
+        [Fact]
+        public void Within_IsTrue_ForWithinStarTarget()
+        {
+            //arrange
+            const string expression = @"Within(TestDataForCompiler.Services.*)";
+
+            var compiler = new Compiler(expression);
+
+            //act
+            var func = compiler.Compile();
+
+            var result = FilterModule(func);
+
+            //assert
+            Assert.Equal(2, result.Count); 
+            Assert.Equal("Get",result[0].Name); 
+            Assert.Equal("Get",result[1].Name); 
         }
 
         private List<MethodDefinition> FilterModule(Func<MethodDefinition, bool> func) =>
