@@ -15,7 +15,7 @@ namespace TestsCompiler
         [Theory]
         [InlineData(@"Within(TestDataForCompiler.*)")]
         [InlineData(@"Within(TestDataForCompiler.NotExisting)")]
-        public void Within_IsFalse_ForNotWithinTarget(string expression)
+        public void IsFalse_ForNotWithinTarget(string expression)
         {
             //arrange
             var compiler = new Compiler(expression);
@@ -30,7 +30,7 @@ namespace TestsCompiler
         }
 
         [Fact]
-        public void Within_IsTrue_ForWithinSpecificTarget()
+        public void IsTrue_ForWithinSpecificTarget()
         {
             //arrange
             const string expression = @"Within(TestDataForCompiler.Services.UserService.Get)";
@@ -52,7 +52,7 @@ namespace TestsCompiler
         [InlineData(@"Within(TestDataForCompiler.*.*.*)")]
         [InlineData(@"Within(TestDataForCompiler.Services.*.*)")]
         [InlineData(@"Within(TestDataForCompiler.Services.*Service.*)")]
-        public void Within_IsTrue_ForWithinStarTarget(string expression)
+        public void IsTrue_ForWithinStarTarget(string expression)
         {
             //arrange
             var compiler = new Compiler(expression);
@@ -74,7 +74,7 @@ namespace TestsCompiler
         [InlineData(@"Within(TestDataForCompiler.Services.**)")]
         [InlineData(@"Within(TestDataForCompiler.Services.**.**)")]
         [InlineData(@"Within(**Service.*)")]
-        public void Within_IsTrue_ForWithinDoubleStarTarget(string expression)
+        public void IsTrue_ForWithinDoubleStarTarget(string expression)
         {
             //arrange
             var compiler = new Compiler(expression);
