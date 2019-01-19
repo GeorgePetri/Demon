@@ -1,36 +1,35 @@
-using System.Linq.Expressions;
 using Demon.Fody.PointcutExpression.Token;
 
 namespace Demon.Fody.PointcutExpression
 {
-    public class ExpressionVisitor : ITokenVisitor<Expression>
+    public class ExpressionVisitor : ITokenVisitor
     {
-        public Expression Visit(AndAlsoToken andAlso)
+        public void Visit(AndAlsoToken andAlso)
         {
             throw new System.NotImplementedException();
         }
 
-        public Expression Visit(ExecutionToken execution)
+        public void Visit(ExecutionToken execution)
         {
             throw new System.NotImplementedException();
         }
 
-        public Expression Visit(NotToken not)
+        public void Visit(NotToken not)
         {
             throw new System.NotImplementedException();
         }
 
-        public Expression Visit(OrElseToken orElse)
+        public void Visit(OrElseToken orElse)
         {
             throw new System.NotImplementedException();
         }
 
-        public Expression Visit(PointcutToken pointcut)
+        public void Visit(PointcutToken pointcut)
         {
             throw new System.NotImplementedException();
         }
 
-        public Expression Visit(WithinToken withinToken)
+        public void Visit(WithinToken withinToken)
         {
             throw new System.NotImplementedException();
         }

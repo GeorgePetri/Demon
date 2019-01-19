@@ -4,6 +4,6 @@ namespace Demon.Fody.PointcutExpression.Token
 {
     public class AndAlsoToken : IToken
     {
-        public T Accept<T>(ITokenVisitor<T> visitor) => visitor.Visit(this);
+        public void Accept(ITokenVisitor visitor) => visitor.Visit(this);
     }
 }
