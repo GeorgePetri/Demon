@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -13,8 +14,8 @@ namespace Demon.Fody.PointcutExpression
         private static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
 
         private readonly ParameterExpression _parameter = Expression.Parameter(typeof(MethodDefinition));
-
-        private Expression _expression;
+        
+        private readonly Stack<Expression> _stack = new Stack<Expression>();
 
         public void Visit(AndAlsoToken andAlso)
         {
@@ -47,13 +48,14 @@ namespace Demon.Fody.PointcutExpression
 
             var regexInstance = Expression.Constant(regex);
 
-            //todo don't equals, combine expression or initialize;
-            _expression = Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName());
+            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName()));
         }
 
         public Func<MethodDefinition, bool> GetExpression()
         {
-            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(_expression, _parameter);
+            var body = _stack.Pop();
+            
+            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, _parameter);
 
             return expression.Compile();
         }
