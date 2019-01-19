@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Demon.Fody.PointcutExpression.Token;
+using Fody;
 using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpression
@@ -27,9 +28,22 @@ namespace Demon.Fody.PointcutExpression
             throw new System.NotImplementedException();
         }
 
-        public void Visit(NotToken not)
+        //todo catch and add contextual information in the compiler
+        public void Visit(NotToken _)
         {
-            throw new System.NotImplementedException();
+            Expression previous;
+            try
+            {
+                previous = _stack.Pop();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new WeavingException("\"!\" can not be the first operation");
+            }
+            
+            var not = Expression.Not(previous);
+
+            _stack.Push(not);
         }
 
         public void Visit(OrElseToken orElse)
@@ -42,6 +56,7 @@ namespace Demon.Fody.PointcutExpression
             throw new System.NotImplementedException();
         }
 
+        //todo validate
         public void Visit(WithinToken withinToken)
         {
             var regex = RegexFactory.TryProcessWithin(withinToken.String);
