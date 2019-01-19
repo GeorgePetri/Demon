@@ -12,12 +12,12 @@ namespace TestsCompiler
     {
         private readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
 
-        [Fact]
-        public void Negates_Within()
+        [Theory]
+        [InlineData(@"Within(TestDataForCompiler.Services.UserService.Get) !")]
+        [InlineData(@"Within(TestDataForCompiler.Services.UserService.Get)!")]
+        public void Negates_Within(string expression)
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.Services.UserService.Get) !";
-
             var compiler = new Compiler(expression);
 
             //act
