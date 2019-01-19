@@ -16,8 +16,7 @@ namespace Demon.Fody.PointcutExpression
         {
             var tokens = Lexer.Analyse(_expression);
 
-            //todo do validation here or in separate visitor
-            var expresionVisitor = new ExpressionVisitor();
+            var expresionVisitor = new CodeGenVisitor();
             
             foreach (var token in tokens)
             {

@@ -8,8 +8,8 @@ using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpression
 {
-    //todo rename
-    public class ExpressionVisitor : ITokenVisitor
+    //todo do validation
+    public class CodeGenVisitor : ITokenVisitor
     {
         private static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
 
