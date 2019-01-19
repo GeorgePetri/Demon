@@ -1,3 +1,6 @@
+using System;
+using Mono.Cecil;
+
 namespace Demon.Fody.PointcutExpression
 {
     public class Compiler
@@ -9,15 +12,19 @@ namespace Demon.Fody.PointcutExpression
             _expression = expression;
         }
 
-        public void Compile()
+        public Func<MethodDefinition, bool> Compile()
         {
-            var expresionVisitor = new ExpressionVisitor();
             var tokens = Lexer.Analyse(_expression);
 
+            //todo do validation here or in separate visitor
+            var expresionVisitor = new ExpressionVisitor();
+            
             foreach (var token in tokens)
             {
                 token.Accept(expresionVisitor);
             }
+
+            return expresionVisitor.GetExpression();
         }
     }
 }
