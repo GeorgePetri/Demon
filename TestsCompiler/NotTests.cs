@@ -1,9 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Demon.Fody.PointcutExpression;
 using Fody;
 using Mono.Cecil;
+using TestsCompiler.Helpers;
 using Xunit;
 
 namespace TestsCompiler
@@ -23,7 +21,7 @@ namespace TestsCompiler
             //act
             var func = compiler.Compile();
 
-            var result = FilterModule(func);
+            var result = _module.FilterModule(func);
 
             //assert   
             Assert.DoesNotContain(result, m => m.DeclaringType.Name == "UserService");
@@ -40,14 +38,5 @@ namespace TestsCompiler
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());
         }
-
-        //todo test for props
-        //todo don't copy paste this
-        private List<MethodDefinition> FilterModule(Func<MethodDefinition, bool> func) =>
-            _module.Types
-                .SelectMany(t => t.Methods)
-                .Where(func)
-                .Where(m => m.Name != ".ctor") //todo impl filtering of ctors in compiler
-                .ToList();
     }
 }
