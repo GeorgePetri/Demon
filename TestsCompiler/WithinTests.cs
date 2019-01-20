@@ -47,8 +47,6 @@ namespace TestsCompiler
         }
 
         [Theory]
-        [InlineData(@"Within(*.*.*.*)")]
-        [InlineData(@"Within(TestDataForCompiler.*.*.*)")]
         [InlineData(@"Within(TestDataForCompiler.Services.*.*)")]
         [InlineData(@"Within(TestDataForCompiler.Services.*Service.*)")]
         public void IsTrue_ForWithinStarTarget(string expression)
@@ -68,8 +66,6 @@ namespace TestsCompiler
         }
 
         [Theory]
-        [InlineData(@"Within(TestDataForCompiler**)")]
-        [InlineData(@"Within(TestDataForCompiler.**)")]
         [InlineData(@"Within(TestDataForCompiler.Services.**)")]
         [InlineData(@"Within(TestDataForCompiler.Services.**.**)")]
         [InlineData(@"Within(**Service.*)")]
