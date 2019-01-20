@@ -1,9 +1,44 @@
+using Demon.Fody.PointcutExpression;
+using Fody;
 using Mono.Cecil;
+using TestsCompiler.Helpers;
+using Xunit;
 
 namespace TestsCompiler
 {
-    public class AndAlso
+    public class AndAlsoTests
     {
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
+        
+        [Fact]
+        public void Within()
+        {
+            //arrange
+            const string expression = @"Within(TestDataForCompiler.Controllers.**) Within(**.Get) &&";
+
+            var compiler = new Compiler(expression);
+
+            //act
+            var func = compiler.Compile();
+
+            var result = _module.FilterModule(func);
+
+            //assert   
+            Assert.Equal(2, result.Count);
+            Assert.Equal("Get", result[0].Name);
+            Assert.Equal("Get", result[1].Name);
+        }
+        
+        [Theory]
+        [InlineData(@"&& Within(TestDataForCompiler.Controllers.**) Within(**.Get)")]
+        [InlineData(@"Within(TestDataForCompiler.Controllers.**) && Within(**.Get)")]
+        public void Throws_IfIsFirstOrSecondToken(string expression)
+        {
+            //arrange
+            var compiler = new Compiler(expression);
+
+            //assert   
+            Assert.Throws<WeavingException>(() => compiler.Compile());
+        }
     }
 }
