@@ -14,10 +14,10 @@ namespace Demon.Fody
                 .Select(MakeAspect)
                 .ToList();
 
-        private static AspectData MakeAspect(TypeDefinition type) => 
+        static AspectData MakeAspect(TypeDefinition type) => 
             new AspectData(type, MakeAdvice(type.Methods).ToList());
 
-        private static IEnumerable<AdviceData> MakeAdvice(IEnumerable<MethodDefinition> methods) =>
+        static IEnumerable<AdviceData> MakeAdvice(IEnumerable<MethodDefinition> methods) =>
             from method in methods
             from attribute in method.CustomAttributes
             let before = TryMakeBefore(attribute, method)
@@ -28,12 +28,12 @@ namespace Demon.Fody
             where data != null
             select data;
 
-        private static AdviceData TryMakeBefore(CustomAttribute attribute, MethodDefinition method) =>
+        static AdviceData TryMakeBefore(CustomAttribute attribute, MethodDefinition method) =>
             attribute.AttributeType.FullName == "Demon.Aspect.BeforeAttribute"
                 ? new AdviceData(method, (string) attribute.ConstructorArguments[0].Value, AdviceType.Before)
                 : null;
 
-        private static AdviceData TryMakeAround(CustomAttribute attribute, MethodDefinition method) =>
+        static AdviceData TryMakeAround(CustomAttribute attribute, MethodDefinition method) =>
             attribute.AttributeType.FullName == "Demon.Aspect.AroundAttribute"
                 ? new AdviceData(method, (string) attribute.ConstructorArguments[0].Value, AdviceType.Around)
                 : null;

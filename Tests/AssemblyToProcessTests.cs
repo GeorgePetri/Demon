@@ -10,7 +10,7 @@ namespace Tests
     //todo split weaving tests in another project
     public class AssemblyToProcessTests
     {
-        private readonly TestResult _result;
+        readonly TestResult _result;
 
         //todo add assemblies for testing weave time validation?
         public AssemblyToProcessTests()

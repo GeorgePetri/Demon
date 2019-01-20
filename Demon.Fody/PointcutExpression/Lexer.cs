@@ -8,7 +8,7 @@ namespace Demon.Fody.PointcutExpression
 {
     public static class Lexer
     {
-        private static readonly Regex Regex = new Regex(
+        static readonly Regex Regex = new Regex(
             @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<execution>Execution\([^()]+\([^()]+\)\s*\))|(?<within>Within\([^()]+\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
             RegexOptions.Compiled);
 

@@ -12,11 +12,11 @@ namespace Demon.Fody.PointcutExpression
     //todo do validation
     public class CodeGenVisitor : ITokenVisitor
     {
-        private static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
+        static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
 
-        private readonly ParameterExpression _parameter = Expression.Parameter(typeof(MethodDefinition));
+        readonly ParameterExpression _parameter = Expression.Parameter(typeof(MethodDefinition));
 
-        private readonly Stack<Expression> _stack = new Stack<Expression>();
+        readonly Stack<Expression> _stack = new Stack<Expression>();
 
         public void Visit(AndAlsoToken _) =>
             HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations");
@@ -72,7 +72,7 @@ namespace Demon.Fody.PointcutExpression
 
         //todo use this only once per visitor parse
         //todo cache reflective calls
-        private MethodCallExpression GetFullName()
+        MethodCallExpression GetFullName()
         {
             var name = Expression.Property(_parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
 
@@ -89,7 +89,7 @@ namespace Demon.Fody.PointcutExpression
             return formated;
         }
 
-        private void HandleBinaryOperation(Func<Expression, Expression, Expression> func, string exceptionText)
+        void HandleBinaryOperation(Func<Expression, Expression, Expression> func, string exceptionText)
         {
             Expression popped1;
             Expression popped2;

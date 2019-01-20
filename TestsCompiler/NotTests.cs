@@ -8,7 +8,7 @@ namespace TestsCompiler
 {
     public class NotTests
     {
-        private readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
+        readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
 
         [Theory]
         [InlineData(@"Within(TestDataForCompiler.Services.UserService.Get) !")]

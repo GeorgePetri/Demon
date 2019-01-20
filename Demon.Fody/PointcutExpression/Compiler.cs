@@ -5,7 +5,7 @@ namespace Demon.Fody.PointcutExpression
 {
     public class Compiler
     {
-        private readonly string _expression;
+        readonly string _expression;
 
         public Compiler(string expression)
         {

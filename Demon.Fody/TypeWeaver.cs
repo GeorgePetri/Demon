@@ -10,11 +10,11 @@ namespace Demon.Fody
     //todo add validation to grammar tokens like execution and within etc
     public class TypeWeaver
     {
-        private readonly TypeDefinition _type;
-        private readonly IEnumerable<AspectData> _aspects;
+        readonly TypeDefinition _type;
+        readonly IEnumerable<AspectData> _aspects;
 
         //todo dsaible backtracking, validate whitepsaces
-        private readonly Regex _executingRegex = new Regex(@"execution\((\*|\*\*|[a-zA-Z_.<>-]+)\s+([a-zA-Z_.<>-]+)\(([a-zA-Z_.<>\s-]+|\*|\**)\)\)", RegexOptions.Compiled);
+        readonly Regex _executingRegex = new Regex(@"execution\((\*|\*\*|[a-zA-Z_.<>-]+)\s+([a-zA-Z_.<>-]+)\(([a-zA-Z_.<>\s-]+|\*|\**)\)\)", RegexOptions.Compiled);
 
         public TypeWeaver(TypeDefinition type, IEnumerable<AspectData> aspects) =>
             (_type, _aspects) = (type, aspects);
@@ -24,7 +24,7 @@ namespace Demon.Fody
             new TypeWeaver(type, aspects).Weave();
 
         //todo
-        private void Weave()
+        void Weave()
         {
             //todo don't foreach 3 times
             //todo don't match here
@@ -43,7 +43,7 @@ namespace Demon.Fody
         }
 
         //todo handle nonwildcard typename and parameters
-        private bool ShouldApplyExecuting(MethodDefinition method, string pointcutExpression)
+        bool ShouldApplyExecuting(MethodDefinition method, string pointcutExpression)
         {
             var match = _executingRegex.Match(pointcutExpression);
 
@@ -67,7 +67,7 @@ namespace Demon.Fody
         }
 
         //todo hardcoded to before advice
-        private void ApplyAdvice(MethodDefinition method, AdviceData advice)
+        void ApplyAdvice(MethodDefinition method, AdviceData advice)
         {
             if (advice.Method.IsStatic)
                 WeaveStatic(method, advice.Method);
@@ -75,7 +75,7 @@ namespace Demon.Fody
                 WeaveInstance(method, advice.Method);
         }
 
-        private static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
+        static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
         {
             //todo replace body precondition to filtering methods without body when resolving pointcuts
             if (!target.HasBody)
@@ -88,7 +88,7 @@ namespace Demon.Fody
             il.InsertBefore(target.Body.Instructions[0], callAdvice);
         }
 
-        private static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
+        static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
         {
             //todo replace body precondition to filtering methods without body when resolving pointcuts
             if (!target.HasBody)

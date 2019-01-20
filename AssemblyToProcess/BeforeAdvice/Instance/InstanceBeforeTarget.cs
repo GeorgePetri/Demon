@@ -2,7 +2,7 @@ namespace AssemblyToProcess.BeforeAdvice.Instance
 {
     public class InstanceBeforeTarget
     {
-        private readonly string _dependency;
+        readonly string _dependency;
 
         public InstanceBeforeTarget(string dependency)
         {
