@@ -15,13 +15,11 @@ namespace Demon.Fody.PointcutExpression
         private static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
 
         private readonly ParameterExpression _parameter = Expression.Parameter(typeof(MethodDefinition));
-        
+
         private readonly Stack<Expression> _stack = new Stack<Expression>();
 
-        public void Visit(AndAlsoToken andAlso)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void Visit(AndAlsoToken _) =>
+            HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations");
 
         public void Visit(ExecutionToken execution)
         {
@@ -39,16 +37,14 @@ namespace Demon.Fody.PointcutExpression
             {
                 throw new WeavingException("\"!\" can not be the first operation");
             }
-            
+
             var not = Expression.Not(previous);
 
             _stack.Push(not);
         }
 
-        public void Visit(OrElseToken orElse)
-        {
-            throw new System.NotImplementedException();
-        }
+        public void Visit(OrElseToken _) =>
+            HandleBinaryOperation(Expression.OrElse, "\"||\" must be preceded by two operations");
 
         public void Visit(PointcutToken pointcut)
         {
@@ -68,7 +64,7 @@ namespace Demon.Fody.PointcutExpression
         public Func<MethodDefinition, bool> GetExpression()
         {
             var body = _stack.Pop();
-            
+
             var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, _parameter);
 
             return expression.Compile();
@@ -91,6 +87,25 @@ namespace Demon.Fody.PointcutExpression
             var formated = Expression.Call(formatMethod, format, declaringFullName, name);
 
             return formated;
+        }
+
+        private void HandleBinaryOperation(Func<Expression, Expression, Expression> func, string exceptionText)
+        {
+            Expression popped1;
+            Expression popped2;
+            try
+            {
+                popped1 = _stack.Pop();
+                popped2 = _stack.Pop();
+            }
+            catch (InvalidOperationException)
+            {
+                throw new WeavingException(exceptionText);
+            }
+
+            var expression = func(popped2, popped1);
+
+            _stack.Push(expression);
         }
     }
 }
