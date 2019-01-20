@@ -10,12 +10,12 @@ namespace TestsCompiler
     {
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
         
-        [Fact]
-        public void Within()
+        [Theory]
+        [InlineData(@"Within(TestDataForCompiler.Controllers.**) Within(**.Get) &&")]
+        [InlineData(@"Within(TestDataForCompiler.Controllers.**) Within(**.Post) ! &&")]
+        public void Within(string expression)
         {
             //arrange
-            const string expression = @"Within(TestDataForCompiler.Controllers.**) Within(**.Get) &&";
-
             var compiler = new Compiler(expression);
 
             //act
