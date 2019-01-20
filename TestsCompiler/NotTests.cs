@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Demon.Fody.PointcutExpression;
+using Fody;
 using Mono.Cecil;
 using Xunit;
 
 namespace TestsCompiler
 {
-    //todo test throws
     public class NotTests
     {
         private readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
@@ -27,6 +27,18 @@ namespace TestsCompiler
 
             //assert   
             Assert.DoesNotContain(result, m => m.DeclaringType.Name == "UserService");
+        }
+
+        [Theory]
+        [InlineData(@"! Within(TestDataForCompiler.Services.UserService.Get) ")]
+        [InlineData(@"!Within(TestDataForCompiler.Services.UserService.Get)")]
+        public void Throws_IfIsFirstToken(string expression)
+        {
+            //arrange
+            var compiler = new Compiler(expression);
+
+            //assert   
+            Assert.Throws<WeavingException>(() => compiler.Compile());
         }
 
         //todo test for props

@@ -28,7 +28,6 @@ namespace Demon.Fody.PointcutExpression
             throw new System.NotImplementedException();
         }
 
-        //todo catch and add contextual information in the compiler
         public void Visit(NotToken _)
         {
             Expression previous;
