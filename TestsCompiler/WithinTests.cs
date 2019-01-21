@@ -17,7 +17,7 @@ namespace TestsCompiler
         public void IsFalse_ForNotWithinTarget(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //act
             var func = compiler.Compile();
@@ -34,7 +34,7 @@ namespace TestsCompiler
             //arrange
             const string expression = @"Within(TestDataForCompiler.Services.UserService.Get)";
 
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //act
             var func = compiler.Compile();
@@ -52,7 +52,7 @@ namespace TestsCompiler
         public void IsTrue_ForWithinStarTarget(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //act
             var func = compiler.Compile();
@@ -72,7 +72,7 @@ namespace TestsCompiler
         public void IsTrue_ForWithinDoubleStarTarget(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //act
             var func = compiler.Compile();

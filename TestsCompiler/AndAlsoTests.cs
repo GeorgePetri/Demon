@@ -9,14 +9,14 @@ namespace TestsCompiler
     public class AndAlsoTests
     {
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
-        
+
         [Theory]
         [InlineData(@"Within(TestDataForCompiler.Controllers.**) Within(**.Get) &&")]
         [InlineData(@"Within(TestDataForCompiler.Controllers.**) Within(**.Post) ! &&")]
         public void Within(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //act
             var func = compiler.Compile();
@@ -28,14 +28,14 @@ namespace TestsCompiler
             Assert.Equal("Get", result[0].Name);
             Assert.Equal("Get", result[1].Name);
         }
-        
+
         [Theory]
         [InlineData(@"&& Within(TestDataForCompiler.Controllers.**) Within(**.Get)")]
         [InlineData(@"Within(TestDataForCompiler.Controllers.**) && Within(**.Get)")]
         public void Throws_IfIsFirstOrSecondToken(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());

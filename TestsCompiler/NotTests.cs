@@ -16,7 +16,7 @@ namespace TestsCompiler
         public void Negates_Within(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //act
             var func = compiler.Compile();
@@ -33,7 +33,7 @@ namespace TestsCompiler
         public void Throws_IfIsFirstToken(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression);
+            var compiler = new Compiler(expression, null);
 
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());

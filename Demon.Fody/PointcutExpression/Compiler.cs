@@ -7,11 +7,10 @@ namespace Demon.Fody.PointcutExpression
     public class Compiler
     {
         readonly string _expression;
+        readonly PointcutContext _pointcutContext;
 
-        public Compiler(string expression)
-        {
-            _expression = expression;
-        }
+        public Compiler(string expression, PointcutContext pointcutContext) => 
+            (_expression, _pointcutContext) = (expression, pointcutContext);
 
         public Func<MethodDefinition, bool> Compile()
         {
