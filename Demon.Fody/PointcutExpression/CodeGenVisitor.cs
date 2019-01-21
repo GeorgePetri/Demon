@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -18,13 +17,10 @@ namespace Demon.Fody.PointcutExpression
         readonly ParameterExpression _parameter = Expression.Parameter(typeof(MethodDefinition));
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
-        
-        readonly ConcurrentDictionary<string, Func<MethodDefinition, bool>> _pointcuts;
 
-        public CodeGenVisitor(ConcurrentDictionary<string, Func<MethodDefinition, bool>> pointcuts)
-        {
-            _pointcuts = pointcuts;
-        }
+        readonly PointcutContext _pointcutContext;
+
+        public CodeGenVisitor(PointcutContext pointcutContext) => _pointcutContext = pointcutContext;
 
         public void Visit(AndAlsoToken _) =>
             HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations");
@@ -56,7 +52,15 @@ namespace Demon.Fody.PointcutExpression
 
         public void Visit(PointcutToken pointcut)
         {
-            throw new System.NotImplementedException();
+            var value = pointcut.String;
+
+            var withoutParentheses = value.Substring(0, value.Length - 2);
+
+            var pointcutFunc = _pointcutContext.GetResolved(withoutParentheses);
+
+            var invoke = Expression.Invoke(Expression.Constant(pointcutFunc), _parameter);
+
+            _stack.Push(invoke);
         }
 
         //todo validate

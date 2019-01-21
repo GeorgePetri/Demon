@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpression
@@ -16,7 +15,7 @@ namespace Demon.Fody.PointcutExpression
         {
             var tokens = Lexer.Analyse(_expression);
 
-            var expresionVisitor = new CodeGenVisitor(new ConcurrentDictionary<string, Func<MethodDefinition, bool>>());
+            var expresionVisitor = new CodeGenVisitor(_pointcutContext);
 
             foreach (var token in tokens)
             {
