@@ -10,6 +10,7 @@ using Mono.Cecil;
 namespace Demon.Fody.PointcutExpression
 {
     //todo do validation
+    //todo cleanup the class is very messy, also, do all string manipulation either here or elsewhere
     public class CodeGenVisitor : ITokenVisitor
     {
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
