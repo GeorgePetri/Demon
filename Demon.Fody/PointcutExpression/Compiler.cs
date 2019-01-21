@@ -3,6 +3,7 @@ using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpression
 {
+    //todo add static method that crates instance and compiles
     public class Compiler
     {
         readonly string _expression;
