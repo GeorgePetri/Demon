@@ -59,7 +59,7 @@ namespace Demon.Fody.PointcutExpression
                 if (pointcut != "")
                 {
                     matchedCharactersLength += pointcut.Length;
-                    yield return new PointcutToken();
+                    yield return new PointcutToken(pointcut);
                 }
             }
 
