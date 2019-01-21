@@ -2,7 +2,8 @@ using Mono.Cecil;
 
 namespace Demon.Fody.Data
 {
-    //todo define data structure that holds regexes
+    //todo defineor update this  data structure that holds delegate
+    //todo try get rid of enum
     public class AdviceData
     {
         public AdviceData(MethodDefinition method, string pointCut, AdviceType type) => 
