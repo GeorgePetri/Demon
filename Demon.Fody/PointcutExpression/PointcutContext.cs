@@ -7,6 +7,7 @@ namespace Demon.Fody.PointcutExpression
 {
     //todo throw nice error if not found in pointcu defs
     //todo can infinite recursion be detected here?
+    //todo unit test caching
     public class PointcutContext
     {
         readonly IReadOnlyDictionary<string, string> _pointcutDefinitions;
