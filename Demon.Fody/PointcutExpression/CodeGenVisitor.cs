@@ -74,6 +74,7 @@ namespace Demon.Fody.PointcutExpression
             _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName()));
         }
 
+        //todo error out if more than one item on stack
         public Func<MethodDefinition, bool> GetExpression()
         {
             var body = _stack.Pop();
