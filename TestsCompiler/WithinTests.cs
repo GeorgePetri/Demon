@@ -16,11 +16,8 @@ namespace TestsCompiler
         [InlineData(@"Within(TestDataForCompiler.NotExisting)")]
         public void IsFalse_ForNotWithinTarget(string expression)
         {
-            //arrange
-            var compiler = new Compiler(expression, null);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, null);
 
             var result = _module.FilterModule(func);
 
@@ -34,10 +31,8 @@ namespace TestsCompiler
             //arrange
             const string expression = @"Within(TestDataForCompiler.Services.UserService.Get)";
 
-            var compiler = new Compiler(expression, null);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, null);
 
             var result = _module.FilterModule(func);
 
@@ -51,11 +46,8 @@ namespace TestsCompiler
         [InlineData(@"Within(TestDataForCompiler.Services.*Service.*)")]
         public void IsTrue_ForWithinStarTarget(string expression)
         {
-            //arrange
-            var compiler = new Compiler(expression, null);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, null);
 
             var result = _module.FilterModule(func);
 
@@ -71,11 +63,8 @@ namespace TestsCompiler
         [InlineData(@"Within(**Service.*)")]
         public void IsTrue_ForWithinDoubleStarTarget(string expression)
         {
-            //arrange
-            var compiler = new Compiler(expression, null);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, null);
 
             var result = _module.FilterModule(func);
 

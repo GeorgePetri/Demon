@@ -21,10 +21,8 @@ namespace TestsCompiler
             var pointcutDictionary = new Dictionary<string, string> {{pointcutKey, pointcutExpression}};
             var context = new PointcutContext(pointcutDictionary);
 
-            var compiler = new Compiler(expression, context);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, context);
 
             var result = _module.FilterModule(func);
 
@@ -44,10 +42,8 @@ namespace TestsCompiler
             var pointcutDictionary = new Dictionary<string, string> {{pointcutKey, pointcutExpression}};
             var context = new PointcutContext(pointcutDictionary);
 
-            var compiler = new Compiler(expression, context);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, context);
 
             var result = _module.FilterModule(func);
 
@@ -66,10 +62,8 @@ namespace TestsCompiler
             var pointcutDictionary = new Dictionary<string, string> {{pointcutKey, pointcutExpression}};
             var context = new PointcutContext(pointcutDictionary);
 
-            var compiler = new Compiler(expression, context);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, context);
 
             var result = _module.FilterModule(func);
 
@@ -90,10 +84,8 @@ namespace TestsCompiler
             var pointcutDictionary = new Dictionary<string, string> {{pointcutInnerKey, pointcutInnerExpression}, {pointcutOuterKey, pointcutOuterExpression}};
             var context = new PointcutContext(pointcutDictionary);
 
-            var compiler = new Compiler(expression, context);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, context);
 
             var result = _module.FilterModule(func);
 
@@ -122,10 +114,8 @@ namespace TestsCompiler
             };
             var context = new PointcutContext(pointcutDictionary);
 
-            var compiler = new Compiler(expression, context);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, context);
 
             var result = _module.FilterModule(func);
 

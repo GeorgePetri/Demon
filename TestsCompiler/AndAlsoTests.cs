@@ -15,11 +15,8 @@ namespace TestsCompiler
         [InlineData(@"Within(TestDataForCompiler.Controllers.**) Within(**.Post) ! &&")]
         public void Within(string expression)
         {
-            //arrange
-            var compiler = new Compiler(expression, null);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, null);
 
             var result = _module.FilterModule(func);
 

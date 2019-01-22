@@ -19,7 +19,7 @@ namespace Demon.Fody.PointcutExpression
         public Func<MethodDefinition, bool> GetResolved(string pointcut) =>
             _compiledPointcuts.GetOrAdd(pointcut, Factory);
 
-        Func<MethodDefinition, bool> Factory(string pointcut) => 
-            new Compiler(_pointcutDefinitions[pointcut], this).Compile();
+        Func<MethodDefinition, bool> Factory(string pointcut) =>
+            Compiler.Compile(_pointcutDefinitions[pointcut], this);
     }
 }

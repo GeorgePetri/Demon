@@ -16,10 +16,8 @@ namespace TestsCompiler
             //arrange
             const string expression = @"Within(TestDataForCompiler.Services.**) Within(**.Post) ||";
 
-            var compiler = new Compiler(expression, null);
-
             //act
-            var func = compiler.Compile();
+            var func = Compiler.Compile(expression, null);
 
             var result = _module.FilterModule(func);
 
