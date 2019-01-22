@@ -3,6 +3,7 @@ using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpression
 {
+    //todo move to compiler folder
     public class Compiler
     {
         readonly string _expression;
@@ -20,10 +21,8 @@ namespace Demon.Fody.PointcutExpression
 
             var expresionVisitor = new CodeGenVisitor(_pointcutContext);
 
-            foreach (var token in tokens)
-            {
+            foreach (var token in tokens) 
                 token.Accept(expresionVisitor);
-            }
 
             return expresionVisitor.GetExpression();
         }

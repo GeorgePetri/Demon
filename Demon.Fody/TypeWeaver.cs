@@ -79,7 +79,7 @@ namespace Demon.Fody
         {
             //todo replace body precondition to filtering methods without body when resolving pointcuts
             if (!target.HasBody)
-                throw new WeavingException(target.FullName + " does not have a body");
+                throw new WeavingException(target.FullName + " does not have a body.");
 
             var il = target.Body.GetILProcessor();
 
@@ -92,7 +92,7 @@ namespace Demon.Fody
         {
             //todo replace body precondition to filtering methods without body when resolving pointcuts
             if (!target.HasBody)
-                throw new WeavingException(target.FullName + " does not have a body");
+                throw new WeavingException(target.FullName + " does not have a body.");
 
             //todo impl
         }

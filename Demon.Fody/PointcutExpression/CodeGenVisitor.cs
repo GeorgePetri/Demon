@@ -24,7 +24,7 @@ namespace Demon.Fody.PointcutExpression
         public CodeGenVisitor(PointcutContext pointcutContext) => _pointcutContext = pointcutContext;
 
         public void Visit(AndAlsoToken _) =>
-            HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations");
+            HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations.");
 
         public void Visit(ExecutionToken execution)
         {
@@ -40,7 +40,7 @@ namespace Demon.Fody.PointcutExpression
             }
             catch (InvalidOperationException)
             {
-                throw new WeavingException("\"!\" can not be the first operation");
+                throw new WeavingException("\"!\" can not be the first operation.");
             }
 
             var not = Expression.Not(previous);
@@ -49,7 +49,7 @@ namespace Demon.Fody.PointcutExpression
         }
 
         public void Visit(OrElseToken _) =>
-            HandleBinaryOperation(Expression.OrElse, "\"||\" must be preceded by two operations");
+            HandleBinaryOperation(Expression.OrElse, "\"||\" must be preceded by two operations.");
 
         public void Visit(PointcutToken pointcut)
         {
@@ -74,11 +74,13 @@ namespace Demon.Fody.PointcutExpression
             _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName()));
         }
 
-        //todo error out if more than one item on stack
         public Func<MethodDefinition, bool> GetExpression()
         {
-            var body = _stack.Pop();
+            if(_stack.Count != 1)
+                throw new WeavingException(@"Invalid expression is there a missing && or ||?"); 
 
+            var body = _stack.Pop();
+            
             var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, _parameter);
 
             return expression.Compile();

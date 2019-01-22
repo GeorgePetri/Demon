@@ -66,7 +66,7 @@ namespace Demon.Fody.PointcutExpression
             var expressionLengthWithoutWhitespace = expression.Replace(" ", "").Length;
 
             if (matchedCharactersLength < expressionLengthWithoutWhitespace)
-                throw new WeavingException($"{expression} is invalid.");
+                throw new WeavingException("Invalid expression.");
         }
     }
 }
