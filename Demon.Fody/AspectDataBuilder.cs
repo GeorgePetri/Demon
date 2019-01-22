@@ -6,6 +6,7 @@ using Mono.Cecil;
 namespace Demon.Fody
 {
     //todo impl ordering for aspects
+    //todo delete this and datas
     public static class AspectDataBuilder
     {
         public static List<AspectData> FromTypeDefinitions(IEnumerable<TypeDefinition> types) =>
