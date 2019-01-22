@@ -77,7 +77,7 @@ namespace Demon.Fody.PointcutExpression
         public Func<MethodDefinition, bool> GetExpression()
         {
             if(_stack.Count != 1)
-                throw new WeavingException(@"Invalid expression is there a missing && or ||?"); 
+                throw new WeavingException(@"Invalid expression.Is there a missing && or ||?"); 
 
             var body = _stack.Pop();
             
