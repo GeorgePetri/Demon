@@ -40,7 +40,7 @@ namespace Demon.Fody.PointcutExpression
             }
             catch (InvalidOperationException)
             {
-                throw new WeavingException("\"!\" can not be the first operation.");
+                throw new WeavingException("\"!\" can not be the first symbol.");
             }
 
             var not = Expression.Not(previous);
@@ -49,7 +49,7 @@ namespace Demon.Fody.PointcutExpression
         }
 
         public void Visit(OrElseToken _) =>
-            HandleBinaryOperation(Expression.OrElse, "\"||\" must be preceded by two operations.");
+            HandleBinaryOperation(Expression.OrElse, "\"||\" must be preceded by two symbol.");
 
         public void Visit(PointcutToken pointcut)
         {
