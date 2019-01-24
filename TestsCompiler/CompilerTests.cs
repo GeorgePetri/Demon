@@ -17,5 +17,19 @@ namespace TestsCompiler
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());
         }
+        
+        [Theory]
+        [InlineData(null)]
+        [InlineData(@"")]
+        [InlineData(@" ")]
+        [InlineData(@"    ")]
+        public void EmptyExpression(string expression)
+        {
+            //arrange
+            var compiler = new Compiler(expression, null);
+
+            //assert   
+            Assert.Throws<WeavingException>(() => compiler.Compile());
+        }
     }
 }

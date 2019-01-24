@@ -1,4 +1,5 @@
 using System;
+using Fody;
 using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpression
@@ -17,6 +18,9 @@ namespace Demon.Fody.PointcutExpression
 
         public Func<MethodDefinition, bool> Compile()
         {
+            if(string.IsNullOrWhiteSpace(_expression))
+                throw new WeavingException("Expression is empty.");
+            
             var tokens = Lexer.Analyse(_expression);
 
             var expresionVisitor = new CodeGenVisitor(_pointcutContext);

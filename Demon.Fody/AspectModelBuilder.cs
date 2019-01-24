@@ -74,6 +74,7 @@ namespace Demon.Fody
             }
         }
 
+        //todo catch weaving exceptions and add contextual information such as pointcut string and aspect
         List<AdviceModel> ProcessAdvice()
         {
             var pointcutContext = new PointcutContext(_pointcutDefinitions);
