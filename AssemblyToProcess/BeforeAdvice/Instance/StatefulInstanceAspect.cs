@@ -7,7 +7,7 @@ namespace AssemblyToProcess.BeforeAdvice.Instance
     {
         public bool AdviceCalled { get; set; }
 
-        [Before("Within(AssemblyToProcess.BeforeAdvice.Static.StaticBeforeTarget.Target)")]
+        [Before("Within(AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget.Target)")]
         public void Advice()
         {
             AdviceCalled = true;

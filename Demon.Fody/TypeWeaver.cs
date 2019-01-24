@@ -24,7 +24,7 @@ namespace Demon.Fody
             {
                 foreach (var advice in _adviceModels)
                 {
-                    if (advice.FilterToApply(method)&& DefaultFilter(method))
+                    if (advice.FilterToApply(method) && DefaultFilter(method))
                         ApplyAdvice(method, advice);
                 }
             }
@@ -32,7 +32,8 @@ namespace Demon.Fody
 
         static bool DefaultFilter(MethodDefinition method) =>
             method.HasBody
-            && method.IsPublic;
+            && method.IsPublic
+            && !method.IsConstructor;
 
         //todo hardcoded to before advice
         static void ApplyAdvice(MethodDefinition method, AdviceModel advice)
@@ -52,6 +53,7 @@ namespace Demon.Fody
             il.InsertBefore(target.Body.Instructions[0], callAdvice);
         }
 
+        //todo support multiple public constructors use a dag and filter by :(this) calls
         static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
         {
             //todo impl
