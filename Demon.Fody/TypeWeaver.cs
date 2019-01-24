@@ -56,7 +56,12 @@ namespace Demon.Fody
         //todo support multiple public constructors use a dag and filter by :(this) calls
         static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
         {
-            //todo impl
+            //todo move declaring type manipulation elsewhere
+            var aspect = advice.DeclaringType;
+
+            //todo do i need to add oter attributes or customAttributes?
+            var field = new FieldDefinition($"<Demon<Aspect<{aspect.Name}", FieldAttributes.Private | FieldAttributes.InitOnly, aspect);
+            target.DeclaringType.Fields.Add(field);
         }
     }
 }
