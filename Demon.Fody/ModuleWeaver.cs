@@ -8,11 +8,12 @@ namespace Demon.Fody
         //todo optimize ils, both manually and with cecil function
         public override void Execute()
         {
-            var aspects = AspectDataBuilder.FromTypeDefinitions(ModuleDefinition.Types);
+            var advice = AspectModelBuilder.FromTypeDefinitions(ModuleDefinition.Types);
 
             //todo filter to not run on aspects accidentally
+            //todo run in paralel
             foreach (var type in ModuleDefinition.Types)
-                TypeWeaver.Weave(type, aspects);
+                TypeWeaver.Weave(type, advice);
         }
 
         public override IEnumerable<string> GetAssembliesForScanning()
@@ -22,6 +23,5 @@ namespace Demon.Fody
         }
 
         public override bool ShouldCleanReference { get; } = false;
-
     }
 }

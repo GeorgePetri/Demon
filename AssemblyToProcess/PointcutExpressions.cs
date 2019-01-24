@@ -4,7 +4,7 @@ namespace AssemblyToProcess
 {
     //todo define a nicer syntax than public void methods with empty body
     //todo replace with rpn, add more complex ones
-    [Aspect]
+//    [Aspect]
     public class PointcutExpressions
     {
         [Pointcut("Within(AssemblyToProcess.Repositories.**)")]

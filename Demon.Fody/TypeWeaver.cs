@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using Demon.Fody.Data;
 using Fody;
 using Mono.Cecil;
@@ -7,67 +6,33 @@ using Mono.Cecil.Cil;
 
 namespace Demon.Fody
 {
-    //todo add validation to grammar tokens like execution and within etc
     public class TypeWeaver
     {
         readonly TypeDefinition _type;
-        readonly IEnumerable<AspectData> _aspects;
+        readonly List<AdviceModel> _adviceModels;
 
-        //todo dsaible backtracking, validate whitepsaces
-        readonly Regex _executingRegex = new Regex(@"execution\((\*|\*\*|[a-zA-Z_.<>-]+)\s+([a-zA-Z_.<>-]+)\(([a-zA-Z_.<>\s-]+|\*|\**)\)\)", RegexOptions.Compiled);
-
-        public TypeWeaver(TypeDefinition type, IEnumerable<AspectData> aspects) =>
-            (_type, _aspects) = (type, aspects);
+        public TypeWeaver(TypeDefinition type, List<AdviceModel> adviceModels) =>
+            (_type, _adviceModels) = (type, adviceModels);
 
         //todo
-        public static void Weave(TypeDefinition type, IEnumerable<AspectData> aspects) =>
+        public static void Weave(TypeDefinition type, List<AdviceModel> aspects) =>
             new TypeWeaver(type, aspects).Weave();
 
-        //todo
         void Weave()
         {
-            //todo don't foreach 3 times
-            //todo don't match here
             //todo add instance aspects when needed
             foreach (var method in _type.Methods)
             {
-                foreach (var aspect in _aspects)
+                foreach (var advice in _adviceModels)
                 {
-                    foreach (var advice in aspect.Advice)
-                    {
-                        if (ShouldApplyExecuting(method, advice.PointCut))
-                            ApplyAdvice(method, advice);
-                    }
+                    if (advice.FilterToApply(method))
+                        ApplyAdvice(method, advice);
                 }
             }
         }
 
-        //todo handle nonwildcard typename and parameters
-        bool ShouldApplyExecuting(MethodDefinition method, string pointcutExpression)
-        {
-            var match = _executingRegex.Match(pointcutExpression);
-
-            if (!match.Success)
-                return false;
-
-            var typeName = match.Groups[1];
-            var namespaceAndMethod = match.Groups[2];
-            var parameters = match.Groups[3];
-
-            if ($"{method.DeclaringType.FullName}.{method.Name}" != namespaceAndMethod.Value)
-                return false;
-
-            if (typeName.Value != @"*" && typeName.Value != @"**")
-                return false;
-
-            if (parameters.Value != @"*" && parameters.Value != @"**")
-                return false;
-
-            return true;
-        }
-
         //todo hardcoded to before advice
-        void ApplyAdvice(MethodDefinition method, AdviceData advice)
+        void ApplyAdvice(MethodDefinition method, AdviceModel advice)
         {
             if (advice.Method.IsStatic)
                 WeaveStatic(method, advice.Method);
