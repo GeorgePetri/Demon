@@ -2,5 +2,7 @@
 <Project>
     <PropertyGroup>
         <Authors>George Petri</Authors>
+        <RepositoryUrl>https://github.com/GeorgePetri/Demon</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/GeorgePetri/Demon</PackageProjectUrl>
     </PropertyGroup>
 </Project>

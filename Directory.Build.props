@@ -2,6 +2,7 @@
 <Project>
     <PropertyGroup>
         <Version>0.0.1</Version>
+        <Title>Demon</Title>
     </PropertyGroup>
 
     <Import Project="Common.props"/>
