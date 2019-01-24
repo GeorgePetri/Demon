@@ -11,6 +11,7 @@ namespace Demon.Fody
 {
     //todo impl ordering
     //todo test paralelize
+    //todo test this class
     public class AspectModelBuilder
     {
         readonly ConcurrentDictionary<string, string> _pointcutDefinitions = new ConcurrentDictionary<string, string>();

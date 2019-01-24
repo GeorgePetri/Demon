@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Demon.Fody.Data;
-using Fody;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -25,14 +24,18 @@ namespace Demon.Fody
             {
                 foreach (var advice in _adviceModels)
                 {
-                    if (advice.FilterToApply(method))
+                    if (advice.FilterToApply(method)&& DefaultFilter(method))
                         ApplyAdvice(method, advice);
                 }
             }
         }
 
+        static bool DefaultFilter(MethodDefinition method) =>
+            method.HasBody
+            && method.IsPublic;
+
         //todo hardcoded to before advice
-        void ApplyAdvice(MethodDefinition method, AdviceModel advice)
+        static void ApplyAdvice(MethodDefinition method, AdviceModel advice)
         {
             if (advice.Method.IsStatic)
                 WeaveStatic(method, advice.Method);
@@ -42,10 +45,6 @@ namespace Demon.Fody
 
         static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
         {
-            //todo replace body precondition to filtering methods without body when resolving pointcuts
-            if (!target.HasBody)
-                throw new WeavingException(target.FullName + " does not have a body.");
-
             var il = target.Body.GetILProcessor();
 
             var callAdvice = il.Create(OpCodes.Call, advice);
@@ -55,10 +54,6 @@ namespace Demon.Fody
 
         static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
         {
-            //todo replace body precondition to filtering methods without body when resolving pointcuts
-            if (!target.HasBody)
-                throw new WeavingException(target.FullName + " does not have a body.");
-
             //todo impl
         }
     }
