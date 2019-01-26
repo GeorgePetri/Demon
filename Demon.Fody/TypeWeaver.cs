@@ -81,13 +81,46 @@ namespace Demon.Fody
             AddAspectToConstructor(constructor, aspect, field);
         }
 
-        static void AddAspectToConstructor(MethodDefinition constructor, TypeDefinition aspect, FieldDefinition aspectField)
+        //todo ugly, refac
+        static void AddAspectToConstructor(MethodDefinition constructor, TypeDefinition aspect, FieldDefinition field)
         {
             var parameter = new ParameterDefinition($"<Demon<Aspect<{aspect.Name}", ParameterAttributes.None, aspect);
 
             constructor.Parameters.Add(parameter);
 
-            //todo processBody
+            var il = constructor.Body.GetILProcessor();
+            
+            var ldarg0 = il.Create(OpCodes.Ldarg_0);
+
+            var parameterIndex = constructor.Parameters.Count;
+
+            var ldAspect = TryUseEfficientLoadInstruction(il, parameterIndex) ?? il.Create(OpCodes.Ldarg_S, parameter);
+
+            var stfld = il.Create(OpCodes.Stfld, field);
+
+            var originalRet = constructor.Body.Instructions.Last();
+            
+            il.InsertBefore(originalRet,ldarg0);
+            il.InsertBefore(originalRet,ldAspect);
+            il.InsertBefore(originalRet,stfld);
+        }
+
+        //todo move
+        static Instruction TryUseEfficientLoadInstruction(ILProcessor il, int index)
+        {
+            switch (index)
+            {
+                case 0:
+                    return il.Create(OpCodes.Ldarg_0);
+                case 1:
+                    return il.Create(OpCodes.Ldarg_1);
+                case 2:
+                    return il.Create(OpCodes.Ldarg_2);
+                case 3:
+                    return il.Create(OpCodes.Ldarg_3);
+                default:
+                    return null;
+            }
         }
     }
 }
