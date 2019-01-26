@@ -3,8 +3,9 @@ namespace AssemblyToProcess.BeforeAdvice.Instance
     public class InstanceBeforeTarget
     {
         readonly string _dependency;
+        readonly int _ignored;
 
-        public InstanceBeforeTarget(string dependency)
+        InstanceBeforeTarget(string dependency)
         {
             _dependency = dependency;
         }  
@@ -12,14 +13,7 @@ namespace AssemblyToProcess.BeforeAdvice.Instance
         public InstanceBeforeTarget(string dependency, int ignored)
         {
             _dependency = dependency;
-        }
-        
-        public InstanceBeforeTarget(string dependency, bool ignored) : this(dependency)
-        {
-        }
-
-        public InstanceBeforeTarget() : this(null)
-        {
+            _ignored = ignored;
         }
 
         public string Target(int parameter) => parameter + _dependency;

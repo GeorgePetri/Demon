@@ -1,7 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 using Demon.Fody.Data;
+using Fody;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace Demon.Fody
 {
@@ -13,7 +16,6 @@ namespace Demon.Fody
         public TypeWeaver(TypeDefinition type, List<AdviceModel> adviceModels) =>
             (_type, _adviceModels) = (type, adviceModels);
 
-        //todo
         public static void Weave(TypeDefinition type, List<AdviceModel> aspects) =>
             new TypeWeaver(type, aspects).Weave();
 
@@ -30,6 +32,7 @@ namespace Demon.Fody
             }
         }
 
+        //todo filter async
         static bool DefaultFilter(MethodDefinition method) =>
             method.HasBody
             && method.IsPublic
@@ -53,15 +56,38 @@ namespace Demon.Fody
             il.InsertBefore(target.Body.Instructions[0], callAdvice);
         }
 
-        //todo support multiple public constructors use a dag and filter by :(this) calls
+        //todo support multiple public constructors use a dag and filter by :this(...) calls
+        //todo compose nicely multiple aspects
         static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
         {
             //todo move declaring type manipulation elsewhere
+            var targetType = target.DeclaringType;
             var aspect = advice.DeclaringType;
 
-            //todo do i need to add oter attributes or customAttributes?
-            var field = new FieldDefinition($"<Demon<Aspect<{aspect.Name}", FieldAttributes.Private | FieldAttributes.InitOnly, aspect);
-            target.DeclaringType.Fields.Add(field);
+            //todo do i need to add other attributes or customAttributes?
+            var field = new FieldDefinition($"_<Demon<Aspect<{aspect.Name}", FieldAttributes.Private | FieldAttributes.InitOnly, aspect);
+            targetType.Fields.Add(field);
+
+            var constructors = targetType.GetConstructors()
+                .Where(c => c.IsPublic)
+                .ToList();
+
+            if (constructors.Count != 1)
+                //todo make message nice, add context
+                throw new WeavingException("There must be only one public constructor.");
+
+            var constructor = constructors[0];
+
+            AddAspectToConstructor(constructor, aspect, field);
+        }
+
+        static void AddAspectToConstructor(MethodDefinition constructor, TypeDefinition aspect, FieldDefinition aspectField)
+        {
+            var parameter = new ParameterDefinition($"<Demon<Aspect<{aspect.Name}", ParameterAttributes.None, aspect);
+
+            constructor.Parameters.Add(parameter);
+
+            //todo processBody
         }
     }
 }
