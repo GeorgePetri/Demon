@@ -32,7 +32,6 @@ namespace Tests
             Assert.Throws<ApplicationException>(() => instance.Target(5));
         }
 
-        //todo add more of these to test position is correct
         //todo check if works with ms di
         [Fact]
         public void InstanceAdvice()
@@ -41,9 +40,27 @@ namespace Tests
             var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget");
             var aspectType = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
 
-            var aspect = (dynamic)Activator.CreateInstance(aspectType);
-             
+            var aspect = (dynamic) Activator.CreateInstance(aspectType);
+
             var instance = Activator.CreateInstance(type, aspect);
+
+            //act
+            instance.Target(5);
+
+            //assert
+            Assert.True(aspect.AdviceCalled);
+        }
+
+        [Fact]
+        public void InstanceAdviceManyConstructorParameters()
+        {
+            //arrange
+            var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget2");
+            var aspectType = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
+
+            var aspect = (dynamic) Activator.CreateInstance(aspectType);
+
+            var instance = Activator.CreateInstance(type, "test", 1, 2, 3, 4, 5, aspect);
 
             //act
             instance.Target(5);
