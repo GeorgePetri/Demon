@@ -23,11 +23,33 @@ namespace Tests
         [Fact]
         public void StaticAdvice()
         {
+            //arrange
             var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Static.StaticBeforeTarget");
 
-            var instance = (dynamic)Activator.CreateInstance(type);
+            var instance = (dynamic) Activator.CreateInstance(type);
 
+            //assert
             Assert.Throws<ApplicationException>(() => instance.Target(5));
+        }
+
+        //todo add more of these to test position is correct
+        //todo check if works with ms di
+        [Fact]
+        public void InstanceAdvice()
+        {
+            //arrange
+            var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget");
+            var aspectType = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
+
+            var aspect = (dynamic)Activator.CreateInstance(aspectType);
+             
+            var instance = Activator.CreateInstance(type, aspect);
+
+            //act
+            instance.Target(5);
+
+            //assert
+            Assert.True(aspect.AdviceCalled);
         }
     }
 }

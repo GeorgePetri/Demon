@@ -9,12 +9,17 @@ namespace AssemblyToProcess.BeforeAdvice.Instance
         readonly int _5;
         readonly int _6;
 
+        public InstanceBeforeTarget()
+        {
+            
+        }
+        
         InstanceBeforeTarget(string dependency)
         {
             _dependency = dependency;
         }  
         
-        public InstanceBeforeTarget(string dependency, int ignored, int a3, int a4, int a5, int a6)
+        InstanceBeforeTarget(string dependency, int ignored, int a3, int a4, int a5, int a6)
         {
             _dependency = dependency;
             _ignored = ignored;

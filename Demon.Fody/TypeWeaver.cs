@@ -79,6 +79,18 @@ namespace Demon.Fody
             var constructor = constructors[0];
 
             AddAspectToConstructor(constructor, aspect, field);
+            
+            var il = target.Body.GetILProcessor();
+
+            var originalFirstInstruction = target.Body.Instructions[0];
+
+            var ldarg0 = il.Create(OpCodes.Ldarg_0);
+            var ldfld = il.Create(OpCodes.Ldfld, field);
+            var callAdvice = il.Create(OpCodes.Call, advice);
+
+            il.InsertBefore(originalFirstInstruction, ldarg0); //todo might not be needed
+            il.InsertBefore(originalFirstInstruction, ldfld);
+            il.InsertBefore(originalFirstInstruction, callAdvice);
         }
 
         //todo ugly, refac
