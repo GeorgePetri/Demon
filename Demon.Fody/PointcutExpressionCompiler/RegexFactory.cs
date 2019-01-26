@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Demon.Fody.PointcutExpression
+namespace Demon.Fody.PointcutExpressionCompiler
 {
     public static class RegexFactory
     {

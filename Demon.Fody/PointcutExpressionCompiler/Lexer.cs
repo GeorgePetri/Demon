@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Demon.Fody.PointcutExpression.Token;
-using Demon.Fody.PointcutExpression.Token.Interface;
+using Demon.Fody.PointcutExpressionCompiler.Token;
+using Demon.Fody.PointcutExpressionCompiler.Token.Interface;
 using Fody;
 
-namespace Demon.Fody.PointcutExpression
+namespace Demon.Fody.PointcutExpressionCompiler
 {
     public static class Lexer
     {

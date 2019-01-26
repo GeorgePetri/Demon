@@ -1,4 +1,4 @@
-namespace Demon.Fody.PointcutExpression.Token.Interface
+namespace Demon.Fody.PointcutExpressionCompiler.Token.Interface
 {
     public interface IToken
     {

@@ -1,4 +1,4 @@
-using Demon.Fody.PointcutExpression;
+using Demon.Fody.PointcutExpressionCompiler;
 using Fody;
 using Mono.Cecil;
 using TestsCompiler.Helpers;

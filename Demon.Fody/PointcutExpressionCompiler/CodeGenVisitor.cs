@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Demon.Fody.PointcutExpression.Token;
+using Demon.Fody.PointcutExpressionCompiler.Token;
 using Fody;
 using Mono.Cecil;
 
-namespace Demon.Fody.PointcutExpression
+namespace Demon.Fody.PointcutExpressionCompiler
 {
     //todo do validation
     //todo cleanup the class is very messy, also, do all string manipulation either here or elsewhere

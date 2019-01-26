@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Demon.Fody.PointcutExpression;
+using Demon.Fody.PointcutExpressionCompiler;
 using Mono.Cecil;
 using TestsCompiler.Helpers;
 using Xunit;

@@ -1,6 +1,6 @@
 using System.Linq;
-using Demon.Fody.PointcutExpression;
-using Demon.Fody.PointcutExpression.Token;
+using Demon.Fody.PointcutExpressionCompiler;
+using Demon.Fody.PointcutExpressionCompiler.Token;
 using Fody;
 using Xunit;
 

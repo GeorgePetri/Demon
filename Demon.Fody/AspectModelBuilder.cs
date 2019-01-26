@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Demon.Fody.Data;
-using Demon.Fody.PointcutExpression;
+using Demon.Fody.PointcutExpressionCompiler;
 using Fody;
 using Mono.Cecil;
 

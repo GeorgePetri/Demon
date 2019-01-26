@@ -1,6 +1,6 @@
-using Demon.Fody.PointcutExpression.Token;
+using Demon.Fody.PointcutExpressionCompiler.Token;
 
-namespace Demon.Fody.PointcutExpression
+namespace Demon.Fody.PointcutExpressionCompiler
 {
     public interface ITokenVisitor
     {

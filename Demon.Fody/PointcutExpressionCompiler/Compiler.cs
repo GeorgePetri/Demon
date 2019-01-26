@@ -2,7 +2,7 @@ using System;
 using Fody;
 using Mono.Cecil;
 
-namespace Demon.Fody.PointcutExpression
+namespace Demon.Fody.PointcutExpressionCompiler
 {
     //todo move to compiler folder
     public class Compiler
