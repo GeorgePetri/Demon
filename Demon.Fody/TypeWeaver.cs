@@ -79,7 +79,7 @@ namespace Demon.Fody
             var constructor = constructors[0];
 
             AddAspectToConstructor(constructor, aspect, field);
-            
+
             var il = target.Body.GetILProcessor();
 
             var originalFirstInstruction = target.Body.Instructions[0];
@@ -88,7 +88,7 @@ namespace Demon.Fody
             var ldfld = il.Create(OpCodes.Ldfld, field);
             var callAdvice = il.Create(OpCodes.Call, advice);
 
-            il.InsertBefore(originalFirstInstruction, ldarg0); //todo might not be needed
+            il.InsertBefore(originalFirstInstruction, ldarg0);
             il.InsertBefore(originalFirstInstruction, ldfld);
             il.InsertBefore(originalFirstInstruction, callAdvice);
         }
@@ -101,7 +101,7 @@ namespace Demon.Fody
             constructor.Parameters.Add(parameter);
 
             var il = constructor.Body.GetILProcessor();
-            
+
             var ldarg0 = il.Create(OpCodes.Ldarg_0);
 
             var parameterIndex = constructor.Parameters.Count;
@@ -111,10 +111,10 @@ namespace Demon.Fody
             var stfld = il.Create(OpCodes.Stfld, field);
 
             var originalRet = constructor.Body.Instructions.Last();
-            
-            il.InsertBefore(originalRet,ldarg0);
-            il.InsertBefore(originalRet,ldAspect);
-            il.InsertBefore(originalRet,stfld);
+
+            il.InsertBefore(originalRet, ldarg0);
+            il.InsertBefore(originalRet, ldAspect);
+            il.InsertBefore(originalRet, stfld);
         }
 
         //todo move

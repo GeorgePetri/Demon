@@ -1,6 +1,6 @@
 using System;
 
-namespace Demon.Fody.PointcutExpression
+namespace Demon.Fody
 {
     public static class StandardExtensions
     {
