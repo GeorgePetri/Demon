@@ -4,7 +4,6 @@ using Mono.Cecil;
 
 namespace Demon.Fody.PointcutExpressionCompiler
 {
-    //todo move to compiler folder
     public class Compiler
     {
         readonly string _expression;

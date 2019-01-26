@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -14,11 +15,10 @@ namespace Demon.Fody.PointcutExpressionCompiler
     public class CodeGenVisitor : ITokenVisitor
     {
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
-
-        readonly ParameterExpression _parameter = Expression.Parameter(typeof(MethodDefinition));
+        static readonly ParameterExpression Parameter = Expression.Parameter(typeof(MethodDefinition));
+        static readonly MethodCallExpression GetFullName = CreateGetFullNameExpression();
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
-
         readonly PointcutContext _pointcutContext;
 
         public CodeGenVisitor(PointcutContext pointcutContext) => _pointcutContext = pointcutContext;
@@ -59,7 +59,7 @@ namespace Demon.Fody.PointcutExpressionCompiler
 
             var pointcutFunc = _pointcutContext.GetResolved(withoutParentheses);
 
-            var invoke = Expression.Invoke(Expression.Constant(pointcutFunc), _parameter);
+            var invoke = Expression.Invoke(Expression.Constant(pointcutFunc), Parameter);
 
             _stack.Push(invoke);
         }
@@ -71,38 +71,38 @@ namespace Demon.Fody.PointcutExpressionCompiler
 
             var regexInstance = Expression.Constant(regex);
 
-            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName()));
+            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, CreateGetFullNameExpression()));
         }
 
         public Func<MethodDefinition, bool> GetExpression()
         {
-            if(_stack.Count != 1)
-                throw new WeavingException(@"Invalid expression.Is there a missing && or ||?"); 
+            if (_stack.Count != 1)
+                throw new WeavingException(@"Invalid expression.Is there a missing && or ||?");
 
             var body = _stack.Pop();
-            
-            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, _parameter);
+
+            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, Parameter);
 
             return expression.Compile();
         }
 
-        //todo use this only once per visitor parse
-        //todo cache reflective calls
-        MethodCallExpression GetFullName()
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        static MethodCallExpression CreateGetFullNameExpression()
         {
-            var name = Expression.Property(_parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
+            var name = Expression.Property(Parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
 
-            var declaringType = Expression.Property(_parameter, typeof(MethodDefinition)
-                .GetProperty(nameof(MethodDefinition.DeclaringType), typeof(TypeDefinition)));
+            var declaringType = Expression.Property(
+                Parameter,
+                typeof(MethodDefinition)
+                    .GetProperty(nameof(MethodDefinition.DeclaringType), typeof(TypeDefinition)));
 
             var declaringFullName = Expression.Property(declaringType, typeof(TypeDefinition).GetProperty(nameof(TypeDefinition.FullName)));
 
-            var formatMethod = typeof(string).GetMethod(nameof(string.Format), new Type[] {typeof(string), typeof(object), typeof(object)});
-            var format = Expression.Constant("{0}.{1}");
+            var formatMethod = typeof(string).GetMethod(nameof(string.Format), new[] {typeof(string), typeof(object), typeof(object)});
 
-            var formated = Expression.Call(formatMethod, format, declaringFullName, name);
+            var stringFormat = Expression.Constant("{0}.{1}");
 
-            return formated;
+            return Expression.Call(formatMethod, stringFormat, declaringFullName, name);
         }
 
         void HandleBinaryOperation(Func<Expression, Expression, Expression> func, string exceptionText)
