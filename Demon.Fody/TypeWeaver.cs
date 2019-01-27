@@ -50,10 +50,28 @@ namespace Demon.Fody
         static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
         {
             var il = target.Body.GetILProcessor();
+            
+            var originalFirstInstruction = target.Body.Instructions[0];
+
+            //todo cleanup, move
+            if (advice.HasParameters)
+            {            
+                //todo assumes only one parameter
+                //todo replace with joinpoint
+                var methodInfoParameter = advice.Parameters
+                    .FirstOrDefault(p => p.ParameterType.FullName == "System.Reflection.TypeInfo");
+
+                if (methodInfoParameter != null)
+                {
+                    var ldMethod = il.Create(OpCodes.Ldtoken,target.DeclaringType);
+
+                    il.InsertBefore(originalFirstInstruction, ldMethod);
+                }
+            }
 
             var callAdvice = il.Create(OpCodes.Call, advice);
 
-            il.InsertBefore(target.Body.Instructions[0], callAdvice);
+            il.InsertBefore(originalFirstInstruction, callAdvice);
         }
 
         //todo support multiple public constructors use a dag and filter by :this(...) calls
