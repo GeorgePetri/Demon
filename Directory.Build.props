@@ -2,6 +2,7 @@
 <Project>
     <PropertyGroup>
         <Title>Demon</Title>
+        <PackageLicenseUrl>https://github.com/GeorgePetri/Demon/blob/master/LICENSE</PackageLicenseUrl>
     </PropertyGroup>
 
     <Import Project="Common.props"/>
