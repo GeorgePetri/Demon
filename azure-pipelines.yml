@@ -12,8 +12,8 @@ pool:
 variables:
   buildConfiguration: 'Release'
 
-- script: |
-  dotnet build --configuration $(buildConfiguration)
+steps:
+  - script: dotnet build --configuration $(buildConfiguration)
   
 - task: DotNetCoreCLI@2
     inputs:
