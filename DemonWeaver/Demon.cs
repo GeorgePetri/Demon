@@ -6,7 +6,10 @@ namespace DemonWeaver
     {
         public override bool Execute()
         {
-            Log.LogWarning("Demon Executed");
+
+//            var module = ModuleDefinition.ReadModule(@".\bin\Debug\netcoreapp2.1\AssemblyToProcess.dll");
+
+//            Log.LogWarning(module.Name);
 
             return true;
         }
