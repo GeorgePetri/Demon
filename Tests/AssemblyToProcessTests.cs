@@ -1,6 +1,5 @@
 ﻿using System;
-using Demon.Fody;
-using Fody;
+using System.Reflection;
 using Xunit;
 
 #pragma warning disable 618
@@ -10,21 +9,19 @@ namespace Tests
     //todo split weaving tests in another project
     public class AssemblyToProcessTests
     {
-        readonly TestResult _result;
+        readonly Assembly _assembly;
 
         //todo add assemblies for testing weave time validation?
         public AssemblyToProcessTests()
         {
-            var weaver = new ModuleWeaver();
-
-            _result = weaver.ExecuteTestRun("AssemblyToProcess.dll");
+            _assembly = Assembly.Load("AssemblyToProcess");
         }
 
         [Fact]
         public void StaticAdvice()
         {
             //arrange
-            var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Static.StaticBeforeTarget");
+            var type = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Static.StaticBeforeTarget");
 
             var instance = (dynamic) Activator.CreateInstance(type);
 
@@ -37,8 +34,8 @@ namespace Tests
         public void InstanceAdvice()
         {
             //arrange
-            var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget");
-            var aspectType = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
+            var type = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget");
+            var aspectType = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
 
             var aspect = (dynamic) Activator.CreateInstance(aspectType);
 
@@ -55,8 +52,8 @@ namespace Tests
         public void InstanceAdviceManyConstructorParameters()
         {
             //arrange
-            var type = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget2");
-            var aspectType = _result.Assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
+            var type = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget2");
+            var aspectType = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
 
             var aspect = (dynamic) Activator.CreateInstance(aspectType);
 

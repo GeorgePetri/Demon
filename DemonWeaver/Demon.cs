@@ -10,13 +10,7 @@ namespace DemonWeaver
 
         public override bool Execute()
         {
-//            var module = ModuleDefinition.ReadModule(@".\bin\Debug\netcoreapp2.1\AssemblyToProcess.dll");
-
-
-            foreach (var assembly in Assemblies)
-            {
-                Log.LogWarning(assembly);
-            }
+            SolutionWeaver.Weave(Assemblies);
 
             return true;
         }

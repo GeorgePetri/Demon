@@ -1,4 +1,4 @@
-using Demon.Fody.PointcutExpressionCompiler;
+using DemonWeaver.PointcutExpressionCompiler;
 using Xunit;
 
 namespace Tests

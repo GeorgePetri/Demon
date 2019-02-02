@@ -1,7 +1,7 @@
 using System.Linq;
-using Demon.Fody.PointcutExpressionCompiler;
-using Demon.Fody.PointcutExpressionCompiler.Token;
-using Fody;
+using DemonWeaver;
+using DemonWeaver.PointcutExpressionCompiler;
+using DemonWeaver.PointcutExpressionCompiler.Token;
 using Xunit;
 
 namespace Tests
