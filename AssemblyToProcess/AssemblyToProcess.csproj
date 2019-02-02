@@ -10,7 +10,7 @@
     <UsingTask TaskName="Demon" AssemblyFile="..\DemonWeaver\bin\Debug\netstandard2.0\DemonWeaver.dll"/>
 
     <Target Name="Weave_Demon" AfterTargets="Build">
-        <Demon/>
+        <Demon Assemblies=".\bin\Debug\netcoreapp2.1\AssemblyToProcess.dll"/>
     </Target>
 
     <ItemGroup>
