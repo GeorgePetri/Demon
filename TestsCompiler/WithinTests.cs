@@ -1,5 +1,5 @@
 using System.Linq;
-using Demon.Fody.PointcutExpressionCompiler;
+using DemonWeaver.PointcutExpressionCompiler;
 using Mono.Cecil;
 using TestsCompiler.Helpers;
 using Xunit;

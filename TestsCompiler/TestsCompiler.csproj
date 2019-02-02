@@ -8,9 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FodyHelpers">
-            <Version>3.3.5</Version>
-        </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk">
             <Version>15.9.0</Version>
         </PackageReference>
@@ -23,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Demon.Fody\Demon.Fody.csproj" />
+        <ProjectReference Include="..\DemonWeaver\DemonWeaver.csproj" />
         <ProjectReference Include="..\Demon\Demon.csproj" />
         <ProjectReference Include="..\TestDataForCompiler\TestDataForCompiler.csproj" />
     </ItemGroup>

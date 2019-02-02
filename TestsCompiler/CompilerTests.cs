@@ -1,5 +1,5 @@
-using Demon.Fody.PointcutExpressionCompiler;
-using Fody;
+using DemonWeaver;
+using DemonWeaver.PointcutExpressionCompiler;
 using Xunit;
 
 namespace TestsCompiler
