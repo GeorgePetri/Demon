@@ -4,13 +4,12 @@
         <TargetFramework>netcoreapp2.1</TargetFramework>
         <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
         <LangVersion>7.3</LangVersion>
-        <DisableFody>true</DisableFody>
     </PropertyGroup>
     
-    <UsingTask TaskName="Demon" AssemblyFile="..\DemonWeaver\bin\Debug\netstandard2.0\DemonWeaver.dll"/>
+    <UsingTask TaskName="Demon" AssemblyFile="..\DemonWeaver\bin\$(Configuration)\netstandard2.0\DemonWeaver.dll"/>
 
     <Target Name="Weave_Demon" AfterTargets="Build">
-        <Demon Assemblies=".\bin\Debug\netcoreapp2.1\AssemblyToProcess.dll"/>
+        <Demon Assemblies=".\bin\$(Configuration)\netcoreapp2.1\AssemblyToProcess.dll"/>
     </Target>
 
     <ItemGroup>
