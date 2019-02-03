@@ -1,0 +1,5 @@
+<Project>
+    
+    <UsingTask TaskName="Demon" AssemblyFile="..\DemonWeaver\bin\$(Configuration)\netstandard2.0\DemonWeaver.dll"/>
+
+</Project>

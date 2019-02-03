@@ -6,5 +6,9 @@
         <PackageVersion>0.3.1</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
+    
+    <ItemGroup>
+        <Content Include="build\Demon.props" PackagePath="build\" />
+    </ItemGroup>
 
 </Project>
