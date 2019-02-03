@@ -1,5 +1,5 @@
 <Project>
     
-    <UsingTask TaskName="Demon" AssemblyFile="task\DemonWeaver.dll"/>
+    <UsingTask TaskName="Demon" AssemblyFile="..\task\DemonWeaver.dll"/>
 
 </Project>
