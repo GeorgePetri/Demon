@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Demon.Fody;
 using Mono.Cecil;
@@ -11,26 +12,29 @@ namespace DemonWeaver
     {
         public static void Weave(string[] assemblyPaths)
         {
-            var pathsAndModules =
-                (from path in assemblyPaths
-                    let module = ModuleDefinition.ReadModule(path, new ReaderParameters {ReadWrite = true})
-                    select (name: path, module))
-                .ToList();
+            var modules = new List<ModuleDefinition>();
 
-            var allTypes = pathsAndModules.SelectMany(t => t.module.GetTypes()).ToList();
-
-            var advice = AspectModelBuilder.FromTypeDefinitions(allTypes);
-
-            //todo filter to not run on aspects accidentally
-            //todo run in paralel
-            foreach (var type in allTypes)
-                TypeWeaver.Weave(type, advice);
-
-            foreach (var (path, module) in pathsAndModules)
+            try
             {
-                //todo remove path if not needed
+                foreach (var path in assemblyPaths)
+                    modules.Add(ModuleDefinition.ReadModule(path, new ReaderParameters {ReadWrite = true}));
+
+                var allTypes = modules.SelectMany(m => m.GetTypes()).ToList();
+
+                var advice = AspectModelBuilder.FromTypeDefinitions(allTypes);
+
+                //todo filter to not run on aspects accidentally
+                foreach (var type in allTypes)
+                    TypeWeaver.Weave(type, advice);
+
                 //todo check file locking issues
-                module.Write();
+                foreach (var module in modules)
+                    module.Write();
+            }
+            finally
+            {
+                foreach (var module in modules)
+                    module.Dispose();
             }
         }
     }

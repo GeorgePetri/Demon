@@ -1,15 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="WeaverFolder">
 
     <PropertyGroup>
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>7.3</LangVersion>
-        <PackageVersion>0.3.4</PackageVersion>
+        <PackageVersion>0.3.6</PackageVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+    
+    <PropertyGroup>
+        <WeaverFolder>..\DemonWeaver\bin\$(Configuration)\netstandard2.0</WeaverFolder>
     </PropertyGroup>
     
     <ItemGroup>
         <Content Include="build\Demon.props" PackagePath="build\" />
-        <_PackageFiles Include="..\DemonWeaver\bin\$(Configuration)\netstandard2.0\DemonWeaver.dll">
+        <_PackageFiles Include="$(WeaverFolder)\DemonWeaver.dll;$(WeaverFolder)\Mono.Cecil.dll;$(WeaverFolder)\Mono.Cecil.Mdb.dll;$(WeaverFolder)\Mono.Cecil.Pdb.dll;$(WeaverFolder)\Mono.Cecil.Rocks.dll">
             <BuildAction>None</BuildAction>
             <PackagePath>task</PackagePath>
         </_PackageFiles>
