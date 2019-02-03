@@ -68,7 +68,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
             var regexInstance = Expression.Constant(regex);
 
-            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, CreateGetFullNameExpression()));
+            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName));
         }
 
         public Func<MethodDefinition, bool> GetExpression()
