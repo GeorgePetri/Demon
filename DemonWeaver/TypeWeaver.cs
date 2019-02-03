@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using DemonWeaver;
 using DemonWeaver.Data;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 
-namespace Demon.Fody
+namespace DemonWeaver
 {
     public class TypeWeaver
     {

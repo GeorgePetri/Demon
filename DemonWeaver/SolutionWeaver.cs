@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Demon.Fody;
 using Mono.Cecil;
 
 namespace DemonWeaver

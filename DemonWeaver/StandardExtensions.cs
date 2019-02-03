@@ -1,6 +1,6 @@
 using System;
 
-namespace Demon.Fody
+namespace DemonWeaver
 {
     public static class StandardExtensions
     {

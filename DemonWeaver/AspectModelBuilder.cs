@@ -2,12 +2,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DemonWeaver;
 using DemonWeaver.Data;
 using DemonWeaver.PointcutExpressionCompiler;
 using Mono.Cecil;
 
-namespace Demon.Fody
+namespace DemonWeaver
 {
     //todo impl ordering
     //todo test paralelize
