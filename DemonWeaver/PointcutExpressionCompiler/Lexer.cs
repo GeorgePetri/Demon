@@ -25,19 +25,12 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     matchedCharactersLength += andAlso.Length;
                     yield return new AndAlsoToken();
                 }
-                
+
                 var args = groups["args"].Value;
                 if (args != "")
                 {
                     matchedCharactersLength += args.Length;
                     yield return new ArgsToken(args);
-                }
-
-                var orElse = groups["orelse"].Value;
-                if (orElse != "")
-                {
-                    matchedCharactersLength += orElse.Length;
-                    yield return new OrElseToken();
                 }
 
                 var not = groups["not"].Value;
@@ -47,11 +40,11 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     yield return new NotToken();
                 }
 
-                var within = groups["within"].Value;
-                if (within != "")
+                var orElse = groups["orelse"].Value;
+                if (orElse != "")
                 {
-                    matchedCharactersLength += within.Length;
-                    yield return new WithinToken(within);
+                    matchedCharactersLength += orElse.Length;
+                    yield return new OrElseToken();
                 }
 
                 var pointcut = groups["pointcut"].Value;
@@ -59,6 +52,13 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 {
                     matchedCharactersLength += pointcut.Length;
                     yield return new PointcutToken(pointcut);
+                }
+
+                var within = groups["within"].Value;
+                if (within != "")
+                {
+                    matchedCharactersLength += within.Length;
+                    yield return new WithinToken(within);
                 }
             }
 
