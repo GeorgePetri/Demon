@@ -31,12 +31,12 @@ namespace AssemblyToProcess
         }
 
         [Pointcut("Args(i,*)")]
-        void ArgsWithOneBoundAndAnotherAny()
+        void ArgsWithOneBoundAndAnotherAny(int i)
         {
         }
 
         [Pointcut("Args(i,**)")]
-        void ArgsWithOneBoundAndAnyOfAnyType()
+        void ArgsWithOneBoundAndAnyOfAnyType(int i)
         {
         }
     }
