@@ -25,11 +25,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
         public void Visit(AndAlsoToken _) =>
             HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations.");
 
-        public void Visit(ExecutionToken execution)
-        {
-            throw new System.NotImplementedException();
-        }
-
         public void Visit(NotToken _)
         {
             Expression previous;

@@ -6,8 +6,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
     {
         void Visit(AndAlsoToken andAlso);
         
-        void Visit(ExecutionToken execution);
-        
         void Visit(NotToken not);
         
         void Visit(OrElseToken orElse);

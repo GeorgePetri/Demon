@@ -9,8 +9,8 @@ namespace Tests
     public class LexerTests
     {
         [Theory]
-        [InlineData("Repositories() !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&")]
-        [InlineData(" Repositories()   !Get() && Execution(* **(Int,*)) Within(AssemblyToProcess.Repositories.**) || &&  ")]
+        [InlineData("Repositories() !Get() && Within(AssemblyToProcess.Repositories.**) || &&")]
+        [InlineData(" Repositories()   !Get() &&  Within(AssemblyToProcess.Repositories.**) || &&  ")]
         public void Analyse_ReturnsTokens_WhenMatchingEverything(string expression)
         {
             //act
@@ -21,10 +21,9 @@ namespace Tests
             Assert.IsType<NotToken>(tokens[1]);
             Assert.IsType<PointcutToken>(tokens[2]);
             Assert.IsType<AndAlsoToken>(tokens[3]);
-            Assert.IsType<ExecutionToken>(tokens[4]);
-            Assert.IsType<WithinToken>(tokens[5]);
-            Assert.IsType<OrElseToken>(tokens[6]);
-            Assert.IsType<AndAlsoToken>(tokens[7]);
+            Assert.IsType<WithinToken>(tokens[4]);
+            Assert.IsType<OrElseToken>(tokens[5]);
+            Assert.IsType<AndAlsoToken>(tokens[6]);
         }
 
         [Theory]
