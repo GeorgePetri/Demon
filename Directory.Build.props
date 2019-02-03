@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+    
+    <!--todo delete this-->
     <PropertyGroup>
         <Title>Demon</Title>
         <PackageLicenseUrl>https://github.com/GeorgePetri/Demon/blob/master/LICENSE</PackageLicenseUrl>
