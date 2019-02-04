@@ -14,17 +14,16 @@ namespace DemonWeaver.PointcutExpressionCompiler
         public static Func<MethodDefinition, bool> Compile(PointcutExpression expression, PointcutContext pointcutContext) =>
             new Compiler(expression, pointcutContext).Compile();
 
-        //todo impl use DefiningMethod
         public Func<MethodDefinition, bool> Compile()
         {
-            if(string.IsNullOrWhiteSpace(_expression.String))
+            if (string.IsNullOrWhiteSpace(_expression.String))
                 throw new WeavingException("Expression is empty.");
-            
+
             var tokens = Lexer.Analyse(_expression.String);
 
-            var expresionVisitor = new CodeGenVisitor(_pointcutContext);
+            var expresionVisitor = new CodeGenVisitor(_expression.DefiningMethod, _pointcutContext);
 
-            foreach (var token in tokens) 
+            foreach (var token in tokens)
                 token.Accept(expresionVisitor);
 
             return expresionVisitor.GetExpression();

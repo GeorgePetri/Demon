@@ -18,15 +18,21 @@ namespace DemonWeaver.PointcutExpressionCompiler
         static readonly MethodCallExpression GetFullName = CreateGetFullNameExpression();
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
+        readonly MethodDefinition _definingMethod;
         readonly PointcutContext _pointcutContext;
 
-        public CodeGenVisitor(PointcutContext pointcutContext) => _pointcutContext = pointcutContext;
+        public CodeGenVisitor(MethodDefinition definingMethod, PointcutContext pointcutContext) =>
+            (_definingMethod, _pointcutContext) = (definingMethod, pointcutContext);
 
         public void Visit(AndAlsoToken _) =>
             HandleBinaryOperation(Expression.AndAlso, "\"&&\" must be preceded by two operations.");
 
-        public void Visit(ArgsToken args) =>
+        public void Visit(ArgsToken args)
+        {
+            var todo = TokenValueParser.Process(args, _definingMethod);
+            
             throw new NotImplementedException();
+        }
 
         public void Visit(NotToken _)
         {

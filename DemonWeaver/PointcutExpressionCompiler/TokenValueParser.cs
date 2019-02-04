@@ -1,9 +1,16 @@
 using DemonWeaver.PointcutExpressionCompiler.Token;
+using Mono.Cecil;
 
 namespace DemonWeaver.PointcutExpressionCompiler
 {
     public static class TokenValueParser
     {
+        //todo impl
+        public static string Process(ArgsToken token, MethodDefinition method)
+        {
+            return null;
+        }
+
         public static string Process(PointcutToken token)
         {
             var value = token.String;
