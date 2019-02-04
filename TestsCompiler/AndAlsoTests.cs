@@ -1,3 +1,4 @@
+using System;
 using DemonWeaver;
 using DemonWeaver.PointcutExpressionCompiler;
 using Mono.Cecil;
@@ -31,6 +32,8 @@ namespace TestsCompiler
         [InlineData(@"Within(TestDataForCompiler.Controllers.**) && Within(**.Get)")]
         public void Throws_IfIsFirstOrSecondToken(string expression)
         {
+            throw new Exception("intentional");
+            
             //arrange
             var compiler = new Compiler(new PointcutExpression(expression, null), null);
 
