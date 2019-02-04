@@ -18,11 +18,11 @@ namespace TestsCompiler
             const string pointcutKey = "UserService";
             const string expression = pointcutKey + @"()";
 
-            var pointcutDictionary = new Dictionary<string, string> {{pointcutKey, pointcutExpression}};
+            var pointcutDictionary = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};
             var context = new PointcutContext(pointcutDictionary);
 
             //act
-            var func = Compiler.Compile(expression, context);
+            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
 
             var result = _module.FilterModule(func);
 
@@ -39,11 +39,11 @@ namespace TestsCompiler
             const string pointcutKey = "UserService";
             const string expression = pointcutKey + @"()";
 
-            var pointcutDictionary = new Dictionary<string, string> {{pointcutKey, pointcutExpression}};
+            var pointcutDictionary = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};
             var context = new PointcutContext(pointcutDictionary);
 
             //act
-            var func = Compiler.Compile(expression, context);
+            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
 
             var result = _module.FilterModule(func);
 
@@ -59,11 +59,11 @@ namespace TestsCompiler
             const string pointcutKey = "UserService";
             const string expression = pointcutKey + @"()!";
 
-            var pointcutDictionary = new Dictionary<string, string> {{pointcutKey, pointcutExpression}};
+            var pointcutDictionary = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};
             var context = new PointcutContext(pointcutDictionary);
 
             //act
-            var func = Compiler.Compile(expression, context);
+            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
 
             var result = _module.FilterModule(func);
 
@@ -81,11 +81,15 @@ namespace TestsCompiler
             const string pointcutOuterKey = "UserServiceCall";
             const string expression = pointcutOuterKey + @"()";
 
-            var pointcutDictionary = new Dictionary<string, string> {{pointcutInnerKey, pointcutInnerExpression}, {pointcutOuterKey, pointcutOuterExpression}};
+            var pointcutDictionary = new Dictionary<string, PointcutExpression>
+            {
+                {pointcutInnerKey, new PointcutExpression(pointcutInnerExpression, null)},
+                {pointcutOuterKey, new PointcutExpression(pointcutOuterExpression, null)}
+            };
             var context = new PointcutContext(pointcutDictionary);
 
             //act
-            var func = Compiler.Compile(expression, context);
+            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
 
             var result = _module.FilterModule(func);
 
@@ -106,16 +110,16 @@ namespace TestsCompiler
             const string pointcutOuterKey = "UserControllerAndNotPost";
             const string expression = pointcutOuterKey + @"()";
 
-            var pointcutDictionary = new Dictionary<string, string>
+            var pointcutDictionary = new Dictionary<string, PointcutExpression>
             {
-                {pointcutInner1Key, pointcutInner1Expression},
-                {pointcutInner2Key, pointcutInner2Expression},
-                {pointcutOuterKey, pointcutOuterExpression}
+                {pointcutInner1Key, new PointcutExpression(pointcutInner1Expression, null)},
+                {pointcutInner2Key, new PointcutExpression(pointcutInner2Expression, null)},
+                {pointcutOuterKey, new PointcutExpression(pointcutOuterExpression, null)}
             };
             var context = new PointcutContext(pointcutDictionary);
 
             //act
-            var func = Compiler.Compile(expression, context);
+            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
 
             var result = _module.FilterModule(func);
 

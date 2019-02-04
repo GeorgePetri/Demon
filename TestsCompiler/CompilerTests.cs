@@ -12,7 +12,7 @@ namespace TestsCompiler
             //arrange
             const string expression = @"Within(TestDataForCompiler.Services.**) Within(**.Post)";
 
-            var compiler = new Compiler(expression, null);
+            var compiler = new Compiler(new PointcutExpression(expression, null), null);
 
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());
@@ -26,7 +26,7 @@ namespace TestsCompiler
         public void EmptyExpression(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression, null);
+            var compiler = new Compiler(new PointcutExpression(expression, null), null);
 
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());

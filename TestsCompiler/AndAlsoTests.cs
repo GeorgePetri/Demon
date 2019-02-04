@@ -16,7 +16,7 @@ namespace TestsCompiler
         public void Within(string expression)
         {
             //act
-            var func = Compiler.Compile(expression, null);
+            var func = Compiler.Compile(new PointcutExpression(expression, null), null);
 
             var result = _module.FilterModule(func);
 
@@ -32,7 +32,7 @@ namespace TestsCompiler
         public void Throws_IfIsFirstOrSecondToken(string expression)
         {
             //arrange
-            var compiler = new Compiler(expression, null);
+            var compiler = new Compiler(new PointcutExpression(expression, null), null);
 
             //assert   
             Assert.Throws<WeavingException>(() => compiler.Compile());

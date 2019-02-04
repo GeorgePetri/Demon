@@ -5,21 +5,22 @@ namespace DemonWeaver.PointcutExpressionCompiler
 {
     public class Compiler
     {
-        readonly string _expression;
+        readonly PointcutExpression _expression;
         readonly PointcutContext _pointcutContext;
 
-        public Compiler(string expression, PointcutContext pointcutContext) =>
+        public Compiler(PointcutExpression expression, PointcutContext pointcutContext) =>
             (_expression, _pointcutContext) = (expression, pointcutContext);
 
-        public static Func<MethodDefinition, bool> Compile(string expression, PointcutContext pointcutContext) =>
+        public static Func<MethodDefinition, bool> Compile(PointcutExpression expression, PointcutContext pointcutContext) =>
             new Compiler(expression, pointcutContext).Compile();
 
+        //todo impl use DefiningMethod
         public Func<MethodDefinition, bool> Compile()
         {
-            if(string.IsNullOrWhiteSpace(_expression))
+            if(string.IsNullOrWhiteSpace(_expression.String))
                 throw new WeavingException("Expression is empty.");
             
-            var tokens = Lexer.Analyse(_expression);
+            var tokens = Lexer.Analyse(_expression.String);
 
             var expresionVisitor = new CodeGenVisitor(_pointcutContext);
 

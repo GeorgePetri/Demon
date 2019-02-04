@@ -10,10 +10,10 @@ namespace DemonWeaver.PointcutExpressionCompiler
     //todo unit test caching
     public class PointcutContext
     {
-        readonly IReadOnlyDictionary<string, string> _pointcutDefinitions;
+        readonly IReadOnlyDictionary<string, PointcutExpression> _pointcutDefinitions;
         readonly ConcurrentDictionary<string, Func<MethodDefinition, bool>> _compiledPointcuts = new ConcurrentDictionary<string, Func<MethodDefinition, bool>>();
 
-        public PointcutContext(IReadOnlyDictionary<string, string> pointcutDefinitions) =>
+        public PointcutContext(IReadOnlyDictionary<string, PointcutExpression> pointcutDefinitions) =>
             _pointcutDefinitions = pointcutDefinitions;
 
         public Func<MethodDefinition, bool> GetResolved(string pointcut) =>

@@ -13,7 +13,7 @@ namespace DemonWeaver
     //todo test this class
     public class AspectModelBuilder
     {
-        readonly ConcurrentDictionary<string, string> _pointcutDefinitions = new ConcurrentDictionary<string, string>();
+        readonly ConcurrentDictionary<string, PointcutExpression> _pointcutDefinitions = new ConcurrentDictionary<string, PointcutExpression>();
         readonly ConcurrentDictionary<MethodDefinition, string> _beforeDefinitions = new ConcurrentDictionary<MethodDefinition, string>();
         readonly ConcurrentDictionary<MethodDefinition, string> _aroundDefinitions = new ConcurrentDictionary<MethodDefinition, string>();
 
@@ -47,7 +47,7 @@ namespace DemonWeaver
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
 
-                    var addedSuccessfully = _pointcutDefinitions.TryAdd(method.Name, pointcutExpression);
+                    var addedSuccessfully = _pointcutDefinitions.TryAdd(method.Name, new PointcutExpression(pointcutExpression, method));
 
                     if (!addedSuccessfully)
                         throw new WeavingException($"More than one pointcut with the name{method.Name} found");
@@ -81,13 +81,13 @@ namespace DemonWeaver
             var beforeResults = from definition in _beforeDefinitions
                 let method = definition.Key
                 let expression = definition.Value
-                let function = Compiler.Compile(expression, pointcutContext)
+                let function = Compiler.Compile(new PointcutExpression(expression, method), pointcutContext)
                 select new BeforeAdvice(method, function) as AdviceModel;
 
             var aroundResults = from definition in _aroundDefinitions
                 let method = definition.Key
                 let expression = definition.Value
-                let function = Compiler.Compile(expression, pointcutContext)
+                let function = Compiler.Compile(new PointcutExpression(expression, method), pointcutContext)
                 select new AroundAdvice(method, function) as AdviceModel;
 
             return beforeResults.Concat(aroundResults)
