@@ -11,9 +11,11 @@ namespace DemonWeaver.PointcutExpressionCompiler
         {
             var value = token.String;
 
-            var onlyInner = value.Substring(4, value.Length - 6);
+            var onlyInner = value.Substring(5, value.Length - 6);
 
-            var split = onlyInner.Split(',');
+            var noWhitespace = onlyInner.Replace(" ", "");
+
+            var split = noWhitespace.Split(',');
 
             return split;
         }
