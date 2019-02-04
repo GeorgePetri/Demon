@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace DemonWeaver
             });
         }
 
-        //todo this and ProcessAdvice are kinda copy paste, fix 
+        //todo this is kinda copy paste, fix 
         void AddMethodToDictionariesIfNeeded(MethodDefinition method)
         {
             foreach (var attribute in method.CustomAttributes)
@@ -73,18 +74,32 @@ namespace DemonWeaver
             }
         }
 
-        //todo catch weaving exceptions and add contextual information such as pointcut string and aspect
         List<AdviceModel> ProcessAdvice()
         {
             var pointcutContext = new PointcutContext(_pointcutDefinitions);
 
-            var beforeResults = from definition in _beforeDefinitions
-                let function = Compiler.Compile(definition, pointcutContext)
-                select new BeforeAdvice(definition.DefiningMethod, function) as AdviceModel;
+            IEnumerable<AdviceModel> CompileAdvice
+            (
+                IEnumerable<PointcutExpression> definitions,
+                Func<PointcutExpression, Func<MethodDefinition, bool>, AdviceModel> func
+            ) =>
+                definitions
+                    .Select(d =>
+                    {
+                        try
+                        {
+                            var compiledFunc = Compiler.Compile(d, pointcutContext);
+                            return func(d, compiledFunc);
+                        }
+                        catch (WeavingException e)
+                        {
+                            throw new WeavingException($"{e.Message} at {d.DefiningMethod.FullName}");
+                        }
+                    });
 
-            var aroundResults = from definition in _aroundDefinitions
-                let function = Compiler.Compile(definition, pointcutContext)
-                select new AroundAdvice(definition.DefiningMethod, function) as AdviceModel;
+            var beforeResults = CompileAdvice(_beforeDefinitions, (expression, func) => new BeforeAdvice(expression.DefiningMethod, func));
+
+            var aroundResults = CompileAdvice(_aroundDefinitions, (expression, func) => new AroundAdvice(expression.DefiningMethod, func));
 
             return beforeResults.Concat(aroundResults)
                 .ToList();
