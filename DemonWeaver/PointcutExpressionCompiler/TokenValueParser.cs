@@ -5,10 +5,17 @@ namespace DemonWeaver.PointcutExpressionCompiler
 {
     public static class TokenValueParser
     {
-        //todo impl
-        public static string Process(ArgsToken token, MethodDefinition method)
+        //todo use MethodDefinition here or in visitor?
+        //todo throw if not ,* ** a1
+        public static string[] Process(ArgsToken token, MethodDefinition method)
         {
-            return null;
+            var value = token.String;
+
+            var onlyInner = value.Substring(4, value.Length - 6);
+
+            var split = onlyInner.Split(',');
+
+            return split;
         }
 
         public static string Process(PointcutToken token)
