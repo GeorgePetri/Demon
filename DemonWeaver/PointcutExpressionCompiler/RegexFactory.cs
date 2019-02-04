@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 
 namespace DemonWeaver.PointcutExpressionCompiler
 {
+    //todo delete this and move to TokenValueParser
     public static class RegexFactory
     {
         static readonly Regex ExtractInnerWithin = new Regex(@"Within\(\s*(?<inner>[a-zA-Z1-9.*]+)\s*\)", RegexOptions.Compiled);

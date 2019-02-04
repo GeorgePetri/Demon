@@ -50,11 +50,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
         public void Visit(PointcutToken pointcut)
         {
-            var value = pointcut.String;
+            var name = TokenValueParser.Process(pointcut);
 
-            var withoutParentheses = value.Substring(0, value.Length - 2);
-
-            var pointcutFunc = _pointcutContext.GetResolved(withoutParentheses);
+            var pointcutFunc = _pointcutContext.GetResolved(name);
 
             var invoke = Expression.Invoke(Expression.Constant(pointcutFunc), Parameter);
 
