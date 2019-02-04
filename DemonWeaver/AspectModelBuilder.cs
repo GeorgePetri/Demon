@@ -14,8 +14,8 @@ namespace DemonWeaver
     public class AspectModelBuilder
     {
         readonly ConcurrentDictionary<string, PointcutExpression> _pointcutDefinitions = new ConcurrentDictionary<string, PointcutExpression>();
-        readonly ConcurrentDictionary<MethodDefinition, string> _beforeDefinitions = new ConcurrentDictionary<MethodDefinition, string>();
-        readonly ConcurrentDictionary<MethodDefinition, string> _aroundDefinitions = new ConcurrentDictionary<MethodDefinition, string>();
+        readonly ConcurrentBag<PointcutExpression> _beforeDefinitions = new ConcurrentBag<PointcutExpression>();
+        readonly ConcurrentBag<PointcutExpression> _aroundDefinitions = new ConcurrentBag<PointcutExpression>();
 
         public static List<AdviceModel> FromTypeDefinitions(IEnumerable<TypeDefinition> types)
         {
@@ -58,7 +58,7 @@ namespace DemonWeaver
                 if (attribute.AttributeType.FullName == "Demon.Aspect.BeforeAttribute")
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
-                    _beforeDefinitions.TryAdd(method, pointcutExpression);
+                    _beforeDefinitions.Add(new PointcutExpression(pointcutExpression, method));
 
                     break;
                 }
@@ -66,7 +66,7 @@ namespace DemonWeaver
                 if (attribute.AttributeType.FullName == "Demon.Aspect.AroundAttribute")
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
-                    _aroundDefinitions.TryAdd(method, pointcutExpression);
+                    _aroundDefinitions.Add(new PointcutExpression(pointcutExpression, method));
 
                     break;
                 }
@@ -79,16 +79,12 @@ namespace DemonWeaver
             var pointcutContext = new PointcutContext(_pointcutDefinitions);
 
             var beforeResults = from definition in _beforeDefinitions
-                let method = definition.Key
-                let expression = definition.Value
-                let function = Compiler.Compile(new PointcutExpression(expression, method), pointcutContext)
-                select new BeforeAdvice(method, function) as AdviceModel;
+                let function = Compiler.Compile(definition, pointcutContext)
+                select new BeforeAdvice(definition.DefiningMethod, function) as AdviceModel;
 
             var aroundResults = from definition in _aroundDefinitions
-                let method = definition.Key
-                let expression = definition.Value
-                let function = Compiler.Compile(new PointcutExpression(expression, method), pointcutContext)
-                select new AroundAdvice(method, function) as AdviceModel;
+                let function = Compiler.Compile(definition, pointcutContext)
+                select new AroundAdvice(definition.DefiningMethod, function) as AdviceModel;
 
             return beforeResults.Concat(aroundResults)
                 .ToList();
