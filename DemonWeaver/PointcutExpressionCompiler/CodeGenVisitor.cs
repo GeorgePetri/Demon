@@ -48,12 +48,23 @@ namespace DemonWeaver.PointcutExpressionCompiler
             }
             else
             {
-                foreach (var parameterName in strings)
+                //todo compiler should return metadata about bound args besides the func
+                //todo move to own method
+                foreach (var argument in strings)
                 {
-                    if (!CanBeFullname.IsMatch(parameterName))
-                        throw new WeavingException($"Invalid argument name:{parameterName} in {args.String}");
-                    
-                    throw new NotImplementedException();
+                    if (!CanBeFullname.IsMatch(argument))
+                        throw new WeavingException($"Invalid argument name:{argument} in {args.String}");
+
+                    if (argument == @"**")
+                        throw new NotImplementedException();
+
+                    if (argument == @"*")
+                        throw new NotImplementedException();
+
+                    var parameterDefinition = _definingMethod
+                                                  .Parameters
+                                                  .FirstOrDefault(p => p.Name == argument)
+                                              ?? throw new WeavingException($"{argument} in {args.String} is not found in the defining method");
                 }
             }
         }

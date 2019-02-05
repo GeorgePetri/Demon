@@ -50,5 +50,21 @@ namespace TestsCompiler
             //assert
             Assert.Throws<WeavingException>(() => compiler.Compile());
         }
+        
+        [Theory]
+        [InlineData(@"Args(i)")]
+        [InlineData(@"Args(is)")]
+        [InlineData(@"Args(s,i)")]
+        public void ThrowOnArgumentNotFoundOnDefiningMethod(string expression)
+        {
+            //arrange
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "Empty");
+
+            //act
+            var compiler = new Compiler(new PointcutExpression(expression, emptyArgsMethod), null);
+
+            //assert
+            Assert.Throws<WeavingException>(() => compiler.Compile());
+        }
     }
 }
