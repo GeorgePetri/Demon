@@ -8,7 +8,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
     public static class Lexer
     {
         static readonly Regex Regex = new Regex(
-            @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<within>Within\([^()]+\))|(?<args>Args\([^()]+\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
+            @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<within>Within\([^()]+\))|(?<args>Args\([^()]*\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
             RegexOptions.Compiled);
 
         public static IEnumerable<IToken> Analyse(string expression)
