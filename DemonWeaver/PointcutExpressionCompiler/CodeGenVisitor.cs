@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using DemonWeaver.PointcutExpressionCompiler.Token;
 using Mono.Cecil;
+using Mono.Collections.Generic;
 
 namespace DemonWeaver.PointcutExpressionCompiler
 {
@@ -16,6 +18,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
         static readonly ParameterExpression Parameter = Expression.Parameter(typeof(MethodDefinition));
         static readonly MethodCallExpression GetFullName = CreateGetFullNameExpression();
+        static readonly MemberExpression ParameterCount = CreateParameterCountExpression();
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
         readonly MethodDefinition _definingMethod;
@@ -29,9 +32,21 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
         public void Visit(ArgsToken args)
         {
-            var todo = TokenValueParser.Process(args, _definingMethod);
-            
-            throw new NotImplementedException();
+            var strings = TokenValueParser.Process(args);
+
+            //todo cleanup, use ANy instead of count on expression
+            if (!strings.Any())
+            {
+                var zero = Expression.Constant(0);
+
+                var equals = Expression.Equal(ParameterCount, zero);
+
+                _stack.Push(equals);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public void Visit(NotToken _)
@@ -104,6 +119,15 @@ namespace DemonWeaver.PointcutExpressionCompiler
             var stringFormat = Expression.Constant("{0}.{1}");
 
             return Expression.Call(formatMethod, stringFormat, declaringFullName, name);
+        }
+
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        static MemberExpression CreateParameterCountExpression()
+        {
+            var parameters = Expression.Property(Parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters)));
+            var count = Expression.Property(parameters, typeof(Collection<ParameterDefinition>).GetProperty(nameof(Collection<ParameterDefinition>.Count)));
+
+            return count;
         }
 
         void HandleBinaryOperation(Func<Expression, Expression, Expression> func, string exceptionText)

@@ -1,5 +1,4 @@
 using DemonWeaver.PointcutExpressionCompiler.Token;
-using Mono.Cecil;
 
 namespace DemonWeaver.PointcutExpressionCompiler
 {
@@ -7,7 +6,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
     {
         //todo use MethodDefinition here or in visitor?
         //todo throw if not ,* ** a1
-        public static string[] Process(ArgsToken token, MethodDefinition method)
+        public static string[] Process(ArgsToken token)
         {
             var value = token.String;
 
@@ -17,7 +16,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
             var split = noWhitespace.Split(',');
 
-            return split;
+            return split.Length == 1 && split[0] == "" 
+                ? new string[0] 
+                : split;
         }
 
         public static string Process(PointcutToken token)
