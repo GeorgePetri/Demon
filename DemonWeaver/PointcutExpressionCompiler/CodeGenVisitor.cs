@@ -15,10 +15,13 @@ namespace DemonWeaver.PointcutExpressionCompiler
     //todo cleanup the class is very messy, also, do all string manipulation either here or elsewhere
     public class CodeGenVisitor : ITokenVisitor
     {
+        //todo extract these in separate class once critical mass is reached
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
         static readonly ParameterExpression Parameter = Expression.Parameter(typeof(MethodDefinition));
         static readonly MethodCallExpression GetFullName = CreateGetFullNameExpression();
         static readonly MemberExpression ParameterCount = CreateParameterCountExpression();
+
+        static readonly Regex CanBeFullname = new Regex(@"^\w*$", RegexOptions.Compiled);
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
         readonly MethodDefinition _definingMethod;
@@ -45,7 +48,13 @@ namespace DemonWeaver.PointcutExpressionCompiler
             }
             else
             {
-                throw new NotImplementedException();
+                foreach (var parameterName in strings)
+                {
+                    if (!CanBeFullname.IsMatch(parameterName))
+                        throw new WeavingException($"Invalid argument name:{parameterName} in {args.String}");
+                    
+                    throw new NotImplementedException();
+                }
             }
         }
 

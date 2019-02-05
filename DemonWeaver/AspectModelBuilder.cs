@@ -93,7 +93,7 @@ namespace DemonWeaver
                         }
                         catch (WeavingException e)
                         {
-                            throw new WeavingException($"{e.Message} at {d.DefiningMethod.FullName}");
+                            throw new WeavingException($"{e.Message}At {d.DefiningMethod.FullName}");
                         }
                     });
 
