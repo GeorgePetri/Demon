@@ -32,7 +32,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
             var strings = TokenValueParser.Process(args);
 
             if (!strings.Any())
-                _stack.Push(Expressions.HasParameters);
+                _stack.Push(Expression.Not(Expressions.HasParameters));
             else
             {
                 var toBeBound = new HashSet<(string, TypeReference)>();
