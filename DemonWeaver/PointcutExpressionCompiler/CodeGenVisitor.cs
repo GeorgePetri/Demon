@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using DemonWeaver.PointcutExpressionCompiler.Token;
 using Mono.Cecil;
 using Mono.Collections.Generic;
+using Expressions = DemonWeaver.PointcutExpressionCompiler.LinqExpressionFactory;
 
 namespace DemonWeaver.PointcutExpressionCompiler
 {
@@ -15,11 +16,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
     //todo cleanup the class is very messy, also, do all string manipulation either here or elsewhere
     public class CodeGenVisitor : ITokenVisitor
     {
-        //todo extract these in separate class once critical mass is reached
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
-        static readonly ParameterExpression Parameter = Expression.Parameter(typeof(MethodDefinition));
-        static readonly MethodCallExpression GetFullName = CreateGetFullNameExpression();
-        static readonly MemberExpression ParameterCount = CreateParameterCountExpression();
 
         static readonly Regex CanBeFullname = new Regex(@"^[\w*]*$", RegexOptions.Compiled);
 
@@ -42,7 +39,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
             {
                 var zero = Expression.Constant(0);
 
-                var equals = Expression.Equal(ParameterCount, zero);
+                var equals = Expression.Equal(Expressions.TargetParameterCount, zero);
 
                 _stack.Push(equals);
             }
@@ -124,7 +121,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
             var pointcutFunc = _pointcutContext.GetResolved(name);
 
-            var invoke = Expression.Invoke(Expression.Constant(pointcutFunc), Parameter);
+            var invoke = Expression.Invoke(Expression.Constant(pointcutFunc), Expressions.Target);
 
             _stack.Push(invoke);
         }
@@ -136,7 +133,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
             var regexInstance = Expression.Constant(regex);
 
-            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, GetFullName));
+            _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, Expressions.TargetFullName));
         }
 
         public Func<MethodDefinition, bool> GetExpression()
@@ -146,34 +143,15 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
             var body = _stack.Pop();
 
-            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, Parameter);
+            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, Expressions.Target);
 
             return expression.Compile();
         }
 
         [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        static MethodCallExpression CreateGetFullNameExpression()
-        {
-            var name = Expression.Property(Parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
-
-            var declaringType = Expression.Property(
-                Parameter,
-                typeof(MethodDefinition)
-                    .GetProperty(nameof(MethodDefinition.DeclaringType), typeof(TypeDefinition)));
-
-            var declaringFullName = Expression.Property(declaringType, typeof(TypeDefinition).GetProperty(nameof(TypeDefinition.FullName)));
-
-            var formatMethod = typeof(string).GetMethod(nameof(string.Format), new[] {typeof(string), typeof(object), typeof(object)});
-
-            var stringFormat = Expression.Constant("{0}.{1}");
-
-            return Expression.Call(formatMethod, stringFormat, declaringFullName, name);
-        }
-
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         static MemberExpression CreateParameterCountExpression()
         {
-            var parameters = Expression.Property(Parameter, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters)));
+            var parameters = Expression.Property(Expressions.Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters)));
             var count = Expression.Property(parameters, typeof(Collection<ParameterDefinition>).GetProperty(nameof(Collection<ParameterDefinition>.Count)));
 
             return count;
