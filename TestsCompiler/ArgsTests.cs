@@ -73,7 +73,7 @@ namespace TestsCompiler
             //arrange
             const string expression = @"Args(*)";
 
-            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "OneInt");
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "Empty");
 
             //act
             var func = Compiler.Compile(new PointcutExpression(expression, emptyArgsMethod), null);
@@ -90,7 +90,42 @@ namespace TestsCompiler
             //arrange
             const string expression = @"Args(*,*)";
 
-            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "TwoInt");
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "Empty");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, emptyArgsMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
+        }        
+        
+        [Fact]
+        public void OneDoubleStar()
+        {
+            //arrange
+            const string expression = @"Args(**)";
+
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "Empty");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, emptyArgsMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "OneInt" && m.DeclaringType.Name == "ArgsMethods");
+            Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
+        }    
+        
+        [Fact]
+        public void OneDoubleStarAndOneSingleStar()
+        {
+            //arrange
+            const string expression = @"Args(**, *)";
+
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "Empty");
 
             //act
             var func = Compiler.Compile(new PointcutExpression(expression, emptyArgsMethod), null);
