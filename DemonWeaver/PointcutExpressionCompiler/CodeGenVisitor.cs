@@ -31,15 +31,8 @@ namespace DemonWeaver.PointcutExpressionCompiler
         {
             var strings = TokenValueParser.Process(args);
 
-            //todo cleanup, use ANy instead of count on expression
             if (!strings.Any())
-            {
-                var zero = Expression.Constant(0);
-
-                var equals = Expression.Equal(Expressions.TargetParameterCount, zero);
-
-                _stack.Push(equals);
-            }
+                _stack.Push(Expressions.HasParameters);
             else
             {
                 var toBeBound = new HashSet<(string, TypeReference)>();
