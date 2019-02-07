@@ -48,24 +48,53 @@ namespace DemonWeaver.PointcutExpressionCompiler
             }
             else
             {
-                //todo compiler should return metadata about bound args besides the func
-                //todo move to own method
+                var toBeBound = new HashSet<(string, TypeReference)>();
+                var argCountMustBeAtLeast = 0;
+                var argCountHasUpperBound = true;
+                //todo compiler should return metadata about bound args besides the func, make sure it works with pointcuts
                 foreach (var argument in strings)
                 {
                     if (!CanBeFullname.IsMatch(argument))
                         throw new WeavingException($"Invalid argument name:{argument} in {args.String}");
 
+                    argCountMustBeAtLeast++;
+
                     if (argument == @"**")
-                        throw new NotImplementedException();
+                    {
+                        argCountHasUpperBound = false;
+                        continue;
+                    }
 
                     if (argument == @"*")
-                        throw new NotImplementedException();
+                        continue;
 
                     var parameterDefinition = _definingMethod
                                                   .Parameters
                                                   .FirstOrDefault(p => p.Name == argument)
                                               ?? throw new WeavingException($"{argument} in {args.String} is not found in the defining method");
+
+                    toBeBound.Add((argument, parameterDefinition.ParameterType));
                 }
+
+                if (toBeBound.Count != argCountMustBeAtLeast)
+                    if (argCountHasUpperBound)
+                    {
+                        var countAtLeast = Expression.Constant(argCountMustBeAtLeast);
+
+                        var equals = Expression.Equal(CreateParameterCountExpression(), countAtLeast);
+
+                        _stack.Push(equals);
+                    }
+                    else
+                    {
+                        var countAtLeast = Expression.Constant(argCountMustBeAtLeast);
+
+                        var greaterThanOrEquals = Expression.GreaterThanOrEqual(CreateParameterCountExpression(), countAtLeast);
+
+                        _stack.Push(greaterThanOrEquals);
+                    }
+
+                //todo add expression here for each to bind 
             }
         }
 
