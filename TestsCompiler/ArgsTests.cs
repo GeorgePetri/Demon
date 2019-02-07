@@ -11,7 +11,7 @@ namespace TestsCompiler
     public class ArgsTests
     {
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
-        
+
         Collection<MethodDefinition> ArgsMethods => _module
             .Types
             .First(t => t.Name == "ArgsMethods")
@@ -33,7 +33,7 @@ namespace TestsCompiler
             //assert
             Assert.Contains(result, m => m.Name == "Empty" && m.DeclaringType.Name == "ArgsMethods");
         }
-        
+
         [Theory]
         [InlineData(@"Args(/)")]
         [InlineData(@"Args(&a)")]
@@ -50,7 +50,7 @@ namespace TestsCompiler
             //assert
             Assert.Throws<WeavingException>(() => compiler.Compile());
         }
-        
+
         [Theory]
         [InlineData(@"Args(i)")]
         [InlineData(@"Args(is)")]
@@ -65,6 +65,40 @@ namespace TestsCompiler
 
             //assert
             Assert.Throws<WeavingException>(() => compiler.Compile());
+        }
+
+        [Fact]
+        public void OneSingleStar()
+        {
+            //arrange
+            const string expression = @"Args(*)";
+
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "OneInt");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, emptyArgsMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "OneInt" && m.DeclaringType.Name == "ArgsMethods");
+        } 
+        
+        [Fact]
+        public void TwoSingleStars()
+        {
+            //arrange
+            const string expression = @"Args(*,*)";
+
+            var emptyArgsMethod = ArgsMethods.First(m => m.Name == "TwoInt");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, emptyArgsMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
         }
     }
 }

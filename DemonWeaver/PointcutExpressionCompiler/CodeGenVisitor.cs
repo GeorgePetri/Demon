@@ -21,7 +21,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
         static readonly MethodCallExpression GetFullName = CreateGetFullNameExpression();
         static readonly MemberExpression ParameterCount = CreateParameterCountExpression();
 
-        static readonly Regex CanBeFullname = new Regex(@"^\w*$", RegexOptions.Compiled);
+        static readonly Regex CanBeFullname = new Regex(@"^[\w*]*$", RegexOptions.Compiled);
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
         readonly MethodDefinition _definingMethod;

@@ -4,6 +4,14 @@ namespace TestDataForCompiler
     {
         public void Empty()
         {
+        }        
+        
+        public void OneInt(int i)
+        {
+        }   
+        
+        public void TwoInt(int i, int j)
+        {
         }
     }
 }
