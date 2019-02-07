@@ -35,7 +35,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 _stack.Push(Expression.Not(Expressions.HasParameters));
             else
             {
-                var toBeBound = new HashSet<(string, TypeReference)>();
+                var toBeBound = new HashSet<(string name, TypeReference type)>();
                 var argCountMustBeAtLeast = 0;
                 var argCountHasUpperBound = true;
                 //todo compiler should return metadata about bound args besides the func, make sure it works with pointcuts
@@ -68,7 +68,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
                         ? Expressions.TargetParameterEqual(argCountMustBeAtLeast)
                         : Expressions.TargetParameterGreaterThanOrEqual(argCountMustBeAtLeast));
 
-                //todo add expression here for each to bind 
+                _stack.Push(Expressions.TargetHasParametersOfType(toBeBound.Select(t => t.type)));
             }
         }
 

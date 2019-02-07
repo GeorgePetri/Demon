@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using Mono.Cecil;
 using Mono.Collections.Generic;
@@ -21,9 +23,17 @@ namespace DemonWeaver.PointcutExpressionCompiler
         public static BinaryExpression TargetParameterGreaterThanOrEqual(int value) => 
             Expression.GreaterThanOrEqual(TargetParameterCount, Expression.Constant(value));
 
+        //todo return type correct, and cached
+        public static BinaryExpression TargetHasParametersOfType(IEnumerable<TypeReference> types)
+        {
+//            MethodReference m;
+//            types.All(t => m.Parameters.Any(p => p.ParameterType == t));
+            throw new NotImplementedException();
+        }
+
+
         static MethodCallExpression CreateTargetFullName()
         {
-            MethodDefinition a;
             var name = Expression.Property(Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
 
             var declaringType = Expression.Property(
