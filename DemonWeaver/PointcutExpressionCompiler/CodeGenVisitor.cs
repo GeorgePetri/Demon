@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using DemonWeaver.PointcutExpressionCompiler.Token;
 using Mono.Cecil;
-using Mono.Collections.Generic;
 using Expressions = DemonWeaver.PointcutExpressionCompiler.LinqExpressionFactory;
 
 namespace DemonWeaver.PointcutExpressionCompiler
@@ -17,7 +15,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
     public class CodeGenVisitor : ITokenVisitor
     {
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
-
         static readonly Regex CanBeFullname = new Regex(@"^[\w*]*$", RegexOptions.Compiled);
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
@@ -74,22 +71,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 }
 
                 if (toBeBound.Count != argCountMustBeAtLeast)
-                    if (argCountHasUpperBound)
-                    {
-                        var countAtLeast = Expression.Constant(argCountMustBeAtLeast);
-
-                        var equals = Expression.Equal(CreateParameterCountExpression(), countAtLeast);
-
-                        _stack.Push(equals);
-                    }
-                    else
-                    {
-                        var countAtLeast = Expression.Constant(argCountMustBeAtLeast);
-
-                        var greaterThanOrEquals = Expression.GreaterThanOrEqual(CreateParameterCountExpression(), countAtLeast);
-
-                        _stack.Push(greaterThanOrEquals);
-                    }
+                    _stack.Push(argCountHasUpperBound
+                        ? Expressions.TargetParameterEqual(argCountMustBeAtLeast)
+                        : Expressions.TargetParameterGreaterThanOrEqual(argCountMustBeAtLeast));
 
                 //todo add expression here for each to bind 
             }
@@ -146,15 +130,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
             var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, Expressions.Target);
 
             return expression.Compile();
-        }
-
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        static MemberExpression CreateParameterCountExpression()
-        {
-            var parameters = Expression.Property(Expressions.Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters)));
-            var count = Expression.Property(parameters, typeof(Collection<ParameterDefinition>).GetProperty(nameof(Collection<ParameterDefinition>.Count)));
-
-            return count;
         }
 
         void HandleBinaryOperation(Func<Expression, Expression, Expression> func, string exceptionText)

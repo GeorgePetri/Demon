@@ -13,6 +13,11 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
         public static MemberExpression TargetParameterCount { get; } = CreateTargetParameterCount();
 
+        public static BinaryExpression TargetParameterEqual(int value) => 
+            Expression.Equal(TargetParameterCount, Expression.Constant(value));
+        public static BinaryExpression TargetParameterGreaterThanOrEqual(int value) => 
+            Expression.GreaterThanOrEqual(TargetParameterCount, Expression.Constant(value));
+
         static MethodCallExpression CreateTargetFullName()
         {
             var name = Expression.Property(Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Name)));
