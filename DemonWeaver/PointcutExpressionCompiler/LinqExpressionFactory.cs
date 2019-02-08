@@ -27,24 +27,26 @@ namespace DemonWeaver.PointcutExpressionCompiler
         public static BinaryExpression TargetParameterGreaterThanOrEqual(int value) =>
             Expression.GreaterThanOrEqual(TargetParameterCount, Expression.Constant(value));
 
-        //todo return type correct, and cached
+        /// <summary>
+        /// Resulting expression looks like <c>types.All(t => m.Parameters.Any(p => p.ParameterType == t))</c>;
+        /// </summary>
         public static MethodCallExpression TargetHasParametersOfType(IEnumerable<TypeReference> types)
         {
-//            MethodReference m;
-//            types.All(t => m.Parameters.Any(p => p.ParameterType == t));
+            var typeParameter = Expression.Parameter(typeof(TypeReference), "t"); //t
 
+            var parameterParameter = Expression.Parameter(typeof(ParameterDefinition), "p"); //p
 
-            var typeParameter = Expression.Parameter(typeof(TypeReference), "t");
+            var parameterParameterType = Expression.Property(
+                parameterParameter,
+                typeof(ParameterDefinition).GetProperty(nameof(ParameterDefinition.ParameterType))); //p.ParameterType
 
-            var parameterParameter = Expression.Parameter(typeof(ParameterDefinition), "p");
+            var parameterTypeEqual = Expression.Equal(parameterParameterType, typeParameter); //p.ParameterType == t
 
-            var parameterParameterType = Expression.Property(parameterParameter, typeof(ParameterDefinition).GetProperty(nameof(ParameterDefinition.ParameterType)));
+            var parametersAnyLambda = Expression.Lambda<Func<ParameterDefinition, bool>>(parameterTypeEqual, parameterParameter); //p => p.ParameterType == t
 
-            var parameterTypeEqual = Expression.Equal(parameterParameterType, typeParameter);
-
-            var parametersAnyLambda = Expression.Lambda<Func<ParameterDefinition, bool>>(parameterTypeEqual, parameterParameter);
-
-            var targetParameters = Expression.Property(Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters)));
+            var targetParameters = Expression.Property(
+                Target,
+                typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters))); //m.Parameters
 
             var targetParametersAny = Expression.Call(
                 typeof(Enumerable)
@@ -52,9 +54,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     .First(m => m.Name == nameof(Enumerable.Any) && m.GetParameters().Length == 2)
                     .MakeGenericMethod(typeof(ParameterDefinition)),
                 targetParameters,
-                parametersAnyLambda);
+                parametersAnyLambda); //m.Parameters.Any(p => p.ParameterType == t)
 
-            var typesAllLambda = Expression.Lambda<Func<TypeReference, bool>>(targetParametersAny, typeParameter);
+            var typesAllLambda = Expression.Lambda<Func<TypeReference, bool>>(targetParametersAny, typeParameter); //t => m.Parameters.Any(p => p.ParameterType == t)
 
             var typesConstant = Expression.Constant(types); //todo cache all beside this
 
@@ -63,7 +65,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     .GetMethod(nameof(Enumerable.All))
                     .MakeGenericMethod(typeof(TypeReference)),
                 typesConstant,
-                typesAllLambda);
+                typesAllLambda); //types.All(t => m.Parameters.Any(p => p.ParameterType == t))
 
             return typesAll;
         }
