@@ -134,6 +134,23 @@ namespace TestsCompiler
 
             //assert
             Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
+        }  
+        
+        [Fact]
+        public void OneInt()
+        {
+            //arrange
+            const string expression = @"Args(i)";
+
+            var oneIntMethod = ArgsMethods.First(m => m.Name == "OneInt");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, oneIntMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "OneInt" && m.DeclaringType.Name == "ArgsMethods");
         }
     }
 }

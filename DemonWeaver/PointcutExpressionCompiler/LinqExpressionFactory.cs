@@ -1,34 +1,71 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Mono.Cecil;
 using Mono.Collections.Generic;
 
+// ReSharper disable PossibleNullReferenceException
 // ReSharper disable AssignNullToNotNullAttribute
 namespace DemonWeaver.PointcutExpressionCompiler
 {
     public static class LinqExpressionFactory
     {
-        public static ParameterExpression Target { get; } = Expression.Parameter(typeof(MethodDefinition));
+        public static ParameterExpression Target { get; } = Expression.Parameter(typeof(MethodDefinition), "m");
 
         public static MethodCallExpression TargetFullName { get; } = CreateTargetFullName();
 
         public static MemberExpression HasParameters { get; } =
             Expression.Property(Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.HasParameters)));
-        
+
         public static MemberExpression TargetParameterCount { get; } = CreateTargetParameterCount();
 
-        public static BinaryExpression TargetParameterEqual(int value) => 
+        public static BinaryExpression TargetParameterEqual(int value) =>
             Expression.Equal(TargetParameterCount, Expression.Constant(value));
-        public static BinaryExpression TargetParameterGreaterThanOrEqual(int value) => 
+
+        public static BinaryExpression TargetParameterGreaterThanOrEqual(int value) =>
             Expression.GreaterThanOrEqual(TargetParameterCount, Expression.Constant(value));
 
         //todo return type correct, and cached
-        public static BinaryExpression TargetHasParametersOfType(IEnumerable<TypeReference> types)
+        public static MethodCallExpression TargetHasParametersOfType(IEnumerable<TypeReference> types)
         {
 //            MethodReference m;
 //            types.All(t => m.Parameters.Any(p => p.ParameterType == t));
-            throw new NotImplementedException();
+
+
+            var typeParameter = Expression.Parameter(typeof(TypeReference), "t");
+
+            var parameterParameter = Expression.Parameter(typeof(ParameterDefinition), "p");
+
+            var parameterParameterType = Expression.Property(parameterParameter, typeof(ParameterDefinition).GetProperty(nameof(ParameterDefinition.ParameterType)));
+
+            var parameterTypeEqual = Expression.Equal(parameterParameterType, typeParameter);
+
+            var parametersAnyLambda = Expression.Lambda<Func<ParameterDefinition, bool>>(parameterTypeEqual, parameterParameter);
+
+            var targetParameters = Expression.Property(Target, typeof(MethodDefinition).GetProperty(nameof(MethodDefinition.Parameters)));
+
+            var targetParametersAny = Expression.Call(
+                typeof(Enumerable)
+                    .GetMethods(BindingFlags.Static | BindingFlags.Public)
+                    .First(m => m.Name == nameof(Enumerable.Any) && m.GetParameters().Length == 2)
+                    .MakeGenericMethod(typeof(ParameterDefinition)),
+                targetParameters,
+                parametersAnyLambda);
+
+            var typesAllLambda = Expression.Lambda<Func<TypeReference, bool>>(targetParametersAny, typeParameter);
+
+            var typesConstant = Expression.Constant(types); //todo cache all beside this
+
+            var typesAll = Expression.Call(
+                typeof(Enumerable)
+                    .GetMethod(nameof(Enumerable.All))
+                    .MakeGenericMethod(typeof(TypeReference)),
+                typesConstant,
+                typesAllLambda);
+
+            return typesAll;
         }
 
 

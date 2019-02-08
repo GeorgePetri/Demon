@@ -63,13 +63,18 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     toBeBound.Add((argument, parameterDefinition.ParameterType));
                 }
 
-                if (toBeBound.Count != argCountMustBeAtLeast)
-                    _stack.Push(argCountHasUpperBound
-                        ? Expressions.TargetParameterEqual(argCountMustBeAtLeast)
-                        : Expressions.TargetParameterGreaterThanOrEqual(argCountMustBeAtLeast));
+                _stack.Push(argCountHasUpperBound
+                    ? Expressions.TargetParameterEqual(argCountMustBeAtLeast)
+                    : Expressions.TargetParameterGreaterThanOrEqual(argCountMustBeAtLeast));
 
                 if (toBeBound.Any())
-                    _stack.Push(Expressions.TargetHasParametersOfType(toBeBound.Select(t => t.type)));
+                {
+                    var previous = _stack.Pop();
+
+                    var targetHasParametersOfType = Expressions.TargetHasParametersOfType(toBeBound.Select(t => t.type));
+                    
+                    _stack.Push(Expression.AndAlso(previous,targetHasParametersOfType));
+                }
             }
         }
 
