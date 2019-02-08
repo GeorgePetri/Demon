@@ -68,7 +68,8 @@ namespace DemonWeaver.PointcutExpressionCompiler
                         ? Expressions.TargetParameterEqual(argCountMustBeAtLeast)
                         : Expressions.TargetParameterGreaterThanOrEqual(argCountMustBeAtLeast));
 
-                _stack.Push(Expressions.TargetHasParametersOfType(toBeBound.Select(t => t.type)));
+                if (toBeBound.Any())
+                    _stack.Push(Expressions.TargetHasParametersOfType(toBeBound.Select(t => t.type)));
             }
         }
 
