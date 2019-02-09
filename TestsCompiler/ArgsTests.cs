@@ -82,8 +82,8 @@ namespace TestsCompiler
 
             //assert
             Assert.Contains(result, m => m.Name == "OneInt" && m.DeclaringType.Name == "ArgsMethods");
-        } 
-        
+        }
+
         [Fact]
         public void TwoSingleStars()
         {
@@ -99,8 +99,8 @@ namespace TestsCompiler
 
             //assert
             Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
-        }        
-        
+        }
+
         [Fact]
         public void OneDoubleStar()
         {
@@ -117,8 +117,8 @@ namespace TestsCompiler
             //assert
             Assert.Contains(result, m => m.Name == "OneInt" && m.DeclaringType.Name == "ArgsMethods");
             Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
-        }    
-        
+        }
+
         [Fact]
         public void OneDoubleStarAndOneSingleStar()
         {
@@ -134,8 +134,8 @@ namespace TestsCompiler
 
             //assert
             Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
-        }  
-        
+        }
+
         [Fact]
         public void OneInt()
         {
@@ -151,6 +151,58 @@ namespace TestsCompiler
 
             //assert
             Assert.Contains(result, m => m.Name == "OneInt" && m.DeclaringType.Name == "ArgsMethods");
+        }
+
+        [Fact]
+        public void OneString()
+        {
+            //arrange
+            const string expression = @"Args(s)";
+
+            var oneIntMethod = ArgsMethods.First(m => m.Name == "OneString");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, oneIntMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "OneString" && m.DeclaringType.Name == "ArgsMethods");
+        }
+
+        [Fact]
+        public void OneIntOneGuid()
+        {
+            //arrange
+            const string expression = @"Args(i,g)";
+
+            var oneIntMethod = ArgsMethods.First(m => m.Name == "OneIntOneGuid");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, oneIntMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "OneIntOneGuid" && m.DeclaringType.Name == "ArgsMethods");
+        }
+
+        [Theory]
+        [InlineData(@"Args(i,*)")]
+        [InlineData(@"Args(*,i)")]
+        public void OneIntOneStar(string expression)
+        {
+            //arrange
+            var oneIntMethod = ArgsMethods.First(m => m.Name == "OneIntOneGuid");
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, oneIntMethod), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Contains(result, m => m.Name == "OneIntOneGuid" && m.DeclaringType.Name == "ArgsMethods");
+            Assert.Contains(result, m => m.Name == "TwoInt" && m.DeclaringType.Name == "ArgsMethods");
         }
     }
 }
