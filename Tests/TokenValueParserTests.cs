@@ -6,22 +6,10 @@ namespace Tests
 {
     public class TokenValueParserTests
     {
-        [Fact]
-        public void TryProcessWithin_ReturnsRegex_WhenMatching_DoubleStar()
-        {
-            //arrange
-            const string token = @"Within( **.Method)";
-
-            //act
-            var result = TokenValueParser.Process(new WithinToken(token));
-
-            //assert           
-            Assert.Equal(@"^[\w.]+\.Method$", result);
-        }
-
         [Theory]
         [MemberData(nameof(WithinData_NoStarsVariousWhiteSpaces))]
         [MemberData(nameof(WithinData_SingleStarVariousWhiteSpaces))]
+        [MemberData(nameof(WithinData_DoubleStarVariousWhiteSpaces))]
         public void Within(string expectedResult, string token)
         {
             //act
@@ -50,6 +38,17 @@ namespace Tests
             {@"^Assembly\.Class[\w]+\.[\w]+Method$", @"Within(Assembly.Class*.*Method)"},
             {@"^Assembly\.Class[\w]+\.[\w]+Method$", @"Within( Assembly.Class*.*Method )"},
             {@"^Assembly\.Class[\w]+\.[\w]+Method$", @"Within(  Assembly.Class*.*Method  )"},
+        };        
+        
+        public static TheoryData<string, string> WithinData_DoubleStarVariousWhiteSpaces() => new TheoryData<string, string>
+        {
+            {@"^Assembly\.Class\.[\w.]+$", @"Within(Assembly.Class.**)"},
+            {@"^Assembly\.Class\.[\w.]+$", @"Within( Assembly.Class.** )"},
+            {@"^Assembly\.Class\.[\w.]+$", @"Within(  Assembly.Class.**  )"},
+            
+            {@"^[\w.]+\.Class\.[\w.]+Method$", @"Within(**.Class.**Method)"},
+            {@"^[\w.]+\.Class\.[\w.]+Method$", @"Within( **.Class.**Method )"},
+            {@"^[\w.]+\.Class\.[\w.]+Method$", @"Within(  **.Class.**Method  )"},
         };
     }
 }
