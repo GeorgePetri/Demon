@@ -4,7 +4,7 @@ using Xunit;
 
 namespace Tests
 {
-    public class RegexFactoryTests
+    public class TokenValueParserTests
     {
         [Theory]
         [InlineData(@"Within(Assembly.Class.Method)")]
