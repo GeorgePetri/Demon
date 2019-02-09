@@ -7,6 +7,19 @@ namespace Tests
     public class TokenValueParserTests
     {
         [Theory]
+        [InlineData("A", @"A()")]
+        [InlineData("Aaaa", @"Aaaa()")]
+        [InlineData("lKi", @"lKi()")]
+        public void Pointcut(string expectedResult, string token)
+        {
+            //act
+            var result = TokenValueParser.Process(new PointcutToken(token));
+
+            //assert           
+            Assert.Equal(expectedResult, result);
+        }
+        
+        [Theory]
         [MemberData(nameof(WithinData_NoStarsVariousWhiteSpaces))]
         [MemberData(nameof(WithinData_SingleStarVariousWhiteSpaces))]
         [MemberData(nameof(WithinData_DoubleStarVariousWhiteSpaces))]
