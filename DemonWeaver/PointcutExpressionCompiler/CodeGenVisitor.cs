@@ -11,11 +11,9 @@ using Expressions = DemonWeaver.PointcutExpressionCompiler.LinqExpressionFactory
 
 namespace DemonWeaver.PointcutExpressionCompiler
 {
-    //todo do validation
     public class CodeGenVisitor : ITokenVisitor
     {
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
-        static readonly Regex CanBeFullname = new Regex(@"^[\w*]*$", RegexOptions.Compiled);
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
         readonly MethodDefinition _definingMethod;
@@ -41,9 +39,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 //todo compiler should return metadata about bound args besides the func, make sure it works with pointcuts
                 foreach (var argument in strings)
                 {
-                    if (!CanBeFullname.IsMatch(argument))
-                        throw new WeavingException($"Invalid argument name:{argument} in {args.String}");
-
                     argCountMustBeAtLeast++;
 
                     if (argument == @"**")
