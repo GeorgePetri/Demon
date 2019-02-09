@@ -32,9 +32,11 @@ namespace DemonWeaver.PointcutExpressionCompiler
         {
             var value = token.String;
 
-            var inner = value.Substring(7, value.Length - 8);
+            var onlyInner = value.Substring(7, value.Length - 8);
             
-            var escapeDot = inner.Replace(".", @"\.");
+            var noWhitespace = onlyInner.Replace(" ", "");
+            
+            var escapeDot = noWhitespace.Replace(".", @"\.");
 
             var replacedDoubleStar = escapeDot.Replace("**", @"[a-zA-Z1-9.]+");
 
