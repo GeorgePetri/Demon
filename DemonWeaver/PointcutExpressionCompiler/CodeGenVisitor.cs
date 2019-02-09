@@ -11,7 +11,6 @@ using Expressions = DemonWeaver.PointcutExpressionCompiler.LinqExpressionFactory
 namespace DemonWeaver.PointcutExpressionCompiler
 {
     //todo do validation
-    //todo cleanup the class is very messy, also, do all string manipulation either here or elsewhere
     public class CodeGenVisitor : ITokenVisitor
     {
         static readonly MethodInfo RegexIsMatchMethod = typeof(Regex).GetMethod(nameof(Regex.IsMatch), new[] {typeof(string)});
@@ -109,7 +108,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
             _stack.Push(invoke);
         }
 
-        //todo validate
         public void Visit(WithinToken withinToken)
         {
             var regex = TokenValueParser.Process(withinToken);
