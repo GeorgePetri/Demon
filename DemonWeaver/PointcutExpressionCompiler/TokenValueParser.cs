@@ -38,9 +38,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
             
             var escapeDot = noWhitespace.Replace(".", @"\.");
 
-            var replacedDoubleStar = escapeDot.Replace("**", @"[a-zA-Z1-9.]+");
+            var replacedDoubleStar = escapeDot.Replace("**", @"[\w.]+");
 
-            var replacedSingleStar = replacedDoubleStar.Replace("*", @"[a-zA-Z1-9]+");
+            var replacedSingleStar = replacedDoubleStar.Replace("*", @"[\w]+");
             
             var withEndString = $"^{replacedSingleStar}$";
 

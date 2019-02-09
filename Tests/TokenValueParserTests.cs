@@ -16,7 +16,7 @@ namespace Tests
             var result = TokenValueParser.Process(new WithinToken(token));
 
             //assert           
-            Assert.Equal(@"^Assembly\.Class\.[a-zA-Z1-9]+Method$", result);
+            Assert.Equal(@"^Assembly\.Class\.[\w]+Method$", result);
         }
 
         [Fact]
@@ -29,7 +29,7 @@ namespace Tests
             var result = TokenValueParser.Process(new WithinToken(token));
 
             //assert           
-            Assert.Equal(@"^[a-zA-Z1-9.]+\.Method$", result);
+            Assert.Equal(@"^[\w.]+\.Method$", result);
         }
 
         [Theory]
