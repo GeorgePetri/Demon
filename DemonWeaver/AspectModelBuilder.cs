@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DemonWeaver.Data;
 using DemonWeaver.PointcutExpressionCompiler;
+using DemonWeaver.PointcutExpressionCompiler.Data;
 using Mono.Cecil;
 
 namespace DemonWeaver

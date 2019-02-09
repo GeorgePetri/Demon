@@ -1,5 +1,6 @@
 using DemonWeaver;
 using DemonWeaver.PointcutExpressionCompiler;
+using DemonWeaver.PointcutExpressionCompiler.Data;
 using Xunit;
 
 namespace TestsCompiler

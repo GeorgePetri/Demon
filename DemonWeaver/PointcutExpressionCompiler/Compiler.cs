@@ -1,4 +1,5 @@
 using System;
+using DemonWeaver.PointcutExpressionCompiler.Data;
 using Mono.Cecil;
 
 namespace DemonWeaver.PointcutExpressionCompiler

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using DemonWeaver.PointcutExpressionCompiler;
+using DemonWeaver.PointcutExpressionCompiler.Data;
 using Mono.Cecil;
 using TestsCompiler.Helpers;
 using Xunit;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using DemonWeaver.PointcutExpressionCompiler.Data;
 using DemonWeaver.PointcutExpressionCompiler.Token;
 using Mono.Cecil;
 using Expressions = DemonWeaver.PointcutExpressionCompiler.LinqExpressionFactory;

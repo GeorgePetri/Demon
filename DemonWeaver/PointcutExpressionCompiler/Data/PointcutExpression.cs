@@ -1,6 +1,6 @@
 using Mono.Cecil;
 
-namespace DemonWeaver.PointcutExpressionCompiler
+namespace DemonWeaver.PointcutExpressionCompiler.Data
 {
     public class PointcutExpression
     {
