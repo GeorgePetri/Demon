@@ -7,19 +7,6 @@ namespace Tests
     public class TokenValueParserTests
     {
         [Fact]
-        public void TryProcessWithin_ReturnsRegex_WhenMatching_SingleStar()
-        {
-            //arrange
-            const string token = @"Within(Assembly.Class.*Method)";
-
-            //act
-            var result = TokenValueParser.Process(new WithinToken(token));
-
-            //assert           
-            Assert.Equal(@"^Assembly\.Class\.[\w]+Method$", result);
-        }
-
-        [Fact]
         public void TryProcessWithin_ReturnsRegex_WhenMatching_DoubleStar()
         {
             //arrange
@@ -34,7 +21,7 @@ namespace Tests
 
         [Theory]
         [MemberData(nameof(WithinData_NoStarsVariousWhiteSpaces))]
-//        [MemberData(nameof(WithinDataNoStarsWithinDataSingleStar))]
+        [MemberData(nameof(WithinData_SingleStarVariousWhiteSpaces))]
         public void Within(string expectedResult, string token)
         {
             //act
@@ -51,12 +38,18 @@ namespace Tests
             {@"^Assembly\.Class\.Method$", @"Within(Assembly.Class.Method )"},
             {@"^Assembly\.Class\.Method$", @"Within(   Assembly.Class.Method)"},
             {@"^Assembly\.Class\.Method$", @"Within(Assembly.Class.Method   )"},
-            {@"^Assembly\.Class\.Method$", @"Within(   Assembly.Class.Method   )"}
+            {@"^Assembly\.Class\.Method$", @"Within(   Assembly.Class.Method   )"},
         };
 
-//        public static TheoryData<string,string> WithinDataNoStarsWithinDataSingleStar() => new TheoryData<string, string>
-//        {
-//            {@"Within(Assembly.Class.*Method)", @"^Assembly\.Class\.[a-zA-Z1-9]+Method$"}
-//        };
+        public static TheoryData<string, string> WithinData_SingleStarVariousWhiteSpaces() => new TheoryData<string, string>
+        {
+            {@"^Assembly\.Class\.[\w]+Method$", @"Within(Assembly.Class.*Method)"},
+            {@"^Assembly\.Class\.[\w]+Method$", @"Within( Assembly.Class.*Method )"},
+            {@"^Assembly\.Class\.[\w]+Method$", @"Within(  Assembly.Class.*Method  )"},
+            
+            {@"^Assembly\.Class[\w]+\.[\w]+Method$", @"Within(Assembly.Class*.*Method)"},
+            {@"^Assembly\.Class[\w]+\.[\w]+Method$", @"Within( Assembly.Class*.*Method )"},
+            {@"^Assembly\.Class[\w]+\.[\w]+Method$", @"Within(  Assembly.Class*.*Method  )"},
+        };
     }
 }
