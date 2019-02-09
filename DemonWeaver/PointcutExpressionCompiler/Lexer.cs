@@ -7,6 +7,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
 {
     public static class Lexer
     {
+        //todo replace ^() with proper values, to validate in teh lexer, then remove validation elsewhere and test
         static readonly Regex Regex = new Regex(
             @"(?<andalso>&&)|(?<orelse>\|\|)|(?<not>!)|(?<within>Within\([^()]+\))|(?<args>Args\([^()]*\))|(?<pointcut>[a-zA-Z0-9]+\(\))",
             RegexOptions.Compiled);
