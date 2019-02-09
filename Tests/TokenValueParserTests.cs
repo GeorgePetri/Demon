@@ -6,22 +6,6 @@ namespace Tests
 {
     public class TokenValueParserTests
     {
-        [Theory]
-        [InlineData(@"Within(Assembly.Class.Method)")]
-        [InlineData(@"Within( Assembly.Class.Method)")]
-        [InlineData(@"Within(Assembly.Class.Method )")]
-        [InlineData(@"Within(   Assembly.Class.Method)")]
-        [InlineData(@"Within(Assembly.Class.Method   )")]
-        [InlineData(@"Within(   Assembly.Class.Method   )")]
-        public void TryProcessWithin_ReturnsRegex_WhenMatching_NoStars_VariousWhitespaces(string token)
-        {
-            //act
-            var result = TokenValueParser.Process(new WithinToken(token));
-
-            //assert           
-            Assert.Equal(@"^Assembly\.Class\.Method$", result);
-        }
-
         [Fact]
         public void TryProcessWithin_ReturnsRegex_WhenMatching_SingleStar()
         {
@@ -47,5 +31,32 @@ namespace Tests
             //assert           
             Assert.Equal(@"^[a-zA-Z1-9.]+\.Method$", result);
         }
+
+        [Theory]
+        [MemberData(nameof(WithinData_NoStarsVariousWhiteSpaces))]
+//        [MemberData(nameof(WithinDataNoStarsWithinDataSingleStar))]
+        public void Within(string expectedResult, string token)
+        {
+            //act
+            var result = TokenValueParser.Process(new WithinToken(token));
+
+            //assert           
+            Assert.Equal(expectedResult, result);
+        }
+
+        public static TheoryData<string, string> WithinData_NoStarsVariousWhiteSpaces() => new TheoryData<string, string>
+        {
+            {@"^Assembly\.Class\.Method$", @"Within(Assembly.Class.Method)"},
+            {@"^Assembly\.Class\.Method$", @"Within( Assembly.Class.Method)"},
+            {@"^Assembly\.Class\.Method$", @"Within(Assembly.Class.Method )"},
+            {@"^Assembly\.Class\.Method$", @"Within(   Assembly.Class.Method)"},
+            {@"^Assembly\.Class\.Method$", @"Within(Assembly.Class.Method   )"},
+            {@"^Assembly\.Class\.Method$", @"Within(   Assembly.Class.Method   )"}
+        };
+
+//        public static TheoryData<string,string> WithinDataNoStarsWithinDataSingleStar() => new TheoryData<string, string>
+//        {
+//            {@"Within(Assembly.Class.*Method)", @"^Assembly\.Class\.[a-zA-Z1-9]+Method$"}
+//        };
     }
 }
