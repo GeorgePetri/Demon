@@ -72,8 +72,8 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     var previous = _stack.Pop();
 
                     var targetHasParametersOfType = Expressions.TargetHasParametersOfType(toBeBound.Select(t => t.type));
-                    
-                    _stack.Push(Expression.AndAlso(previous,targetHasParametersOfType));
+
+                    _stack.Push(Expression.AndAlso(previous, targetHasParametersOfType));
                 }
             }
         }
@@ -112,9 +112,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
         //todo validate
         public void Visit(WithinToken withinToken)
         {
-            var regex = RegexFactory.TryProcessWithin(withinToken.String);
+            var regex = TokenValueParser.Process(withinToken);
 
-            var regexInstance = Expression.Constant(regex);
+            var regexInstance = Expression.Constant(new Regex(regex, RegexOptions.Compiled));
 
             _stack.Push(Expression.Call(regexInstance, RegexIsMatchMethod, Expressions.TargetFullName));
         }

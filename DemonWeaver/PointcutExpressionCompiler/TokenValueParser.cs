@@ -27,5 +27,22 @@ namespace DemonWeaver.PointcutExpressionCompiler
 
             return withoutParentheses;
         }
+        
+        public static string Process(WithinToken token)
+        {
+            var value = token.String;
+
+            var inner = value.Substring(7, value.Length - 8);
+            
+            var escapeDot = inner.Replace(".", @"\.");
+
+            var replacedDoubleStar = escapeDot.Replace("**", @"[a-zA-Z1-9.]+");
+
+            var replacedSingleStar = replacedDoubleStar.Replace("*", @"[a-zA-Z1-9]+");
+            
+            var withEndString = $"^{replacedSingleStar}$";
+
+            return withEndString;
+        }
     }
 }
