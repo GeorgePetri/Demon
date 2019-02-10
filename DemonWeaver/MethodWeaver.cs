@@ -1,3 +1,4 @@
+using System.Linq;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -26,7 +27,7 @@ namespace DemonWeaver
             InsertLoadAdviceBoundParametersIfNeeded();
 
             var callAspect = _il.Create(OpCodes.Call, _advice);
-            _il.InsertBefore(_originalFirstInstruction, callAspect);
+            InsertBeforeOriginalFirst(callAspect);
         }
 
         void InsertLoadAspectIfNeeded()
@@ -37,8 +38,8 @@ namespace DemonWeaver
             var loadClass = _il.Create(OpCodes.Ldarg_0);
             var loadAspect = _il.Create(OpCodes.Ldfld, _adviceField);
 
-            _il.InsertBefore(_originalFirstInstruction, loadClass);
-            _il.InsertBefore(_originalFirstInstruction, loadAspect);
+            InsertBeforeOriginalFirst(loadClass);
+            InsertBeforeOriginalFirst(loadAspect);
         }
 
         void InsertLoadAdviceBoundParametersIfNeeded()
@@ -46,10 +47,24 @@ namespace DemonWeaver
             if (!_advice.HasParameters)
                 return;
 
-//            foreach (var parameter in _advice.Parameters)
-//            {
-//                _target.
-//            }
+            foreach (var parameter in _advice.Parameters)
+            {
+                var parameterToLoad = _target.Parameters.FirstOrDefault(p => p.ParameterType == parameter.ParameterType);
+                if (parameterToLoad != null)
+                {
+                    var loadParameter = _il.GetEfficientLoadInstruction(parameter);
+                    InsertBeforeOriginalFirst(loadParameter);
+                }
+                else
+                {
+                    //todo add nicer error message when GetLoadForDefault throws
+                    var loadDefault = _il.GetLoadForDefault(parameter.ParameterType);
+                    InsertBeforeOriginalFirst(loadDefault);
+                }
+            }
         }
+
+        void InsertBeforeOriginalFirst(Instruction instruction) =>
+            _il.InsertBefore(_originalFirstInstruction, instruction);
     }
 }
