@@ -7,6 +7,7 @@ using Xunit;
 namespace Tests
 {
     //todo split weaving tests in another project
+    //todo make another assembly for testing that doesn't include the weaver in the pipeline and call the weaver manually, that way debugging works
     public class AssemblyToProcessTests
     {
         readonly Assembly _assembly;
