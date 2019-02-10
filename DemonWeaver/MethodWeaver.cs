@@ -23,7 +23,8 @@ namespace DemonWeaver
         public void Weave()
         {
             InsertLoadAspectIfNeeded();
-            
+            InsertLoadAdviceBoundParametersIfNeeded();
+
             var callAspect = _il.Create(OpCodes.Call, _advice);
             _il.InsertBefore(_originalFirstInstruction, callAspect);
         }
@@ -32,12 +33,23 @@ namespace DemonWeaver
         {
             if (_adviceField == null)
                 return;
-            
+
             var loadClass = _il.Create(OpCodes.Ldarg_0);
             var loadAspect = _il.Create(OpCodes.Ldfld, _adviceField);
-            
-            _il.InsertBefore(_originalFirstInstruction,loadClass);
-            _il.InsertBefore(_originalFirstInstruction,loadAspect);
+
+            _il.InsertBefore(_originalFirstInstruction, loadClass);
+            _il.InsertBefore(_originalFirstInstruction, loadAspect);
+        }
+
+        void InsertLoadAdviceBoundParametersIfNeeded()
+        {
+            if (!_advice.HasParameters)
+                return;
+
+//            foreach (var parameter in _advice.Parameters)
+//            {
+//                _target.
+//            }
         }
     }
 }
