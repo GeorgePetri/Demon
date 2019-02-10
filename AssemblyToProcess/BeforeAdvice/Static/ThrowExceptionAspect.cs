@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using Demon.Aspect;
 
 namespace AssemblyToProcess.BeforeAdvice.Static
@@ -8,7 +7,7 @@ namespace AssemblyToProcess.BeforeAdvice.Static
     public class ThrowExceptionAspect
     {
         [Before("StaticBefore()")]
-        public static void Advice(TypeInfo t) =>
+        public static void Advice() =>
             throw new ApplicationException("Exception from an aspect");
     }
 }

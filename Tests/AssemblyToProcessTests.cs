@@ -29,7 +29,6 @@ namespace Tests
             Assert.Throws<ApplicationException>(() => instance.Target(5));
         }
 
-        //todo check if works with ms di
         [Fact]
         public void InstanceAdvice()
         {

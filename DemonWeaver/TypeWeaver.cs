@@ -46,32 +46,9 @@ namespace DemonWeaver
                 WeaveInstance(method, advice.Method);
         }
 
-        static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
-        {
-            var il = target.Body.GetILProcessor();
-
-            var originalFirstInstruction = target.Body.Instructions[0];
-
-            //todo cleanup, move
-            if (advice.HasParameters)
-            {
-                //todo assumes only one parameter
-                //todo replace with joinpoint
-                var methodInfoParameter = advice.Parameters
-                    .FirstOrDefault(p => p.ParameterType.FullName == "System.Reflection.TypeInfo");
-
-                if (methodInfoParameter != null)
-                {
-                    var ldMethod = il.Create(OpCodes.Ldtoken, target.DeclaringType);
-
-                    il.InsertBefore(originalFirstInstruction, ldMethod);
-                }
-            }
-
-            var callAdvice = il.Create(OpCodes.Call, advice);
-
-            il.InsertBefore(originalFirstInstruction, callAdvice);
-        }
+        //todo combine this and instance
+        static void WeaveStatic(MethodDefinition target, MethodDefinition advice) => 
+            new MethodWeaver(target, advice, null).Weave();
 
         //todo support multiple public constructors use a dag and filter by :this(...) calls
         //todo compose nicely multiple aspects
@@ -96,17 +73,7 @@ namespace DemonWeaver
 
             AddAspectToConstructor(constructor, aspect, field);
 
-            var il = target.Body.GetILProcessor();
-
-            var originalFirstInstruction = target.Body.Instructions[0];
-
-            var ldarg0 = il.Create(OpCodes.Ldarg_0);
-            var ldfld = il.Create(OpCodes.Ldfld, field);
-            var callAdvice = il.Create(OpCodes.Call, advice);
-
-            il.InsertBefore(originalFirstInstruction, ldarg0);
-            il.InsertBefore(originalFirstInstruction, ldfld);
-            il.InsertBefore(originalFirstInstruction, callAdvice);
+            new MethodWeaver(target, advice, field).Weave();
         }
 
         //todo ugly, refac
