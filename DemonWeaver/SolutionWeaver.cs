@@ -6,7 +6,6 @@ namespace DemonWeaver
 {
     //todo parallelize?
     //todo don't weave if not needed
-    //todo dispose modules
     public static class SolutionWeaver
     {
         public static void Weave(string[] assemblyPaths)

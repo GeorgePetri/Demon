@@ -7,6 +7,7 @@ using Mono.Cecil.Rocks;
 
 namespace DemonWeaver
 {
+    //todo add debug info if needed
     public class TypeWeaver
     {
         readonly TypeDefinition _type;
@@ -20,7 +21,6 @@ namespace DemonWeaver
 
         void Weave()
         {
-            //todo add instance aspects when needed
             foreach (var method in _type.Methods)
             {
                 foreach (var advice in _adviceModels)
@@ -49,12 +49,12 @@ namespace DemonWeaver
         static void WeaveStatic(MethodDefinition target, MethodDefinition advice)
         {
             var il = target.Body.GetILProcessor();
-            
+
             var originalFirstInstruction = target.Body.Instructions[0];
 
             //todo cleanup, move
             if (advice.HasParameters)
-            {            
+            {
                 //todo assumes only one parameter
                 //todo replace with joinpoint
                 var methodInfoParameter = advice.Parameters
@@ -62,7 +62,7 @@ namespace DemonWeaver
 
                 if (methodInfoParameter != null)
                 {
-                    var ldMethod = il.Create(OpCodes.Ldtoken,target.DeclaringType);
+                    var ldMethod = il.Create(OpCodes.Ldtoken, target.DeclaringType);
 
                     il.InsertBefore(originalFirstInstruction, ldMethod);
                 }
@@ -81,7 +81,6 @@ namespace DemonWeaver
             var targetType = target.DeclaringType;
             var aspect = advice.DeclaringType;
 
-            //todo do i need to add other attributes or customAttributes?
             var field = new FieldDefinition($"_<Demon<Aspect<{aspect.Name}", FieldAttributes.Private | FieldAttributes.InitOnly, aspect);
             targetType.Fields.Add(field);
 
