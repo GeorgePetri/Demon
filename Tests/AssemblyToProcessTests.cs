@@ -65,23 +65,5 @@ namespace Tests
             //assert
             Assert.True(aspect.AdviceCalled);
         }
-
-        [Fact]
-        public void ArgsOneInt()
-        {
-            //arrange
-            var type = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Args.ArgsTarget");
-            var aspectType = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Args.ArgsAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, aspect);
-
-            //act
-            instance.TargetInt(5);
-
-            //assert
-            Assert.Equal(5,aspect.LastBoundInt);
-        }
     }
 }

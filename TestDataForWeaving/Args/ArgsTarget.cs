@@ -1,4 +1,4 @@
-namespace AssemblyToProcess.BeforeAdvice.Args
+namespace TestDataForWeaving.Args
 {
     public class ArgsTarget
     {

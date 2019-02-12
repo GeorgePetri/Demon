@@ -18,9 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\AssemblyToProcess\AssemblyToProcess.csproj" />
-      <ProjectReference Include="..\DemonWeaver\DemonWeaver.csproj" />
-      <ProjectReference Include="..\Demon\Demon.csproj" />
+        <ProjectReference Include="..\DemonWeaver\DemonWeaver.csproj" />
+        <ProjectReference Include="..\TestDataForWeaving\TestDataForWeaving.csproj" />
     </ItemGroup>
-
+    
+    
 </Project>

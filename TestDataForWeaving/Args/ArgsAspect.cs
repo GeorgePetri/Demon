@@ -1,13 +1,14 @@
+
 using Demon.Aspect;
 
-namespace AssemblyToProcess.BeforeAdvice.Args
+namespace TestDataForWeaving.Args
 {
     [Aspect]
     public class ArgsAspect
     {
         public int LastBoundInt { get; set; }
 
-        [Pointcut("Within(AssemblyToProcess.BeforeAdvice.Args.ArgsTarget.*)")]
+        [Pointcut("Within(TestDataForWeaving.Args.ArgsTarget.*)")]
         void WithinArgsTarget()
         {
         }
