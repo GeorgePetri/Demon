@@ -12,7 +12,7 @@ namespace TestsWeaving.Helpers
         //todo copy pasted from solution weaver
         public WeavedInMemoryModule()
         {
-            using (var module = ModuleDefinition.ReadModule(TestDataFilename, new ReaderParameters {ReadWrite = true, ReadSymbols = true}))
+            using (var module = ModuleDefinition.ReadModule(TestDataFilename))
             {
                 var types = module.Types;
 
@@ -30,20 +30,6 @@ namespace TestsWeaving.Helpers
             }
         }
 
-        //todo fix on ci
-        static string TestDataFilename
-        {
-            get
-            {
-                string configuration;
-
-#if DEBUG
-                configuration = "Debug";
-#else
-                configuration = "Release";
-#endif
-                return $@"..\..\..\..\TestDataForWeaving\bin\{configuration}\netcoreapp2.1\TestDataForWeaving.dll";
-            }
-        }
+        static string TestDataFilename => $@"TestDataForWeaving.dll";
     }
 }
