@@ -2,11 +2,10 @@ using System.Reflection;
 
 namespace Demon.JoinPoint
 {
-    //todo add MethodInfo
     public class TypeJoinPoint
     {
-        public TypeJoinPoint(TypeInfo declaringType) => DeclaringType = declaringType;
+        public TypeJoinPoint(MethodInfo method) => Method = method;
 
-        public TypeInfo DeclaringType { get; }
+        public MethodInfo Method { get; }
     }
 }
