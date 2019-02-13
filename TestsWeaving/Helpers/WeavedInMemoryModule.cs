@@ -30,6 +30,6 @@ namespace TestsWeaving.Helpers
             }
         }
 
-        static string TestDataFilename => $@"TestDataForWeaving.dll";
+        static string TestDataFilename => @"TestDataForWeaving.dll";
     }
 }

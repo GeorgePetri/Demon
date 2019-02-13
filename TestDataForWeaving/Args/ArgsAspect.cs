@@ -1,4 +1,3 @@
-
 using Demon.Aspect;
 
 namespace TestDataForWeaving.Args
@@ -7,6 +6,8 @@ namespace TestDataForWeaving.Args
     public class ArgsAspect
     {
         public int LastBoundInt { get; set; }
+
+        public bool EmptyCalled { get; set; }
 
         [Pointcut("Within(TestDataForWeaving.Args.ArgsTarget.*)")]
         void WithinArgsTarget()
@@ -17,6 +18,12 @@ namespace TestDataForWeaving.Args
         public void SingleInt(int i)
         {
             LastBoundInt = i;
+        }
+
+        [Before("WithinArgsTarget() Args() &&")]
+        public void Empty()
+        {
+            EmptyCalled = true;
         }
     }
 }

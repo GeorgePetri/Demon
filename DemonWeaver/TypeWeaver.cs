@@ -38,7 +38,7 @@ namespace DemonWeaver
             && !method.IsConstructor;
 
         //todo hardcoded to before advice
-        static void ApplyAdvice(MethodDefinition method, AdviceModel advice)
+        void ApplyAdvice(MethodDefinition method, AdviceModel advice)
         {
             if (advice.Method.IsStatic)
                 WeaveStatic(method, advice.Method);
@@ -47,21 +47,40 @@ namespace DemonWeaver
         }
 
         //todo combine this and instance
-        static void WeaveStatic(MethodDefinition target, MethodDefinition advice) => 
+        static void WeaveStatic(MethodDefinition target, MethodDefinition advice) =>
             new MethodWeaver(target, advice, null).Weave();
 
         //todo support multiple public constructors use a dag and filter by :this(...) calls
         //todo compose nicely multiple aspects
-        static void WeaveInstance(MethodDefinition target, MethodDefinition advice)
+        void WeaveInstance(MethodDefinition target, MethodDefinition advice)
         {
-            //todo move declaring type manipulation elsewhere
-            var targetType = target.DeclaringType;
             var aspect = advice.DeclaringType;
 
-            var field = new FieldDefinition($"_<Demon<Aspect<{aspect.Name}", FieldAttributes.Private | FieldAttributes.InitOnly, aspect);
-            targetType.Fields.Add(field);
+            var field = GetOrAddFieldIfNeeded(aspect);
 
-            var constructors = targetType.GetConstructors()
+            AddToConstructorIfNeeded(aspect, field);
+
+            new MethodWeaver(target, advice, field).Weave();
+        }
+
+        FieldDefinition GetOrAddFieldIfNeeded(TypeDefinition aspect)
+        {
+            var name = $"_<Demon<Aspect<{aspect.FullName}";
+
+            var found = _type.Fields.FirstOrDefault(f => f.Name == name);
+
+            if (found != null)
+                return found;
+
+            var added = new FieldDefinition(name, FieldAttributes.Private | FieldAttributes.InitOnly, aspect);
+            _type.Fields.Add(added);
+
+            return added;
+        }
+
+        void AddToConstructorIfNeeded(TypeDefinition aspect, FieldDefinition field)
+        {
+            var constructors = _type.GetConstructors()
                 .Where(c => c.IsPublic)
                 .ToList();
 
@@ -71,16 +90,19 @@ namespace DemonWeaver
 
             var constructor = constructors[0];
 
-            AddAspectToConstructor(constructor, aspect, field);
+            var parameterName = $"<Demon<Aspect<{aspect.FullName}";
 
-            new MethodWeaver(target, advice, field).Weave();
+            if (constructor.Parameters.Any(p => p.Name == parameterName))
+                return;
+
+            var parameter = new ParameterDefinition(parameterName, ParameterAttributes.None, aspect);
+
+            AddAspectToConstructor(constructor, parameter, field);
         }
 
         //todo ugly, refac
-        static void AddAspectToConstructor(MethodDefinition constructor, TypeDefinition aspect, FieldDefinition field)
+        static void AddAspectToConstructor(MethodDefinition constructor, ParameterDefinition parameter, FieldDefinition field)
         {
-            var parameter = new ParameterDefinition($"<Demon<Aspect<{aspect.Name}", ParameterAttributes.None, aspect);
-
             constructor.Parameters.Add(parameter);
 
             var il = constructor.Body.GetILProcessor();
