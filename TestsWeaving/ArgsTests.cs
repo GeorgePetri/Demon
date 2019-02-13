@@ -1,88 +1,66 @@
 using System;
-using System.Reflection;
 using TestsWeaving.Helpers;
 using Xunit;
 
 namespace TestsWeaving
 {
-    //todo uncopypaste
+    //todo add tests for complex types both null and non null 
     public class ArgsTests : IClassFixture<WeavedInMemoryModule>
     {
         readonly WeavedInMemoryModule _fixture;
-        readonly Assembly _assembly;
 
-        public ArgsTests(WeavedInMemoryModule fixture) => (_fixture, _assembly) = (fixture, fixture.Assembly);
+        readonly dynamic _aspect;
+        readonly dynamic _sut;
+
+        public ArgsTests(WeavedInMemoryModule fixture)
+        {
+            _fixture = fixture;
+
+            var type = _fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = _fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+
+            _aspect = Activator.CreateInstance(aspectType);
+
+            _sut = Activator.CreateInstance(type, _aspect);
+        }
 
         [Fact]
         public void SingleInt()
         {
-            //arrange
-            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, aspect);
-
-            //act
-            instance.TargetInt(5);
+            _sut.TargetInt(5);
 
             //assert
-            Assert.Equal(5, aspect.LastBoundInt);
+            Assert.Equal(5, _aspect.LastBoundInt);
         }
 
         [Fact]
         public void Empty()
         {
-            //arrange
-            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, aspect);
-
             //act
-            instance.TargetEmpty();
+            _sut.TargetEmpty();
 
             //assert
-            Assert.True(aspect.EmptyCalled);
+            Assert.True(_aspect.EmptyCalled);
         }
 
         [Fact]
         public void OptionalString_WhenNotNull()
         {
-            //arrange
-            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, aspect);
-
             //act
-            instance.TargetIntAndString(5, "five");
+            _sut.TargetIntAndString(5, "five");
 
             //assert
-            Assert.Equal("five", aspect.LastBoundString);
+            Assert.Equal("five", _aspect.LastBoundString);
         }
-        
+
         [Fact]
         public void OptionalString_WhenNull()
         {
-            //arrange
-            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, aspect);
-
             //act
-            instance.TargetEmpty();
+            _sut.TargetEmpty();
 
             //assert
-            Assert.Equal(null, aspect.LastBoundString);
+            Assert.Null(_aspect.LastBoundString);
         }
     }
 }
