@@ -5,6 +5,7 @@ using Xunit;
 
 namespace TestsWeaving
 {
+    //todo uncopypaste
     public class ArgsTests : IClassFixture<WeavedInMemoryModule>
     {
         readonly WeavedInMemoryModule _fixture;
@@ -28,6 +29,24 @@ namespace TestsWeaving
 
             //assert
             Assert.Equal(5, aspect.LastBoundInt);
+        }
+
+        [Fact]
+        public void Empty()
+        {
+            //arrange
+            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+
+            var aspect = (dynamic) Activator.CreateInstance(aspectType);
+
+            var instance = Activator.CreateInstance(type, aspect);
+
+            //act
+            instance.TargetEmpty();
+
+            //assert
+            Assert.True(aspect.EmptyCalled);
         }
     }
 }
