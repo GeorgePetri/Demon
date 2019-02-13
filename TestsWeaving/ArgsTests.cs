@@ -48,5 +48,41 @@ namespace TestsWeaving
             //assert
             Assert.True(aspect.EmptyCalled);
         }
+
+        [Fact]
+        public void OptionalString_WhenNotNull()
+        {
+            //arrange
+            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+
+            var aspect = (dynamic) Activator.CreateInstance(aspectType);
+
+            var instance = Activator.CreateInstance(type, aspect);
+
+            //act
+            instance.TargetIntAndString(5, "five");
+
+            //assert
+            Assert.Equal("five", aspect.LastBoundString);
+        }
+        
+        [Fact]
+        public void OptionalString_WhenNull()
+        {
+            //arrange
+            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+
+            var aspect = (dynamic) Activator.CreateInstance(aspectType);
+
+            var instance = Activator.CreateInstance(type, aspect);
+
+            //act
+            instance.TargetEmpty();
+
+            //assert
+            Assert.Equal(null, aspect.LastBoundString);
+        }
     }
 }

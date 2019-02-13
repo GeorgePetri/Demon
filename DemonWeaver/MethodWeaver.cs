@@ -52,7 +52,7 @@ namespace DemonWeaver
                 var parameterToLoad = _target.Parameters.FirstOrDefault(p => p.ParameterType == parameter.ParameterType);
                 if (parameterToLoad != null)
                 {
-                    var loadParameter = _il.GetEfficientLoadInstruction(parameter);
+                    var loadParameter = _il.GetEfficientLoadInstruction(parameterToLoad);
                     InsertBeforeOriginalFirst(loadParameter);
                 }
                 else

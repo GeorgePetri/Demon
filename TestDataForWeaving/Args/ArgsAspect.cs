@@ -7,6 +7,8 @@ namespace TestDataForWeaving.Args
     {
         public int LastBoundInt { get; set; }
 
+        public string LastBoundString { get; set; }
+
         public bool EmptyCalled { get; set; }
 
         [Pointcut("Within(TestDataForWeaving.Args.ArgsTarget.*)")]
@@ -24,6 +26,12 @@ namespace TestDataForWeaving.Args
         public void Empty()
         {
             EmptyCalled = true;
+        }
+
+        [Before("WithinArgsTarget() Args(s,*) Args() || &&")]
+        public void OptionalStringBinding(string s)
+        {
+            LastBoundString = s;
         }
     }
 }
