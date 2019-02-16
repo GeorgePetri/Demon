@@ -1,9 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using DemonWeaver.Data;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using FieldAttributes = Mono.Cecil.FieldAttributes;
+using MethodAttributes = Mono.Cecil.MethodAttributes;
+using ParameterAttributes = Mono.Cecil.ParameterAttributes;
 
 namespace DemonWeaver
 {
@@ -121,9 +126,54 @@ namespace DemonWeaver
             il.InsertBefore(originalRet, stfld);
         }
 
-        public FieldDefinition WeaveTypeJoinPointField(MethodReference method)
+        //todo try get rid of typeJoinPointType
+        //todo ugly, cleanup
+        public FieldDefinition WeaveTypeJoinPointField(MethodReference method, TypeReference typeJoinPointType)
         {
-            return null;
+            var fieldName = $"_<Demon<TypeJoinPoint<{method.FullName}";
+
+            var field = new FieldDefinition(fieldName, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static, typeJoinPointType);
+
+            var staticConstructor = GetOrAddStaticConstructor();
+
+            var il = staticConstructor.Body.GetILProcessor();
+
+            var getMethodFromHandle = _type.Module.ImportReference(typeof(MethodBase).GetMethod(nameof(MethodBase.GetMethodFromHandle), new[] {typeof(RuntimeMethodHandle)}));
+            var methodInfo = _type.Module.ImportReference(typeof(MethodInfo));
+
+            var loadMethodToken = il.Create(OpCodes.Ldtoken, method);
+            var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
+            var castToMethodInfo = il.Create(OpCodes.Castclass, methodInfo); //todo is this needed?
+
+            var lastOriginalInstruction = staticConstructor.Body.Instructions.Last();
+            il.InsertAfter(lastOriginalInstruction, loadMethodToken);
+            il.InsertAfter(lastOriginalInstruction, callGetMethodFromHandle);
+            il.InsertAfter(lastOriginalInstruction, castToMethodInfo);
+
+            return field;
+        }
+
+        MethodDefinition GetOrAddStaticConstructor()
+        {
+            var currentStaticConstructor = _type.GetStaticConstructor();
+
+            if (currentStaticConstructor != null)
+                return currentStaticConstructor;
+
+            var newStaticConstructor = new MethodDefinition(
+                ".cctor",
+                MethodAttributes.Private
+                | MethodAttributes.Static
+                | MethodAttributes.HideBySig
+                | MethodAttributes.SpecialName
+                | MethodAttributes.RTSpecialName,
+                _type.Module.TypeSystem.Void);
+
+            _type.Methods.Add(newStaticConstructor);
+
+            _type.IsBeforeFieldInit = false; //todo what does this do? is it needed?
+
+            return newStaticConstructor;
         }
     }
 }

@@ -59,7 +59,7 @@ namespace DemonWeaver
                 }
                 else if (parameter.ParameterType.FullName == "Demon.JoinPoint.TypeJoinPoint")
                 {
-                    var typeJoinPointField = _typeWeaver.WeaveTypeJoinPointField(_target);
+                    var typeJoinPointField = _typeWeaver.WeaveTypeJoinPointField(_target, parameter.ParameterType);
                     var loadTypeJoinPoint = _il.Create(OpCodes.Ldfld, typeJoinPointField);
                     InsertBeforeOriginalFirst(loadTypeJoinPoint);
                 }
