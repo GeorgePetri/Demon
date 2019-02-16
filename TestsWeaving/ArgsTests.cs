@@ -13,10 +13,8 @@ namespace TestsWeaving
 
         public ArgsTests(WeavedInMemoryModule fixture)
         {
-            var fixture1 = fixture;
-
-            var type = fixture1.Assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = fixture1.Assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+            var type = fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
 
             _aspect = Activator.CreateInstance(aspectType);
 

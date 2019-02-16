@@ -6,6 +6,7 @@ using DemonWeaver.Data;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
+using Mono.Collections.Generic;
 using FieldAttributes = Mono.Cecil.FieldAttributes;
 using MethodAttributes = Mono.Cecil.MethodAttributes;
 using ParameterAttributes = Mono.Cecil.ParameterAttributes;
@@ -27,7 +28,7 @@ namespace DemonWeaver
 
         void Weave()
         {
-            foreach (var method in _type.Methods)
+            foreach (var method in new Collection<MethodDefinition>(_type.Methods))
             {
                 foreach (var advice in _adviceModels)
                 {
@@ -130,9 +131,10 @@ namespace DemonWeaver
         //todo ugly, cleanup
         public FieldDefinition WeaveTypeJoinPointField(MethodReference method, TypeReference typeJoinPointType)
         {
-            var fieldName = $"_<Demon<TypeJoinPoint<{method.FullName}";
+            var fieldName = $"_<Demon<TypeJoinPoint<{method.DeclaringType.FullName}.{method.Name}";
 
             var field = new FieldDefinition(fieldName, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static, typeJoinPointType);
+            _type.Fields.Add(field);
 
             var staticConstructor = GetOrAddStaticConstructor();
 
@@ -141,14 +143,26 @@ namespace DemonWeaver
             var getMethodFromHandle = _type.Module.ImportReference(typeof(MethodBase).GetMethod(nameof(MethodBase.GetMethodFromHandle), new[] {typeof(RuntimeMethodHandle)}));
             var methodInfo = _type.Module.ImportReference(typeof(MethodInfo));
 
-            var loadMethodToken = il.Create(OpCodes.Ldtoken, method);
-            var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-            var castToMethodInfo = il.Create(OpCodes.Castclass, methodInfo); //todo is this needed?
+            //todo make instance of TypeJoinPoint
+//            var loadMethodToken = il.Create(OpCodes.Ldtoken, method);
+//            var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
+//            var castToMethodInfo = il.Create(OpCodes.Castclass, methodInfo); //todo is this needed?
+//            var newTypeJoinPointType = il.Create(OpCodes.Newobj, typeJoinPointType); //call ctor
+//            var setField = il.Create(OpCodes.Stfld, field);
+            
+            var insertFunc = staticConstructor.Body.Instructions.Any()
+                ? i => il.InsertBefore(staticConstructor.Body.Instructions.Last(), i)
+                : new Action<Instruction>(il.Append);
 
-            var lastOriginalInstruction = staticConstructor.Body.Instructions.Last();
-            il.InsertAfter(lastOriginalInstruction, loadMethodToken);
-            il.InsertAfter(lastOriginalInstruction, callGetMethodFromHandle);
-            il.InsertAfter(lastOriginalInstruction, castToMethodInfo);
+//            insertFunc(loadMethodToken);
+//            insertFunc(callGetMethodFromHandle);
+//            insertFunc(castToMethodInfo);
+//            insertFunc(newTypeJoinPointType);
+//            insertFunc(setField);
+
+//            insertFunc(il.Create(OpCodes.Ldnull));
+//            insertFunc(il.Create(OpCodes.Stfld, field));
+            insertFunc(il.Create(OpCodes.Ret));
 
             return field;
         }
