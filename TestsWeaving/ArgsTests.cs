@@ -4,20 +4,19 @@ using Xunit;
 
 namespace TestsWeaving
 {
-    //todo add tests for complex types both null and non null 
-    public class ArgsTests : IClassFixture<WeavedInMemoryModule>
+    //todo add tests for complex types both null and non null
+    [Collection(WeavedInMemoryModuleTestCollection.Name)]
+    public class ArgsTests
     {
-        readonly WeavedInMemoryModule _fixture;
-
         readonly dynamic _aspect;
         readonly dynamic _sut;
 
         public ArgsTests(WeavedInMemoryModule fixture)
         {
-            _fixture = fixture;
+            var fixture1 = fixture;
 
-            var type = _fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = _fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+            var type = fixture1.Assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = fixture1.Assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
 
             _aspect = Activator.CreateInstance(aspectType);
 
