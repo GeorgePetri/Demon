@@ -6,14 +6,16 @@ namespace DemonWeaver
 {
     public class MethodWeaver
     {
+        readonly TypeWeaver _typeWeaver;
         readonly MethodDefinition _target;
         readonly MethodDefinition _advice;
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
         readonly Instruction _originalFirstInstruction;
 
-        public MethodWeaver(MethodDefinition target, MethodDefinition advice, FieldDefinition adviceField)
+        public MethodWeaver(TypeWeaver typeWeaver, MethodDefinition target, MethodDefinition advice, FieldDefinition adviceField)
         {
+            _typeWeaver = typeWeaver;
             _target = target;
             _advice = advice;
             _adviceField = adviceField;
@@ -24,7 +26,7 @@ namespace DemonWeaver
         public void Weave()
         {
             InsertLoadAspectIfNeeded();
-            InsertLoadAdviceBoundParametersIfNeeded();
+            InsertLoadAdviceParametersIfNeeded();
 
             var callAspect = _il.Create(OpCodes.Call, _advice);
             InsertBeforeOriginalFirst(callAspect);
@@ -42,7 +44,7 @@ namespace DemonWeaver
             InsertBeforeOriginalFirst(loadAspect);
         }
 
-        void InsertLoadAdviceBoundParametersIfNeeded()
+        void InsertLoadAdviceParametersIfNeeded()
         {
             if (!_advice.HasParameters)
                 return;
@@ -54,6 +56,12 @@ namespace DemonWeaver
                 {
                     var loadParameter = _il.GetEfficientLoadInstruction(parameterToLoad);
                     InsertBeforeOriginalFirst(loadParameter);
+                }
+                else if (parameter.ParameterType.FullName == "Demon.JoinPoint.TypeJoinPoint")
+                {
+                    var typeJoinPointField = _typeWeaver.WeaveTypeJoinPointField(_target);
+                    var loadTypeJoinPoint = _il.Create(OpCodes.Ldfld, typeJoinPointField);
+                    InsertBeforeOriginalFirst(loadTypeJoinPoint);
                 }
                 else
                 {

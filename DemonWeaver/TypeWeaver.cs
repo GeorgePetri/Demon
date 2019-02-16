@@ -8,6 +8,7 @@ using Mono.Cecil.Rocks;
 namespace DemonWeaver
 {
     //todo add debug info if needed
+    //todo add option for the user to insert the aspect constructor parameter , for non di instantiation                           
     public class TypeWeaver
     {
         readonly TypeDefinition _type;
@@ -47,8 +48,8 @@ namespace DemonWeaver
         }
 
         //todo combine this and instance
-        static void WeaveStatic(MethodDefinition target, MethodDefinition advice) =>
-            new MethodWeaver(target, advice, null).Weave();
+        void WeaveStatic(MethodDefinition target, MethodDefinition advice) =>
+            new MethodWeaver(this, target, advice, null).Weave();
 
         //todo support multiple public constructors use a dag and filter by :this(...) calls
         //todo compose nicely multiple aspects
@@ -60,7 +61,7 @@ namespace DemonWeaver
 
             AddToConstructorIfNeeded(aspect, field);
 
-            new MethodWeaver(target, advice, field).Weave();
+            new MethodWeaver(this, target, advice, field).Weave();
         }
 
         FieldDefinition GetOrAddFieldIfNeeded(TypeDefinition aspect)
@@ -118,6 +119,11 @@ namespace DemonWeaver
             il.InsertBefore(originalRet, ldarg0);
             il.InsertBefore(originalRet, ldAspect);
             il.InsertBefore(originalRet, stfld);
+        }
+
+        public FieldDefinition WeaveTypeJoinPointField(MethodReference method)
+        {
+            return null;
         }
     }
 }
