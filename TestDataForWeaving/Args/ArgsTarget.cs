@@ -7,5 +7,7 @@ namespace TestDataForWeaving.Args
         public string TargetInt(int i) => i.ToString();
 
         public string TargetIntAndString(int i, string s) => i + s;
+        
+        public string TargetComplex(ComplexClass complex) => complex.ToString();
     }
 }
