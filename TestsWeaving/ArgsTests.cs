@@ -1,20 +1,23 @@
 using System;
+using System.Reflection;
 using TestsWeaving.Helpers;
 using Xunit;
 
 namespace TestsWeaving
 {
-    //todo add tests for complex types both null and non null
     [Collection(WeavedInMemoryModuleTestCollection.Name)]
     public class ArgsTests
     {
         readonly dynamic _aspect;
         readonly dynamic _sut;
+        readonly Assembly _assembly;
 
         public ArgsTests(WeavedInMemoryModule fixture)
         {
-            var type = fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
-            var aspectType = fixture.Assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
+            _assembly = fixture.Assembly;
+            
+            var type = _assembly.GetType("TestDataForWeaving.Args.ArgsTarget");
+            var aspectType = _assembly.GetType("TestDataForWeaving.Args.ArgsAspect");
 
             _aspect = Activator.CreateInstance(aspectType);
 
@@ -58,6 +61,30 @@ namespace TestsWeaving
 
             //assert
             Assert.Null(_aspect.LastBoundString);
+        }    
+        
+        [Fact]
+        public void OptionalComplex_WhenNotNull()
+        {
+            //arrange
+            var complexClassType = _assembly.GetType("TestDataForWeaving.Args.ComplexClass");
+            var complex = (dynamic)Activator.CreateInstance(complexClassType);
+            
+            //act
+            _sut.TargetComplex(complex);
+
+            //assert
+            Assert.Equal(complex, _aspect.LastBoundComplex);
+        }     
+        
+        [Fact]
+        public void OptionalComplex_WhenNull()
+        {
+            //act
+            _sut.TargetEmpty();
+
+            //assert
+            Assert.Null(_aspect.LastBoundComplex);
         }
     }
 }

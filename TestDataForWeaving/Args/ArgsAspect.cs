@@ -9,6 +9,8 @@ namespace TestDataForWeaving.Args
 
         public string LastBoundString { get; set; }
 
+        public ComplexClass LastBoundComplex { get; set; }
+
         public bool EmptyCalled { get; set; }
 
         [Pointcut("Within(TestDataForWeaving.Args.ArgsTarget.*)")]
@@ -32,6 +34,12 @@ namespace TestDataForWeaving.Args
         public void OptionalStringBinding(string s)
         {
             LastBoundString = s;
+        }
+        
+        [Before("WithinArgsTarget() Args(c) Args() || &&")]
+        public void OptionalComplex(ComplexClass c)
+        {
+            LastBoundComplex = c;
         }
     }
 }
