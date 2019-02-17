@@ -141,25 +141,22 @@ namespace DemonWeaver
             var il = staticConstructor.Body.GetILProcessor();
 
             var getMethodFromHandle = _type.Module.ImportReference(typeof(MethodBase).GetMethod(nameof(MethodBase.GetMethodFromHandle), new[] {typeof(RuntimeMethodHandle)}));
-            var methodInfo = _type.Module.ImportReference(typeof(MethodInfo));
 
             var loadMethodToken = il.Create(OpCodes.Ldtoken, method.Resolve());
             var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-            var castToMethodInfo = il.Create(OpCodes.Castclass, methodInfo); //todo is this needed?
             var newTypeJoinPointType = il.Create(OpCodes.Newobj, _type.Module.ImportReference(typeJoinPointType.Resolve().GetConstructors().First()));
             var setField = il.Create(OpCodes.Stsfld, field);
             var ret = il.Create(OpCodes.Ret);
 
-            var insertFunc = staticConstructor.Body.Instructions.Any()
+            var insertInstruction = staticConstructor.Body.Instructions.Any()
                 ? i => il.InsertBefore(staticConstructor.Body.Instructions.Last(), i)
                 : new Action<Instruction>(il.Append);
 
-            insertFunc(loadMethodToken);
-            insertFunc(callGetMethodFromHandle);
-            insertFunc(castToMethodInfo);
-            insertFunc(newTypeJoinPointType);
-            insertFunc(setField);
-            insertFunc(ret);
+            insertInstruction(loadMethodToken);
+            insertInstruction(callGetMethodFromHandle);
+            insertInstruction(newTypeJoinPointType);
+            insertInstruction(setField);
+            insertInstruction(ret);
 
             return field;
         }
