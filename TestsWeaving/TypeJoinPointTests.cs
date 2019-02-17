@@ -4,7 +4,7 @@ using Xunit;
 
 namespace TestsWeaving
 {
-    //todo add tests for static aspects, for static targets, for static targets with static constructors, for instance targets with static constructors
+    //todo add tests for static aspects, for static targets, for static targets with static constructors, for instance targets with static constructors, for multiple typejoinpoints in a type
     [Collection(WeavedInMemoryModuleTestCollection.Name)]
     public class TypeJoinPointTests
     {
