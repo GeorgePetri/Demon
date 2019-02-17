@@ -7,7 +7,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Demon\Demon.csproj" />
-        <ProjectReference Include="..\TestDataForWeavingDependency\TestDataForWeavingDependency.csproj" />
     </ItemGroup>
 
 </Project>

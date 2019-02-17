@@ -26,6 +26,7 @@ namespace TestsWeaving
         {
             //act
             _sut.Empty();
+            
             //assert
             Assert.Equal(@"System.String Empty()", _aspect.BoundTypeJoinPoint.Method.ToString());
         }
