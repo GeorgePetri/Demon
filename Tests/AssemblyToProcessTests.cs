@@ -6,6 +6,7 @@ using Xunit;
 
 namespace Tests
 {
+    //todo test static targets
     //todo split weaving tests in another project
     public class AssemblyToProcessTests
     {

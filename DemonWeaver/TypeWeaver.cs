@@ -143,26 +143,23 @@ namespace DemonWeaver
             var getMethodFromHandle = _type.Module.ImportReference(typeof(MethodBase).GetMethod(nameof(MethodBase.GetMethodFromHandle), new[] {typeof(RuntimeMethodHandle)}));
             var methodInfo = _type.Module.ImportReference(typeof(MethodInfo));
 
-            //todo make instance of TypeJoinPoint
-//            var loadMethodToken = il.Create(OpCodes.Ldtoken, method);
-//            var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-//            var castToMethodInfo = il.Create(OpCodes.Castclass, methodInfo); //todo is this needed?
-//            var newTypeJoinPointType = il.Create(OpCodes.Newobj, typeJoinPointType); //call ctor
-//            var setField = il.Create(OpCodes.Stfld, field);
-            
+            var loadMethodToken = il.Create(OpCodes.Ldtoken, method.Resolve());
+            var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
+            var castToMethodInfo = il.Create(OpCodes.Castclass, methodInfo); //todo is this needed?
+            var newTypeJoinPointType = il.Create(OpCodes.Newobj, _type.Module.ImportReference(typeJoinPointType.Resolve().GetConstructors().First()));
+            var setField = il.Create(OpCodes.Stsfld, field);
+            var ret = il.Create(OpCodes.Ret);
+
             var insertFunc = staticConstructor.Body.Instructions.Any()
                 ? i => il.InsertBefore(staticConstructor.Body.Instructions.Last(), i)
                 : new Action<Instruction>(il.Append);
 
-//            insertFunc(loadMethodToken);
-//            insertFunc(callGetMethodFromHandle);
-//            insertFunc(castToMethodInfo);
-//            insertFunc(newTypeJoinPointType);
-//            insertFunc(setField);
-
-//            insertFunc(il.Create(OpCodes.Ldnull));
-//            insertFunc(il.Create(OpCodes.Stfld, field));
-            insertFunc(il.Create(OpCodes.Ret));
+            insertFunc(loadMethodToken);
+            insertFunc(callGetMethodFromHandle);
+            insertFunc(castToMethodInfo);
+            insertFunc(newTypeJoinPointType);
+            insertFunc(setField);
+            insertFunc(ret);
 
             return field;
         }
@@ -185,7 +182,7 @@ namespace DemonWeaver
 
             _type.Methods.Add(newStaticConstructor);
 
-            _type.IsBeforeFieldInit = false; //todo what does this do? is it needed?
+            _type.IsBeforeFieldInit = false;
 
             return newStaticConstructor;
         }

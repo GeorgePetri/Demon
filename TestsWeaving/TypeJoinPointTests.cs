@@ -21,13 +21,13 @@ namespace TestsWeaving
             _sut = Activator.CreateInstance(type, _aspect);
         }
 
-//        [Fact]
-//        void InstanceAspect()
-//        {
-//            //act
-//            _sut.Empty();
-//
-//            //assert
-//        }
+        [Fact]
+        void InstanceAspect()
+        {
+            //act
+            _sut.Empty();
+            //assert
+            Assert.Equal(@"System.String Empty()", _aspect.BoundTypeJoinPoint.Method.ToString());
+        }
     }
 }
