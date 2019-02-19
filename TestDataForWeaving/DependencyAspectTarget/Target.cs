@@ -2,6 +2,6 @@ namespace TestDataForWeaving.DependencyAspectTarget
 {
     public class Target
     {
-        public string Empty() => "empty";
+        public string TargetInt(int i) => i.ToString();
     }
 }
