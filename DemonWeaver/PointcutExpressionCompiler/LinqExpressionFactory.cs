@@ -52,6 +52,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 parameterParameter,
                 typeof(ParameterDefinition).GetProperty(nameof(ParameterDefinition.ParameterType))); //p.ParameterType
 
+            //todo i don't think it works across assembly boundaries
             var parameterTypeEqual = Expression.Equal(parameterParameterType, typeParameter); //p.ParameterType == t
 
             var parametersAnyLambda = Expression.Lambda<Func<ParameterDefinition, bool>>(parameterTypeEqual, parameterParameter); //p => p.ParameterType == t

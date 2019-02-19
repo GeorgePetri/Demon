@@ -52,7 +52,7 @@ namespace DemonWeaver
                     var addedSuccessfully = _pointcutDefinitions.TryAdd(method.Name, new PointcutExpression(pointcutExpression, method));
 
                     if (!addedSuccessfully)
-                        throw new WeavingException($"More than one pointcut with the name{method.Name} found");
+                        throw new WeavingException($"More than one pointcut with the name {method.Name} found");
 
                     break;
                 }
