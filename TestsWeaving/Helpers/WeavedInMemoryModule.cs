@@ -14,7 +14,8 @@ namespace TestsWeaving.Helpers
         //todo copy pasted from solution weaver
         public WeavedInMemoryModule()
         {
-            using (ModuleDefinition module = ModuleDefinition.ReadModule(TestDataFilename), moduleDependency = ModuleDefinition.ReadModule(TestDataDependencyFilename))
+            using (ModuleDefinition module = ModuleDefinition.ReadModule(TestDataFilename),
+                moduleDependency = ModuleDefinition.ReadModule(TestDataDependencyFilename))
             {
                 var types = module.Types.Concat(moduleDependency.Types).ToList();
 
@@ -23,7 +24,8 @@ namespace TestsWeaving.Helpers
                 foreach (var type in types)
                     TypeWeaver.Weave(type, advice);
 
-                using (MemoryStream stream = new MemoryStream(), dependencyStream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream(),
+                    dependencyStream = new MemoryStream())
                 {
                     module.Write(stream);
                     moduleDependency.Write(dependencyStream);

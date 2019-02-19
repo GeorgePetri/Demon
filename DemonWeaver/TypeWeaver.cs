@@ -33,7 +33,7 @@ namespace DemonWeaver
                 foreach (var advice in _adviceModels)
                 {
                     if (advice.FilterToApply(method) && DefaultFilter(method))
-                        ApplyAdvice(method, advice);
+                        ApplyAdvice(method, advice.Method);
                 }
             }
         }
@@ -45,32 +45,27 @@ namespace DemonWeaver
             && !method.IsConstructor;
 
         //todo hardcoded to before advice
-        void ApplyAdvice(MethodDefinition method, AdviceModel advice)
-        {
-            if (advice.Method.IsStatic)
-                WeaveStatic(method, advice.Method);
-            else
-                WeaveInstance(method, advice.Method);
-        }
-
-        //todo combine this and instance
-        void WeaveStatic(MethodDefinition target, MethodDefinition advice) =>
-            new MethodWeaver(this, target, advice, null).Weave();
-
         //todo support multiple public constructors use a dag and filter by :this(...) calls
         //todo compose nicely multiple aspects
-        void WeaveInstance(MethodDefinition target, MethodDefinition advice)
-        {
-            var aspect = advice.DeclaringType;
+        void ApplyAdvice(MethodDefinition target, MethodDefinition advice)
+        {                
+            //todo make sure importing doesn't add unneeded references or cycles that break, make sure parameter and return values work
+            //todo should a dependency in the other direction work?
+            var importedAdvice = target.Module.ImportReference(advice);
 
-            var field = GetOrAddFieldIfNeeded(aspect);
+            if (advice.IsStatic)
+                new MethodWeaver(this, target, importedAdvice, null).Weave();
+            else
+            {
+                var field = GetOrAddFieldIfNeeded(importedAdvice.DeclaringType);
 
-            AddToConstructorIfNeeded(aspect, field);
+                AddToConstructorIfNeeded(importedAdvice.DeclaringType, field);
 
-            new MethodWeaver(this, target, advice, field).Weave();
+                new MethodWeaver(this, target, importedAdvice, field).Weave();
+            }
         }
 
-        FieldDefinition GetOrAddFieldIfNeeded(TypeDefinition aspect)
+        FieldDefinition GetOrAddFieldIfNeeded(TypeReference aspect)
         {
             var name = $"_<Demon<Aspect<{aspect.FullName}";
 
@@ -85,7 +80,7 @@ namespace DemonWeaver
             return added;
         }
 
-        void AddToConstructorIfNeeded(TypeDefinition aspect, FieldDefinition field)
+        void AddToConstructorIfNeeded(TypeReference aspect, FieldDefinition field)
         {
             var constructors = _type.GetConstructors()
                 .Where(c => c.IsPublic)

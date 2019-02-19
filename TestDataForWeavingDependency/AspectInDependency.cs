@@ -2,15 +2,16 @@ using Demon.Aspect;
 
 namespace TestDataForWeavingDependency
 {
+    //todo test args when fixed, unit test
     [Aspect]
     public class AspectInDependency
     {
-        public int LastBoundInt { get; set; }
+        public bool AdviceCalled { get; set; }
 
-        [Before("Within(TestDataForWeaving.DependencyAspectTarget.Target.*) Args(i) &&")]
+        [Before("Within(TestDataForWeaving.DependencyAspectTarget.Target.*)")]
         public void TargetInt(int i)
         {
-            LastBoundInt = i;
+            AdviceCalled = true;
         }
     }
 }

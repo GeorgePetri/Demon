@@ -8,12 +8,12 @@ namespace DemonWeaver
     {
         readonly TypeWeaver _typeWeaver;
         readonly MethodDefinition _target;
-        readonly MethodDefinition _advice;
+        readonly MethodReference _advice;
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
         readonly Instruction _originalFirstInstruction;
 
-        public MethodWeaver(TypeWeaver typeWeaver, MethodDefinition target, MethodDefinition advice, FieldDefinition adviceField)
+        public MethodWeaver(TypeWeaver typeWeaver, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
             _typeWeaver = typeWeaver;
             _target = target;
