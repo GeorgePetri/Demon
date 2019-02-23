@@ -36,7 +36,6 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 var toBeBound = new HashSet<(string name, TypeReference type)>();
                 var argCountMustBeAtLeast = 0;
                 var argCountHasUpperBound = true;
-                //todo compiler should return metadata about bound args besides the func, make sure it works with pointcuts
                 foreach (var argument in strings)
                 {
                     argCountMustBeAtLeast++;

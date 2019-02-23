@@ -9,7 +9,6 @@ namespace TestsCompiler
 {
     public class WithinTests
     {
-        //todo impl syntax errors in within
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
 
         [Theory]
