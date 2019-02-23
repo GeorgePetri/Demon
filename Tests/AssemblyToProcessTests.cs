@@ -6,7 +6,6 @@ using Xunit;
 
 namespace Tests
 {
-    //todo test static targets
     //todo split weaving tests in another project
     public class AssemblyToProcessTests
     {
@@ -28,42 +27,6 @@ namespace Tests
 
             //assert
             Assert.Throws<ApplicationException>(() => instance.Target(5));
-        }
-
-        [Fact]
-        public void InstanceAdvice()
-        {
-            //arrange
-            var type = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget");
-            var aspectType = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, aspect);
-
-            //act
-            instance.Target(5);
-
-            //assert
-            Assert.True(aspect.AdviceCalled);
-        }
-
-        [Fact]
-        public void InstanceAdviceManyConstructorParameters()
-        {
-            //arrange
-            var type = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.InstanceBeforeTarget2");
-            var aspectType = _assembly.GetType("AssemblyToProcess.BeforeAdvice.Instance.StatefulInstanceAspect");
-
-            var aspect = (dynamic) Activator.CreateInstance(aspectType);
-
-            var instance = Activator.CreateInstance(type, "test", 1, 2, 3, 4, 5, aspect);
-
-            //act
-            instance.Target(5);
-
-            //assert
-            Assert.True(aspect.AdviceCalled);
         }
     }
 }
