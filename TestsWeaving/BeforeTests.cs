@@ -5,9 +5,9 @@ using Xunit;
 
 namespace TestsWeaving
 {
-    //todo test static target, instance aspect
     //todo test composition of aspects in other class
     //todo idea, make these tests in dependency to test imports
+    //todo StaticTargetInstanceAspect should not bind, fix in typeweaver
     [Collection(WeavedInMemoryModuleTestCollection.Name)]
     public class BeforeTests
     {
