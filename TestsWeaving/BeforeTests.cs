@@ -6,7 +6,6 @@ using Xunit;
 namespace TestsWeaving
 {
     //todo test static target, instance aspect
-    //todo test instance target, static aspect
     //todo test composition of aspects in other class
     //todo idea, make these tests in dependency to test imports
     [Collection(WeavedInMemoryModuleTestCollection.Name)]
@@ -20,17 +19,30 @@ namespace TestsWeaving
         public void InstanceTargetInstanceAspect()
         {
             //arrange
-            var aspect = _assembly.GetType("TestDataForWeaving.Before.InstanceTargetInstanceAspect.Aspect");
-            var aspectInstance = (dynamic) Activator.CreateInstance(aspect);
+            var aspectType = _assembly.GetType("TestDataForWeaving.Before.InstanceTargetInstanceAspect.Aspect");
+            var aspectInstance = (dynamic) Activator.CreateInstance(aspectType);
 
-            var type = _assembly.GetType("TestDataForWeaving.Before.InstanceTargetInstanceAspect.Target");
-            var typeInstance = (dynamic) Activator.CreateInstance(type, aspectInstance);
+            var targetType = _assembly.GetType("TestDataForWeaving.Before.InstanceTargetInstanceAspect.Target");
+            var targetInstance = (dynamic) Activator.CreateInstance(targetType, aspectInstance);
 
             //act
-            typeInstance.OneInt(5);
-            
+            targetInstance.OneInt(5);
+
             //assert
             Assert.True(aspectInstance.Called);
+        }
+
+        [Fact]
+        public void InstanceTargetStaticAspect()
+        {
+            //arrange
+            var targetType = _assembly.GetType("TestDataForWeaving.Before.InstanceTargetStaticAspect.Target");
+            var targetInstance = (dynamic) Activator.CreateInstance(targetType);
+
+            //assert
+            var exception = Assert.Throws<Exception>(() => targetInstance.OneInt(5));
+
+            Assert.Equal("Weaved", exception.Message);
         }
 
         [Fact]
