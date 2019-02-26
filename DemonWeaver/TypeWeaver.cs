@@ -56,8 +56,8 @@ namespace DemonWeaver
             && method.IsPublic
             && !method.IsConstructor;
 
-        //todo support multiple public constructors use a dag and filter by :this(...) calls
-        //todo compose nicely multiple aspects
+
+        //todo deduplicate
         void ApplyBeforeAdvice(MethodDefinition target, MethodDefinition advice)
         {
             //todo make sure importing doesn't add unneeded references or cycles that break, make sure parameter and return values work
@@ -77,9 +77,24 @@ namespace DemonWeaver
         }
 
         void ApplyAroundAdvice(MethodDefinition target, MethodDefinition advice)
-        {
+        {            
+            //todo make sure importing doesn't add unneeded references or cycles that break, make sure parameter and return values work
+            //todo should a dependency in the other direction work?
+            var importedAdvice = target.Module.ImportReference(advice);
+
+            if (advice.IsStatic)
+                new AroundMethodWeaver(this, target, importedAdvice, null).Weave();
+            else
+            {
+                var field = GetOrAddFieldIfNeeded(importedAdvice.DeclaringType);
+
+                AddToConstructorIfNeeded(importedAdvice.DeclaringType, field);
+
+                new AroundMethodWeaver(this, target, importedAdvice, field).Weave();
+            }
         }
 
+        //todo compose nicely multiple aspects
         FieldDefinition GetOrAddFieldIfNeeded(TypeReference aspect)
         {
             var name = $"_<Demon<Aspect<{aspect.FullName}";
@@ -95,6 +110,7 @@ namespace DemonWeaver
             return added;
         }
 
+        //todo support multiple public constructors use a dag and filter by :this(...) calls
         void AddToConstructorIfNeeded(TypeReference aspect, FieldDefinition field)
         {
             var constructors = _type.GetConstructors()
