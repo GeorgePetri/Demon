@@ -33,7 +33,19 @@ namespace DemonWeaver
                 foreach (var advice in _adviceModels)
                 {
                     if (advice.FilterToApply(method) && DefaultFilter(method))
-                        ApplyAdvice(method, advice.Method);
+                    {
+                        switch (advice)
+                        {
+                            case BeforeAdvice _:
+                                ApplyBeforeAdvice(method, advice.Method);
+                                break;
+                            case AroundAdvice _:
+                                ApplyAroundAdvice(method, advice.Method);
+                                break;
+                            default:
+                                throw new ArgumentException();
+                        }
+                    }
                 }
             }
         }
@@ -44,11 +56,10 @@ namespace DemonWeaver
             && method.IsPublic
             && !method.IsConstructor;
 
-        //todo hardcoded to before advice
         //todo support multiple public constructors use a dag and filter by :this(...) calls
         //todo compose nicely multiple aspects
-        void ApplyAdvice(MethodDefinition target, MethodDefinition advice)
-        {                
+        void ApplyBeforeAdvice(MethodDefinition target, MethodDefinition advice)
+        {
             //todo make sure importing doesn't add unneeded references or cycles that break, make sure parameter and return values work
             //todo should a dependency in the other direction work?
             var importedAdvice = target.Module.ImportReference(advice);
@@ -63,6 +74,10 @@ namespace DemonWeaver
 
                 new MethodWeaver(this, target, importedAdvice, field).Weave();
             }
+        }
+
+        void ApplyAroundAdvice(MethodDefinition target, MethodDefinition advice)
+        {
         }
 
         FieldDefinition GetOrAddFieldIfNeeded(TypeReference aspect)
