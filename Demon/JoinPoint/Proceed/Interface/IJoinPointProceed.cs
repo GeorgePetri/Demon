@@ -1,6 +1,6 @@
 namespace Demon.JoinPoint.Proceed.Interface
 {
-    public interface IJoinPointProceed
+    internal interface IJoinPointProceed
     {
     }
 }
