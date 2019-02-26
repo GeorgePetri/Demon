@@ -4,7 +4,7 @@ using Mono.Cecil.Cil;
 
 namespace DemonWeaver
 {
-    public class MethodWeaver
+    public class BeforeMethodWeaver
     {
         readonly TypeWeaver _typeWeaver;
         readonly MethodDefinition _target;
@@ -13,7 +13,7 @@ namespace DemonWeaver
         readonly ILProcessor _il;
         readonly Instruction _originalFirstInstruction;
 
-        public MethodWeaver(TypeWeaver typeWeaver, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
+        public BeforeMethodWeaver(TypeWeaver typeWeaver, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
             _typeWeaver = typeWeaver;
             _target = target;
