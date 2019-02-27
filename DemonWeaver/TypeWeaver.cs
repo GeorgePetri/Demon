@@ -77,7 +77,7 @@ namespace DemonWeaver
         }
 
         void ApplyAroundAdvice(MethodDefinition target, MethodDefinition advice)
-        {            
+        {
             //todo make sure importing doesn't add unneeded references or cycles that break, make sure parameter and return values work
             //todo should a dependency in the other direction work?
             var importedAdvice = target.Module.ImportReference(advice);
@@ -170,7 +170,13 @@ namespace DemonWeaver
 
             var loadMethodToken = il.Create(OpCodes.Ldtoken, method.Resolve());
             var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-            var newTypeJoinPointType = il.Create(OpCodes.Newobj, _type.Module.ImportReference(typeJoinPointType.Resolve().GetConstructors().First()));
+            var newTypeJoinPointType = il.Create(
+                OpCodes.Newobj,
+                _type.Module.ImportReference(
+                    _type.Module.ImportReference(typeJoinPointType)
+                        .Resolve()
+                        .GetConstructors()
+                        .First()));
             var setField = il.Create(OpCodes.Stsfld, field);
             var ret = il.Create(OpCodes.Ret);
 
