@@ -22,8 +22,10 @@ namespace TestsWeaving.Helpers
 
                 var advice = AspectModelBuilder.FromTypeDefinitions(types);
 
+                var demonTypes = DemonTypes.FromModule(demon);
+                
                 foreach (var type in types)
-                    TypeWeaver.Weave(type, advice, demon);
+                    TypeWeaver.Weave(type, advice, demonTypes);
 
                 using (MemoryStream stream = new MemoryStream(),
                     dependencyStream = new MemoryStream())

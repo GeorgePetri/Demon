@@ -19,15 +19,13 @@ namespace DemonWeaver
     {
         readonly TypeDefinition _type;
         readonly List<AdviceModel> _adviceModels;
-        readonly ModuleDefinition _demonModule;
+        readonly DemonTypes _demonTypes;
 
-        public TypeWeaver(TypeDefinition type, List<AdviceModel> adviceModels, ModuleDefinition demonModule)
-        {
-            (_type, _adviceModels, _demonModule) = (type, adviceModels, demonModule);
-        }
+        public TypeWeaver(TypeDefinition type, List<AdviceModel> adviceModels, DemonTypes demonTypes) => 
+            (_type, _adviceModels, _demonTypes) = (type, adviceModels, demonTypes);
 
-        public static void Weave(TypeDefinition type, List<AdviceModel> aspects, ModuleDefinition demonModule) =>
-            new TypeWeaver(type, aspects, demonModule).Weave();
+        public static void Weave(TypeDefinition type, List<AdviceModel> aspects, DemonTypes demonTypes) =>
+            new TypeWeaver(type, aspects, demonTypes).Weave();
 
         void Weave()
         {
@@ -58,7 +56,6 @@ namespace DemonWeaver
             method.HasBody
             && method.IsPublic
             && !method.IsConstructor;
-
 
         //todo deduplicate
         void ApplyBeforeAdvice(MethodDefinition target, MethodDefinition advice)
@@ -156,13 +153,12 @@ namespace DemonWeaver
             il.InsertBefore(originalRet, stfld);
         }
 
-        //todo try get rid of typeJoinPointType
         //todo ugly, cleanup
-        public FieldDefinition WeaveTypeJoinPointField(MethodReference method, TypeReference typeJoinPointType)
+        public FieldDefinition WeaveTypeJoinPointField(MethodReference method)
         {
             var fieldName = $"_<Demon<TypeJoinPoint<{method.DeclaringType.FullName}.{method.Name}";
 
-            var field = new FieldDefinition(fieldName, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static, typeJoinPointType);
+            var field = new FieldDefinition(fieldName, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static, _type.Module.ImportReference(_demonTypes.TypeJoinPoint));
             _type.Fields.Add(field);
 
             var staticConstructor = GetOrAddStaticConstructor();
@@ -173,11 +169,7 @@ namespace DemonWeaver
 
             var loadMethodToken = il.Create(OpCodes.Ldtoken, method.Resolve());
             var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-            var newTypeJoinPointType = il.Create(
-                OpCodes.Newobj,
-                _type.Module.ImportReference(_demonModule.Types.First(t => t.Name == "TypeJoinPoint")
-                        .GetConstructors()
-                        .First()));
+            var newTypeJoinPointType = il.Create(OpCodes.Newobj,_type.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
             var setField = il.Create(OpCodes.Stsfld, field);
             var ret = il.Create(OpCodes.Ret);
 

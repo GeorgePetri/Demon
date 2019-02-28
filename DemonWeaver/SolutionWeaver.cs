@@ -18,6 +18,7 @@ namespace DemonWeaver
             try
             {
                 demonModule = HackyLoadDemonModule();
+                var demonTypes = DemonTypes.FromModule(demonModule);
 
                 foreach (var path in assemblyPaths)
                     modules.Add(ModuleDefinition.ReadModule(path, new ReaderParameters {ReadWrite = true}));
@@ -28,7 +29,7 @@ namespace DemonWeaver
 
                 //todo filter to not run on aspects accidentally
                 foreach (var type in allTypes)
-                    TypeWeaver.Weave(type, advice, demonModule);
+                    TypeWeaver.Weave(type, advice, demonTypes);
 
                 //todo check file locking issues
                 foreach (var module in modules)

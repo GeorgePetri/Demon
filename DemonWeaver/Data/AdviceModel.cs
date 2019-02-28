@@ -9,7 +9,6 @@ namespace DemonWeaver.Data
             (Method, FilterToApply) = (method, filterToApply);
 
         public MethodDefinition Method { get; }
-
         public Func<MethodDefinition, bool> FilterToApply { get; }
     }
 }
