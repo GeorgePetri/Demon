@@ -32,7 +32,7 @@ namespace DemonWeaver
         {
             Parallel.ForEach(types, type =>
             {
-                if (type.CustomAttributes.All(a => a.AttributeType.FullName != "Demon.Aspect.AspectAttribute"))
+                if (type.CustomAttributes.All(a => a.AttributeType.FullName != DemonTypes.FullNames.AspectAttribute))
                     return;
 
                 foreach (var method in type.Methods)
@@ -45,7 +45,7 @@ namespace DemonWeaver
         {
             foreach (var attribute in method.CustomAttributes)
             {
-                if (attribute.AttributeType.FullName == "Demon.Aspect.PointcutAttribute")
+                if (attribute.AttributeType.FullName == DemonTypes.FullNames.PointcutAttribute)
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
 
@@ -57,7 +57,7 @@ namespace DemonWeaver
                     break;
                 }
 
-                if (attribute.AttributeType.FullName == "Demon.Aspect.BeforeAttribute")
+                if (attribute.AttributeType.FullName == DemonTypes.FullNames.BeforeAttribute)
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
                     _beforeDefinitions.Add(new PointcutExpression(pointcutExpression, method));
@@ -65,7 +65,7 @@ namespace DemonWeaver
                     break;
                 }
 
-                if (attribute.AttributeType.FullName == "Demon.Aspect.AroundAttribute")
+                if (attribute.AttributeType.FullName == DemonTypes.FullNames.AroundAttribute)
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
                     _aroundDefinitions.Add(new PointcutExpression(pointcutExpression, method));

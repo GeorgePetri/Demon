@@ -57,7 +57,7 @@ namespace DemonWeaver
                     var loadParameter = _il.GetEfficientLoadInstruction(parameterToLoad);
                     InsertBeforeOriginalFirst(loadParameter);
                 }
-                else if (parameter.ParameterType.FullName == "Demon.JoinPoint.TypeJoinPoint")
+                else if (parameter.ParameterType.FullName == DemonTypes.FullNames.TypeJoinPoint)
                 {
                     var typeJoinPointField = _typeWeaver.WeaveTypeJoinPointField(_target);
                     var loadTypeJoinPoint = _il.Create(OpCodes.Ldsfld, typeJoinPointField);
