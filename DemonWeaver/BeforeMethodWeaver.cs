@@ -44,6 +44,7 @@ namespace DemonWeaver
             InsertBeforeOriginalFirst(loadAspect);
         }
 
+        //todo this tries to bind everything implicitly, is it good design?
         void InsertLoadAdviceParametersIfNeeded()
         {
             if (!_advice.HasParameters)

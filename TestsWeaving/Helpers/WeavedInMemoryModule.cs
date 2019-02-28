@@ -16,14 +16,14 @@ namespace TestsWeaving.Helpers
         {
             using (ModuleDefinition module = ModuleDefinition.ReadModule(TestDataFilename),
                 moduleDependency = ModuleDefinition.ReadModule(TestDataDependencyFilename),
-                demon = ModuleDefinition.ReadModule("Demon.dll"))
+                demon = ModuleDefinition.ReadModule(DemonFilename))
             {
                 var types = module.Types.Concat(moduleDependency.Types).ToList();
 
                 var advice = AspectModelBuilder.FromTypeDefinitions(types);
 
                 var demonTypes = DemonTypes.FromModule(demon);
-                
+
                 foreach (var type in types)
                     TypeWeaver.Weave(type, advice, demonTypes);
 
@@ -41,5 +41,6 @@ namespace TestsWeaving.Helpers
 
         const string TestDataFilename = "TestDataForWeaving.dll";
         const string TestDataDependencyFilename = "TestDataForWeavingDependency.dll";
+        const string DemonFilename = "Demon.dll";
     }
 }

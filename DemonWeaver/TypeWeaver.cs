@@ -21,7 +21,7 @@ namespace DemonWeaver
         readonly List<AdviceModel> _adviceModels;
         readonly DemonTypes _demonTypes;
 
-        public TypeWeaver(TypeDefinition type, List<AdviceModel> adviceModels, DemonTypes demonTypes) => 
+        public TypeWeaver(TypeDefinition type, List<AdviceModel> adviceModels, DemonTypes demonTypes) =>
             (_type, _adviceModels, _demonTypes) = (type, adviceModels, demonTypes);
 
         public static void Weave(TypeDefinition type, List<AdviceModel> aspects, DemonTypes demonTypes) =>
@@ -168,7 +168,7 @@ namespace DemonWeaver
 
             var loadMethodToken = il.Create(OpCodes.Ldtoken, method.Resolve());
             var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-            var newTypeJoinPointType = il.Create(OpCodes.Newobj,_type.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
+            var newTypeJoinPointType = il.Create(OpCodes.Newobj, _type.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
             var setField = il.Create(OpCodes.Stsfld, field);
             var ret = il.Create(OpCodes.Ret);
 
