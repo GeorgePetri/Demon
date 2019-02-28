@@ -15,14 +15,15 @@ namespace TestsWeaving.Helpers
         public WeavedInMemoryModule()
         {
             using (ModuleDefinition module = ModuleDefinition.ReadModule(TestDataFilename),
-                moduleDependency = ModuleDefinition.ReadModule(TestDataDependencyFilename))
+                moduleDependency = ModuleDefinition.ReadModule(TestDataDependencyFilename),
+                demon = ModuleDefinition.ReadModule("Demon.dll"))
             {
                 var types = module.Types.Concat(moduleDependency.Types).ToList();
 
                 var advice = AspectModelBuilder.FromTypeDefinitions(types);
 
                 foreach (var type in types)
-                    TypeWeaver.Weave(type, advice);
+                    TypeWeaver.Weave(type, advice, demon);
 
                 using (MemoryStream stream = new MemoryStream(),
                     dependencyStream = new MemoryStream())
