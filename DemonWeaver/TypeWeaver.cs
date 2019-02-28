@@ -13,7 +13,7 @@ using ParameterAttributes = Mono.Cecil.ParameterAttributes;
 
 namespace DemonWeaver
 {
-    //todo add debug info if needed
+    //todo add debug info
     //todo add option for the user to insert the aspect constructor parameter , for non di instantiation                           
     public class TypeWeaver
     {
@@ -118,8 +118,7 @@ namespace DemonWeaver
                 .ToList();
 
             if (constructors.Count != 1)
-                //todo make message nice, add context
-                throw new WeavingException("There must be only one public constructor.");
+                throw new WeavingException($"There must be only one public constructor in type {_type.FullName}");
 
             var constructor = constructors[0];
 
