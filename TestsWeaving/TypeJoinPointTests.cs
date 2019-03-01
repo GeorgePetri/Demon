@@ -4,7 +4,7 @@ using Xunit;
 
 namespace TestsWeaving
 {
-    //todo add tests for static aspects, for static targets, for static targets with static constructors, for instance targets with static constructors, for multiple typejoinpoints in a type
+    //todo add tests for for multiple typejoinpoints in a type
     [Collection(WeavedInMemoryModuleTestCollection.Name)]
     public class TypeJoinPointTests
     {
@@ -28,7 +28,7 @@ namespace TestsWeaving
             _sut.Empty();
             
             //assert
-            Assert.Equal(null, _aspect.BoundTypeJoinPoint);
+            Assert.Equal(@"System.String TestDataForWeaving.TypeJoinPoint.Target::Empty()", _aspect.BoundTypeJoinPoint.FullName);
         }
     }
 }

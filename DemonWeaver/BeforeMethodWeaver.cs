@@ -6,16 +6,16 @@ namespace DemonWeaver
 {
     public class BeforeMethodWeaver
     {
-        readonly TypeWeaver _typeWeaver;
+        readonly DemonTypes _demonTypes;
         readonly MethodDefinition _target;
         readonly MethodReference _advice;
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
         readonly Instruction _originalFirstInstruction;
 
-        public BeforeMethodWeaver(TypeWeaver typeWeaver, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
+        public BeforeMethodWeaver(DemonTypes demonTypes, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
-            _typeWeaver = typeWeaver;
+            _demonTypes = demonTypes;
             _target = target;
             _advice = advice;
             _adviceField = adviceField;
@@ -60,8 +60,12 @@ namespace DemonWeaver
                 }
                 else if (parameter.ParameterType.FullName == DemonTypes.FullNames.TypeJoinPoint)
                 {
-                    var loadTypeJoinPoint = _il.Create(OpCodes.Ldnull);
-                    InsertBeforeOriginalFirst(loadTypeJoinPoint);
+                    var loadName = _il.Create(OpCodes.Ldstr, _target.Name);
+                    var loadFullName = _il.Create(OpCodes.Ldstr, _target.FullName);
+                    var createTypeJoinPoint = _il.Create(OpCodes.Newobj, _target.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
+                    InsertBeforeOriginalFirst(loadName);
+                    InsertBeforeOriginalFirst(loadFullName);
+                    InsertBeforeOriginalFirst(createTypeJoinPoint);
                 }
                 else
                 {
