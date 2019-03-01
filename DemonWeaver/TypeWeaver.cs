@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using DemonWeaver.Data;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using Mono.Collections.Generic;
-using FieldAttributes = Mono.Cecil.FieldAttributes;
-using MethodAttributes = Mono.Cecil.MethodAttributes;
-using ParameterAttributes = Mono.Cecil.ParameterAttributes;
 
 namespace DemonWeaver
 {
@@ -150,62 +146,6 @@ namespace DemonWeaver
             il.InsertBefore(originalRet, ldarg0);
             il.InsertBefore(originalRet, ldAspect);
             il.InsertBefore(originalRet, stfld);
-        }
-
-        //todo ugly, cleanup
-        public FieldDefinition WeaveTypeJoinPointField(MethodReference method)
-        {
-            var fieldName = $"_<Demon<TypeJoinPoint<{method.DeclaringType.FullName}.{method.Name}";
-
-            var field = new FieldDefinition(fieldName, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static, _type.Module.ImportReference(_demonTypes.TypeJoinPoint));
-            _type.Fields.Add(field);
-
-            var staticConstructor = GetOrAddStaticConstructor();
-
-            var il = staticConstructor.Body.GetILProcessor();
-
-            var getMethodFromHandle = _type.Module.ImportReference(typeof(MethodBase).GetMethod(nameof(MethodBase.GetMethodFromHandle), new[] {typeof(RuntimeMethodHandle)}));
-
-            var loadMethodToken = il.Create(OpCodes.Ldtoken, method.Resolve());
-            var callGetMethodFromHandle = il.Create(OpCodes.Call, getMethodFromHandle);
-            var newTypeJoinPointType = il.Create(OpCodes.Newobj, _type.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
-            var setField = il.Create(OpCodes.Stsfld, field);
-            var ret = il.Create(OpCodes.Ret);
-
-            var insertInstruction = staticConstructor.Body.Instructions.Any()
-                ? i => il.InsertBefore(staticConstructor.Body.Instructions.Last(), i)
-                : new Action<Instruction>(il.Append);
-
-            insertInstruction(loadMethodToken);
-            insertInstruction(callGetMethodFromHandle);
-            insertInstruction(newTypeJoinPointType);
-            insertInstruction(setField);
-            insertInstruction(ret);
-
-            return field;
-        }
-
-        MethodDefinition GetOrAddStaticConstructor()
-        {
-            var currentStaticConstructor = _type.GetStaticConstructor();
-
-            if (currentStaticConstructor != null)
-                return currentStaticConstructor;
-
-            var newStaticConstructor = new MethodDefinition(
-                ".cctor",
-                MethodAttributes.Private
-                | MethodAttributes.Static
-                | MethodAttributes.HideBySig
-                | MethodAttributes.SpecialName
-                | MethodAttributes.RTSpecialName,
-                _type.Module.TypeSystem.Void);
-
-            _type.Methods.Add(newStaticConstructor);
-
-            _type.IsBeforeFieldInit = false;
-
-            return newStaticConstructor;
         }
     }
 }
