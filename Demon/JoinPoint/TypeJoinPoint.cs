@@ -1,11 +1,10 @@
-using System.Reflection;
-
 namespace Demon.JoinPoint
 {
     public class TypeJoinPoint
     {
-        public TypeJoinPoint(MethodInfo method) => Method = method;
+        public TypeJoinPoint(string name, string fullName) => (Name, FullName) = (name, fullName);
 
-        public MethodInfo Method { get; }
+        public string Name { get; }
+        public string FullName { get; }
     }
 }
