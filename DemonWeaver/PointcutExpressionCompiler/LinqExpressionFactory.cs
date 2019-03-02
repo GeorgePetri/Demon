@@ -34,7 +34,7 @@ namespace DemonWeaver.PointcutExpressionCompiler
             Expression.GreaterThanOrEqual(TargetParameterCount, Expression.Constant(value));
 
         /// <summary>
-        /// Resulting expression looks like <c>types.All(t => m.Parameters.Any(p => p.ParameterType == t))</c>;
+        /// Resulting expression looks like <c>types.All(t => m.Parameters.Any(p => p.ParameterType.FullName == t.FullName))</c>;
         /// </summary>
         public static MethodCallExpression TargetHasParametersOfType(IEnumerable<TypeReference> types) =>
             Expression.Call(
@@ -52,10 +52,17 @@ namespace DemonWeaver.PointcutExpressionCompiler
                 parameterParameter,
                 typeof(ParameterDefinition).GetProperty(nameof(ParameterDefinition.ParameterType))); //p.ParameterType
 
-            //todo i don't think it works across assembly boundaries
-            var parameterTypeEqual = Expression.Equal(parameterParameterType, typeParameter); //p.ParameterType == t
+            var parameterParameterTypeFullName = Expression.Property(
+                parameterParameterType,
+                typeof(TypeReference).GetProperty(nameof(TypeReference.FullName))); //p.ParameterType.FullName
+            
+            var typeParameterFullName = Expression.Property(
+                typeParameter,
+                typeof(TypeReference).GetProperty(nameof(TypeReference.FullName))); //t.FullName
+            
+            var parameterTypeEqual = Expression.Equal(parameterParameterTypeFullName, typeParameterFullName); //p.ParameterType.FullName == t.FullName
 
-            var parametersAnyLambda = Expression.Lambda<Func<ParameterDefinition, bool>>(parameterTypeEqual, parameterParameter); //p => p.ParameterType == t
+            var parametersAnyLambda = Expression.Lambda<Func<ParameterDefinition, bool>>(parameterTypeEqual, parameterParameter); //p => p.ParameterType.FullName == t.FullName
 
             var targetParameters = Expression.Property(
                 Target,
@@ -67,9 +74,9 @@ namespace DemonWeaver.PointcutExpressionCompiler
                     .First(m => m.Name == nameof(Enumerable.Any) && m.GetParameters().Length == 2)
                     .MakeGenericMethod(typeof(ParameterDefinition)),
                 targetParameters,
-                parametersAnyLambda); //m.Parameters.Any(p => p.ParameterType == t)
+                parametersAnyLambda); //m.Parameters.Any(p => p.ParameterType.FullName == t.FullName)
 
-            return Expression.Lambda<Func<TypeReference, bool>>(targetParametersAny, typeParameter); //t => m.Parameters.Any(p => p.ParameterType == t)
+            return Expression.Lambda<Func<TypeReference, bool>>(targetParametersAny, typeParameter); //t => m.Parameters.Any(p => p.ParameterType.FullName == t.FullName)
         }
 
         static MethodCallExpression CreateTargetFullName()
