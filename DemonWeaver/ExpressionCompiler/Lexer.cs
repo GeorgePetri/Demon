@@ -7,6 +7,7 @@ namespace DemonWeaver.ExpressionCompiler
 {
     public static class Lexer
     {
+        //work with no space in ( and )
         public static IEnumerable<IToken> AnalyseExpression(string expression)
         {
             var split = expression.Split(new char[0], StringSplitOptions.RemoveEmptyEntries);
