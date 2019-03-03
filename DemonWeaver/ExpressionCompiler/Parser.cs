@@ -12,6 +12,8 @@ namespace DemonWeaver.ExpressionCompiler
         readonly List<IToken> _tokens;
         readonly Stack<ISym> _stack = new Stack<ISym>();
 
+        //todo idea: generalize symbol
+        //todo idea: poincuts are funcs with arity
         public Parser(List<IToken> tokens)
         {
             _tokens = tokens;
@@ -36,6 +38,9 @@ namespace DemonWeaver.ExpressionCompiler
                 case LeftParenToken _:
                     LeftParen();
                     break;
+                case AndAlsoToken _:
+                    AndAlso();
+                    break;
                 case WithinToken _:
                     Within();
                     break;
@@ -43,6 +48,32 @@ namespace DemonWeaver.ExpressionCompiler
                     Eof();
                     break;
             }
+        }
+
+        //todo impl varargs
+        //todo remove hacky reordering between args 
+        void AndAlso()
+        {
+            if (Peek() is RightParenToken)
+                throw new WeavingException("(and) error"); //todo nicer message
+
+            _stack.Push(new AndSym());
+
+            var stackCountBeforeFirst = _stack.Count;
+
+            Parse(Pop());
+
+            var firstStack = new Stack<ISym>();
+            while (_stack.Count > stackCountBeforeFirst)
+                firstStack.Push(_stack.Pop());
+
+            Parse(Pop());
+
+            while (firstStack.Any())
+                _stack.Push(firstStack.Pop());
+
+            if (!(Peek() is RightParenToken))
+                throw new WeavingException("(and x y kdoawda99 error"); //todo nicer message
         }
 
         void LeftParen()
