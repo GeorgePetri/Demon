@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using DemonWeaver.ExpressionCompiler.Token;
 using DemonWeaver.ExpressionCompiler.Token.Interface;
 
@@ -7,6 +8,9 @@ namespace DemonWeaver.ExpressionCompiler
 {
     public static class Lexer
     {
+        //todo unit test this
+        static readonly Regex ValidateSymbol = new Regex(@"^[a-zA-Z*][\w.*]*$");
+
         public static IEnumerable<IToken> AnalyseExpression(string expression)
         {
             var withSpaceAroundLeftParens = expression.Replace("(", " ( ");
@@ -15,6 +19,8 @@ namespace DemonWeaver.ExpressionCompiler
 
             foreach (var value in split)
                 yield return Analyse(value);
+
+            yield return new EofToken();
         }
 
         static IToken Analyse(string value)
@@ -30,7 +36,9 @@ namespace DemonWeaver.ExpressionCompiler
                 case "within":
                     return new WithinToken();
                 default:
-                    throw new WeavingException("Invalid expression.");
+                    return ValidateSymbol.IsMatch(value)
+                        ? new SymbolToken(value)
+                        : throw new WeavingException("Invalid expression.");
             }
         }
     }

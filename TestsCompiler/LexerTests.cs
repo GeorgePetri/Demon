@@ -9,13 +9,14 @@ namespace TestsCompiler
     public class LexerTests
     {
         [Theory]
-        [InlineData(@"and ( ) within")]
-        [InlineData(@" and ( ) within ")]
-        [InlineData(@"and  (  )  within")]
+        [InlineData(@"and ( ) whatever within")]
+        [InlineData(@" and ( ) whatever within ")]
+        [InlineData(@"and  (  )  whatever  within")]
         [InlineData(@"
 and
 (
 )
+whatever
 within")]
         void ReturnsTokens_WhenMatchingEverything(string expression)
         {
@@ -26,7 +27,9 @@ within")]
             Assert.IsType<AndAlsoToken>(tokens[0]);
             Assert.IsType<LeftParenToken>(tokens[1]);
             Assert.IsType<RightParenToken>(tokens[2]);
-            Assert.IsType<WithinToken>(tokens[3]);
+            Assert.IsType<SymbolToken>(tokens[3]);
+            Assert.IsType<WithinToken>(tokens[4]);
+            Assert.IsType<EofToken>(tokens[5]);
         }
 
         [Theory]
@@ -44,18 +47,17 @@ within")]
         }
 
         [Fact]
-        void ReturnsEmpty_WhenWhitespace()
+        void ReturnsEof_WhenWhitespace()
         {
             //act
             var tokens = Lexer.AnalyseExpression(" ");
 
             //assert
-            Assert.Empty(tokens);
+            Assert.Single(tokens, t => t is EofToken);
         }
 
         [Theory]
         [InlineData(@"/")]
-        [InlineData(@"*")]
         [InlineData(@"%")]
         [InlineData(@"1")]
         [InlineData(@"-")]
