@@ -29,16 +29,30 @@ within")]
             Assert.IsType<WithinToken>(tokens[3]);
         }
 
+        [Theory]
+        [InlineData("(and)")]
+        [InlineData("( and )")]
+        void AnalysesParensWithoutWhitespace(string expression)
+        {
+            //act
+            var tokens = Lexer.AnalyseExpression(expression).ToList();
+
+            //assert
+            Assert.IsType<LeftParenToken>(tokens[0]);
+            Assert.IsType<AndAlsoToken>(tokens[1]);
+            Assert.IsType<RightParenToken>(tokens[2]);
+        }
+
         [Fact]
         void ReturnsEmpty_WhenWhitespace()
         {
             //act
             var tokens = Lexer.AnalyseExpression(" ");
-            
+
             //assert
             Assert.Empty(tokens);
         }
-        
+
         [Theory]
         [InlineData(@"/")]
         [InlineData(@"*")]
