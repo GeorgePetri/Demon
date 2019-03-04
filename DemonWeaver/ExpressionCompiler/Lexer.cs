@@ -9,7 +9,10 @@ namespace DemonWeaver.ExpressionCompiler
     public static class Lexer
     {
         //todo unit test this
-        static readonly Regex ValidateSymbol = new Regex(@"^[a-zA-Z*][\w.*]*$");
+        static readonly Regex SymbolRegex = new Regex(@"^[a-zA-Z*][\w.*]*$", RegexOptions.Compiled);
+
+        //todo unit test this
+        static readonly Regex StringRegex = new Regex(@"^#(\S)\w+$", RegexOptions.Compiled);
 
         public static IEnumerable<IToken> AnalyseExpression(string expression)
         {
@@ -39,10 +42,12 @@ namespace DemonWeaver.ExpressionCompiler
                     return new NotToken();
                 case "within":
                     return new WithinToken();
+                case var _ when SymbolRegex.IsMatch(value):
+                    return new SymbolToken(value);
+                case var _ when StringRegex.IsMatch(value):
+                    return new StringToken(value.Remove(0, 1));
                 default:
-                    return ValidateSymbol.IsMatch(value)
-                        ? new SymbolToken(value)
-                        : throw new WeavingException("Invalid expression.");
+                    throw new WeavingException("Invalid expression.");
             }
         }
     }

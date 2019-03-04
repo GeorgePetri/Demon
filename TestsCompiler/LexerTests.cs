@@ -9,15 +9,16 @@ namespace TestsCompiler
     public class LexerTests
     {
         [Theory]
-        [InlineData(@"and ( not or ) whatever within")]
-        [InlineData(@" and ( not or ) whatever within ")]
-        [InlineData(@"and  (  not  or  )  whatever  within")]
+        [InlineData(@"and ( not or ) #string whatever within")]
+        [InlineData(@" and ( not or ) #string whatever within ")]
+        [InlineData(@"and  (  not  or  )  #string  whatever  within")]
         [InlineData(@"
 and
 (
 not
 or
 )
+#string
 whatever
 within")]
         void ReturnsTokens_WhenMatchingEverything(string expression)
@@ -31,9 +32,10 @@ within")]
             Assert.IsType<NotToken>(tokens[2]);
             Assert.IsType<OrElseToken>(tokens[3]);
             Assert.IsType<RightParenToken>(tokens[4]);
-            Assert.IsType<SymbolToken>(tokens[5]);
-            Assert.IsType<WithinToken>(tokens[6]);
-            Assert.IsType<EofToken>(tokens[7]);
+            Assert.IsType<StringToken>(tokens[5]);
+            Assert.IsType<SymbolToken>(tokens[6]);
+            Assert.IsType<WithinToken>(tokens[7]);
+            Assert.IsType<EofToken>(tokens[8]);
         }
 
         [Theory]
