@@ -33,6 +33,10 @@ namespace DemonWeaver.ExpressionCompiler
                     return new RightParenToken();
                 case "and":
                     return new AndAlsoToken();
+                case "or":
+                    return new OrElseToken();
+                case "not":
+                    return new NotToken();
                 case "within":
                     return new WithinToken();
                 default:
