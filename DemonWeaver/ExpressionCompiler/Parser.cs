@@ -31,49 +31,25 @@ namespace DemonWeaver.ExpressionCompiler
         {
             switch (token)
             {
-                case LeftParenToken _:
-                    LeftParen();
-                    break;
-                case OrElseToken _:
-                    OrElse();
-                    break;
                 case AndAlsoToken _:
                     AndAlso();
-                    break;
-                case WithinToken _:
-                    Within();
                     break;
                 case EofToken _:
                     Eof();
                     break;
+                case LeftParenToken _:
+                    LeftParen();
+                    break;
+                case NotToken _:
+                    Not();
+                    break;
+                case OrElseToken _:
+                    OrElse();
+                    break;
+                case WithinToken _:
+                    Within();
+                    break;
             }
-        }
-
-        //todo copy pasted
-        //todo impl varargs
-        //todo remove hacky reordering between args 
-        void OrElse()
-        {
-            if (Peek() is RightParenToken)
-                throw new WeavingException("(or) error"); //todo nicer message
-
-            _stack.Push(new OrElseSym());
-
-            var stackCountBeforeFirst = _stack.Count;
-
-            Parse(Pop());
-
-            var firstStack = new Stack<ISym>();
-            while (_stack.Count > stackCountBeforeFirst)
-                firstStack.Push(_stack.Pop());
-
-            Parse(Pop());
-
-            while (firstStack.Any())
-                _stack.Push(firstStack.Pop());
-
-            if (!(Peek() is RightParenToken))
-                throw new WeavingException("(or x y kdoawda99 error"); //todo nicer message
         }
 
         //todo copy pasted
@@ -103,6 +79,10 @@ namespace DemonWeaver.ExpressionCompiler
                 throw new WeavingException("(and x y kdoawda99 error"); //todo nicer message
         }
 
+        void Eof()
+        {
+        }
+
         void LeftParen()
         {
             if (Peek() is RightParenToken)
@@ -119,6 +99,41 @@ namespace DemonWeaver.ExpressionCompiler
             }
         }
 
+        void Not()
+        {
+            if (Peek() is RightParenToken)
+                throw new WeavingException("(not) error"); //todo nicer message
+
+            _stack.Push(new NotSym());
+        }
+
+        //todo copy pasted
+        //todo impl varargs
+        //todo remove hacky reordering between args 
+        void OrElse()
+        {
+            if (Peek() is RightParenToken)
+                throw new WeavingException("(or) error"); //todo nicer message
+
+            _stack.Push(new OrElseSym());
+
+            var stackCountBeforeFirst = _stack.Count;
+
+            Parse(Pop());
+
+            var firstStack = new Stack<ISym>();
+            while (_stack.Count > stackCountBeforeFirst)
+                firstStack.Push(_stack.Pop());
+
+            Parse(Pop());
+
+            while (firstStack.Any())
+                _stack.Push(firstStack.Pop());
+
+            if (!(Peek() is RightParenToken))
+                throw new WeavingException("(or x y kdoawda99 error"); //todo nicer message
+        }
+
         //todo generalize to function call by arity
         void Within()
         {
@@ -131,10 +146,6 @@ namespace DemonWeaver.ExpressionCompiler
             }
             else
                 throw new WeavingException("\"within\" expects a string");
-        }
-
-        void Eof()
-        {
         }
 
         IToken Pop()
