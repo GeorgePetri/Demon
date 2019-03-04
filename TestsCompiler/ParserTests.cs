@@ -25,6 +25,39 @@ namespace TestsCompiler
             Assert.Empty(result);
         }
 
+        //todo copy pasted
+        [Fact]
+        void Or2Within()
+        {
+            //arrange
+            var tokens = new List<IToken>
+            {
+                new LeftParenToken(),
+                new OrElseToken(),
+                new LeftParenToken(),
+                new WithinToken(),
+                new StringToken("**.Get*"),
+                new RightParenToken(),
+                new LeftParenToken(),
+                new WithinToken(),
+                new StringToken("**.Set*"),
+                new RightParenToken(),
+                new RightParenToken(),
+                new EofToken()
+            }; // (or (within #**.Get*) (within #**.Set*))
+
+            //act
+            var result = new Parser(tokens).Parse();
+
+            //assert
+            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
+            Assert.IsType<WithinSym>(result.Pop());
+            Assert.Equal("**.Set*", ((StringSym) result.Pop()).Value);
+            Assert.IsType<WithinSym>(result.Pop());
+            Assert.IsType<OrElseSym>(result.Pop());
+            Assert.Empty(result);
+        }
+        
         [Fact]
         void And2Within()
         {
@@ -43,7 +76,7 @@ namespace TestsCompiler
                 new RightParenToken(),
                 new RightParenToken(),
                 new EofToken()
-            }; // (and(within #**.Get*) (within #**.Set*))
+            }; // (and (within #**.Get*) (within #**.Set*))
 
             //act
             var result = new Parser(tokens).Parse();
@@ -53,7 +86,7 @@ namespace TestsCompiler
             Assert.IsType<WithinSym>(result.Pop());
             Assert.Equal("**.Set*", ((StringSym) result.Pop()).Value);
             Assert.IsType<WithinSym>(result.Pop());
-            Assert.IsType<AndSym>(result.Pop());
+            Assert.IsType<AndAlsoSym>(result.Pop());
             Assert.Empty(result);
         }
     }

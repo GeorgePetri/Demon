@@ -12,12 +12,8 @@ namespace DemonWeaver.ExpressionCompiler
         readonly List<IToken> _tokens;
         readonly Stack<ISym> _stack = new Stack<ISym>();
 
-        //todo idea: generalize symbol
         //todo idea: poincuts are funcs with arity
-        public Parser(List<IToken> tokens)
-        {
-            _tokens = tokens;
-        }
+        public Parser(List<IToken> tokens) => _tokens = tokens;
 
         public Stack<ISym> Parse()
         {
@@ -38,6 +34,9 @@ namespace DemonWeaver.ExpressionCompiler
                 case LeftParenToken _:
                     LeftParen();
                     break;
+                case OrElseToken _:
+                    OrElse();
+                    break;
                 case AndAlsoToken _:
                     AndAlso();
                     break;
@@ -50,6 +49,34 @@ namespace DemonWeaver.ExpressionCompiler
             }
         }
 
+        //todo copy pasted
+        //todo impl varargs
+        //todo remove hacky reordering between args 
+        void OrElse()
+        {
+            if (Peek() is RightParenToken)
+                throw new WeavingException("(or) error"); //todo nicer message
+
+            _stack.Push(new OrElseSym());
+
+            var stackCountBeforeFirst = _stack.Count;
+
+            Parse(Pop());
+
+            var firstStack = new Stack<ISym>();
+            while (_stack.Count > stackCountBeforeFirst)
+                firstStack.Push(_stack.Pop());
+
+            Parse(Pop());
+
+            while (firstStack.Any())
+                _stack.Push(firstStack.Pop());
+
+            if (!(Peek() is RightParenToken))
+                throw new WeavingException("(or x y kdoawda99 error"); //todo nicer message
+        }
+
+        //todo copy pasted
         //todo impl varargs
         //todo remove hacky reordering between args 
         void AndAlso()
@@ -57,7 +84,7 @@ namespace DemonWeaver.ExpressionCompiler
             if (Peek() is RightParenToken)
                 throw new WeavingException("(and) error"); //todo nicer message
 
-            _stack.Push(new AndSym());
+            _stack.Push(new AndAlsoSym());
 
             var stackCountBeforeFirst = _stack.Count;
 
