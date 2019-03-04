@@ -97,10 +97,13 @@ namespace DemonWeaver.ExpressionCompiler
         {
             var popped = Pop();
 
-            if (popped is SymbolToken symbol)
-                _stack.Push(new WithinSym(symbol.Value));
+            if (popped is StringToken token)
+            {
+                _stack.Push(new WithinSym());
+                _stack.Push(new StringSym(token.Value));
+            }
             else
-                throw new WeavingException("\"within\" expects a symbol"); //todo is symbol name good here?
+                throw new WeavingException("\"within\" expects a string");
         }
 
         void Eof()

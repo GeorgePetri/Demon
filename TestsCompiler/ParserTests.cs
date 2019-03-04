@@ -14,18 +14,20 @@ namespace TestsCompiler
         void SimpleWithin()
         {
             //arrange
-            var tokens = new List<IToken> {new LeftParenToken(), new WithinToken(), new SymbolToken("**.Get*"), new RightParenToken(), new EofToken()};
+            var tokens = new List<IToken> {new LeftParenToken(), new WithinToken(), new StringToken("**.Get*"), new RightParenToken(), new EofToken()};
 
             //act
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Single(result, s => s is WithinSym within && within.Value == "**.Get*");
+            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
+            Assert.IsType<WithinSym>(result.Pop());
+            Assert.Empty(result);
         }
 
         [Fact]
         void And2Within()
-        {       
+        {
             //arrange
             var tokens = new List<IToken>
             {
@@ -33,22 +35,24 @@ namespace TestsCompiler
                 new AndAlsoToken(),
                 new LeftParenToken(),
                 new WithinToken(),
-                new SymbolToken("**.Get*"),
+                new StringToken("**.Get*"),
                 new RightParenToken(),
                 new LeftParenToken(),
                 new WithinToken(),
-                new SymbolToken("**.Set*"),
+                new StringToken("**.Set*"),
                 new RightParenToken(),
                 new RightParenToken(),
                 new EofToken()
-            };// (and(within **.Get*) (within "**.Set*"))
+            }; // (and(within #**.Get*) (within #**.Set*))
 
             //act
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Equal("**.Get*",((WithinSym)result.Pop()).Value);
-            Assert.Equal("**.Set*",((WithinSym)result.Pop()).Value);
+            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
+            Assert.IsType<WithinSym>(result.Pop());
+            Assert.Equal("**.Set*", ((StringSym) result.Pop()).Value);
+            Assert.IsType<WithinSym>(result.Pop());
             Assert.IsType<AndSym>(result.Pop());
             Assert.Empty(result);
         }
