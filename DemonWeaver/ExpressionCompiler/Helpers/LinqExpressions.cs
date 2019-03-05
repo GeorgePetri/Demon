@@ -8,9 +8,10 @@ using Mono.Collections.Generic;
 
 // ReSharper disable PossibleNullReferenceException
 // ReSharper disable AssignNullToNotNullAttribute
-namespace DemonWeaver.ExpressionCompiler
+namespace DemonWeaver.ExpressionCompiler.Helpers
 {
-    public static class LinqExpressionFactory
+    //todo move reflective calls to methods class
+    public static class LinqExpressions
     {
         static readonly MethodInfo IEnumerableOfTypeReferenceAllMethod = typeof(Enumerable)
             .GetMethod(nameof(Enumerable.All))
