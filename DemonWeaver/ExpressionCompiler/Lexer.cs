@@ -12,7 +12,7 @@ namespace DemonWeaver.ExpressionCompiler
         static readonly Regex SymbolRegex = new Regex(@"^[a-zA-Z*][\w.*]*$", RegexOptions.Compiled);
 
         //todo unit test this
-        static readonly Regex StringRegex = new Regex(@"^#(\S)\w+$", RegexOptions.Compiled);
+        static readonly Regex StringRegex = new Regex(@"^@(\S)\w+$", RegexOptions.Compiled);
 
         public static IEnumerable<IToken> AnalyseExpression(string expression)
         {

@@ -9,16 +9,16 @@ namespace TestsCompiler
     public class LexerTests
     {
         [Theory]
-        [InlineData(@"and ( not or ) #string whatever within")]
-        [InlineData(@" and ( not or ) #string whatever within ")]
-        [InlineData(@"and  (  not  or  )  #string  whatever  within")]
+        [InlineData(@"and ( not or ) @string whatever within")]
+        [InlineData(@" and ( not or ) @string whatever within ")]
+        [InlineData(@"and  (  not  or  )  @string  whatever  within")]
         [InlineData(@"
 and
 (
 not
 or
 )
-#string
+@string
 whatever
 within")]
         void ReturnsTokens_WhenMatchingEverything(string expression)

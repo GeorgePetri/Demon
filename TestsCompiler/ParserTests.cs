@@ -39,7 +39,7 @@ namespace TestsCompiler
                 new RightParenToken(),
                 new RightParenToken(),
                 new EofToken()
-            }; //(not (within #**.Get*))
+            }; //(not (within @**.Get*))
 
             //act
             var result = new Parser(tokens).Parse();
@@ -70,7 +70,7 @@ namespace TestsCompiler
                 new RightParenToken(),
                 new RightParenToken(),
                 new EofToken()
-            }; // (or (within #**.Get*) (within #**.Set*))
+            }; // (or (within @**.Get*) (within @**.Set*))
 
             //act
             var result = new Parser(tokens).Parse();
@@ -102,7 +102,7 @@ namespace TestsCompiler
                 new RightParenToken(),
                 new RightParenToken(),
                 new EofToken()
-            }; // (and (within #**.Get*) (within #**.Set*))
+            }; // (and (within @**.Get*) (within @**.Set*))
 
             //act
             var result = new Parser(tokens).Parse();
