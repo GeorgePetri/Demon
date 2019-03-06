@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Mono.Cecil;
 using Environment = DemonWeaver.ExpressionCompiler.Data.Environment;
 using PointcutExpression = DemonWeaver.PointcutExpressionCompiler.Data.PointcutExpression;
@@ -18,7 +19,11 @@ namespace DemonWeaver.ExpressionCompiler
 
         public Func<MethodDefinition, bool> Compile()
         {
-            return default;
+            var tokens = Lexer.AnalyseExpression(_expression.String).ToList();
+
+            var syms = new Parser(tokens).Parse();
+
+            return new CodeGenerator(syms, _expression.DefiningMethod, _environment).Generate();
         }
     }
 }

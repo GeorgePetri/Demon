@@ -7,15 +7,24 @@ using DemonWeaver.ExpressionCompiler.Helpers;
 using DemonWeaver.ExpressionCompiler.Sym;
 using DemonWeaver.ExpressionCompiler.Sym.Interface;
 using Mono.Cecil;
+using Environment = DemonWeaver.ExpressionCompiler.Data.Environment;
 
 namespace DemonWeaver.ExpressionCompiler
 {
     public class CodeGenerator
     {
         readonly Stack<ISym> _syms;
+        readonly MethodDefinition _definingMethod;
+        readonly Environment _environment;
+
         readonly Stack<Expression> _stack = new Stack<Expression>();
 
-        public CodeGenerator(Stack<ISym> syms) => _syms = syms;
+        public CodeGenerator(Stack<ISym> syms, MethodDefinition definingMethod, Environment environment)
+        {
+            _syms = syms;
+            _definingMethod = definingMethod;
+            _environment = environment;
+        }
 
         public Func<MethodDefinition, bool> Generate()
         {
