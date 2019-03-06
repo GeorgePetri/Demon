@@ -69,7 +69,11 @@ namespace DemonWeaver.ExpressionCompiler
 
         void Not()
         {
-            throw new System.NotImplementedException();
+            var previous = Pop();
+
+            var not = Expression.Not(previous);
+            
+            Push(not);
         }
 
         void OrElse()
