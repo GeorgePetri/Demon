@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using DemonWeaver.ExpressionCompiler.Helpers;
 using DemonWeaver.ExpressionCompiler.Sym;
 using DemonWeaver.ExpressionCompiler.Sym.Interface;
+using Mono.Cecil;
 
 namespace DemonWeaver.ExpressionCompiler
 {
@@ -14,9 +17,16 @@ namespace DemonWeaver.ExpressionCompiler
 
         public CodeGenerator(Stack<ISym> syms) => _syms = syms;
 
-        public void Generate()
+        public Func<MethodDefinition, bool> Generate()
         {
-            GenerateNext();
+            while (_syms.Any())
+                GenerateNext();
+
+            var body = Pop();
+
+            var expression = Expression.Lambda<Func<MethodDefinition, bool>>(body, LinqExpressions.Target);
+
+            return expression.Compile();
         }
 
         void GenerateNext()
@@ -70,12 +80,12 @@ namespace DemonWeaver.ExpressionCompiler
         {
             var withinParameter = GetString(Pop());
 
-            var regexInstance = Expression.Constant(MakeWithinPredicateRegex(withinParameter));
+            var regexInstance = Expression.Constant(CreateWithinPredicateRegex(withinParameter));
 
             Push(Expression.Call(regexInstance, Methods.RegexIsMatchMethod, LinqExpressions.TargetFullName));
         }
 
-        static Regex MakeWithinPredicateRegex(string value)
+        static Regex CreateWithinPredicateRegex(string value)
         {
             var escapeDot = value.Replace(".", @"\.");
 
