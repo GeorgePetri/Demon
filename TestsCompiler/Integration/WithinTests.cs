@@ -7,7 +7,6 @@ using Xunit;
 
 namespace TestsCompiler.Integration
 {
-    //todo copy test from within
     public class WithinTests
     {
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
@@ -24,6 +23,55 @@ namespace TestsCompiler.Integration
 
             //assert
             Assert.False(result.Any());
+        }
+        
+        [Fact]
+        public void IsTrue_ForWithinSpecificTarget()
+        {
+            //arrange
+            const string expression = @"(within @TestDataForCompiler.Services.UserService.Get)";
+
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, null), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Single(result);
+            Assert.Equal("Get", result[0].Name);
+        }
+
+        [Theory]
+        [InlineData(@"(within @TestDataForCompiler.Services.*.*)")]
+        [InlineData(@"(within @TestDataForCompiler.Services.*Service.*)")]
+        public void IsTrue_ForWithinStarTarget(string expression)
+        {
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, null), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Equal(2, result.Count);
+            Assert.Equal("Get", result[0].Name);
+            Assert.Equal("Get", result[1].Name);
+        }
+
+        [Theory]
+        [InlineData(@"(within @TestDataForCompiler.Services.**)")]
+        [InlineData(@"(within @TestDataForCompiler.Services.**.**)")]
+        [InlineData(@"(within @**Service.*)")]
+        public void IsTrue_ForWithinDoubleStarTarget(string expression)
+        {
+            //act
+            var func = Compiler.Compile(new PointcutExpression(expression, null), null);
+
+            var result = _module.FilterModule(func);
+
+            //assert
+            Assert.Equal(2, result.Count);
+            Assert.Equal("Get", result[0].Name);
+            Assert.Equal("Get", result[1].Name);
         }
     }
 }
