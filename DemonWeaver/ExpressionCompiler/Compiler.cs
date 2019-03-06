@@ -21,9 +21,9 @@ namespace DemonWeaver.ExpressionCompiler
         {
             var tokens = Lexer.AnalyseExpression(_expression.String).ToList();
 
-            var syms = new Parser(tokens).Parse();
+            var syms = Parser.Parse(tokens);
 
-            return new CodeGenerator(syms, _expression.DefiningMethod, _environment).Generate();
+            return CodeGenerator.Generate(syms, _expression.DefiningMethod, _environment);
         }
     }
 }

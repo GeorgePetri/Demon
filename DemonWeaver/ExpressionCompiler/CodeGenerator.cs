@@ -19,12 +19,11 @@ namespace DemonWeaver.ExpressionCompiler
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
 
-        public CodeGenerator(Stack<ISym> syms, MethodDefinition definingMethod, Environment environment)
-        {
-            _syms = syms;
-            _definingMethod = definingMethod;
-            _environment = environment;
-        }
+        public CodeGenerator(Stack<ISym> syms, MethodDefinition definingMethod, Environment environment) =>
+            (_syms, _definingMethod, _environment) = (syms, definingMethod, environment);
+
+        public static Func<MethodDefinition, bool> Generate(Stack<ISym> syms, MethodDefinition definingMethod, Environment environment) =>
+            new CodeGenerator(syms, definingMethod, environment).Generate();
 
         public Func<MethodDefinition, bool> Generate()
         {

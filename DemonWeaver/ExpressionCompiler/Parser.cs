@@ -10,11 +10,14 @@ namespace DemonWeaver.ExpressionCompiler
     public class Parser
     {
         readonly List<IToken> _tokens;
+
         //todo should probably replace with a simple list here and in code gen
         readonly Stack<ISym> _stack = new Stack<ISym>();
 
         //todo idea: poincuts are funcs with arity
         public Parser(List<IToken> tokens) => _tokens = tokens;
+
+        public static Stack<ISym> Parse(List<IToken> tokens) => new Parser(tokens).Parse();
 
         public Stack<ISym> Parse()
         {
