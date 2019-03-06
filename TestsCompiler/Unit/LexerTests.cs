@@ -4,7 +4,7 @@ using DemonWeaver.ExpressionCompiler;
 using DemonWeaver.ExpressionCompiler.Token;
 using Xunit;
 
-namespace TestsCompiler
+namespace TestsCompiler.Unit
 {
     public class LexerTests
     {

@@ -5,7 +5,7 @@ using DemonWeaver.ExpressionCompiler.Token;
 using DemonWeaver.ExpressionCompiler.Token.Interface;
 using Xunit;
 
-namespace TestsCompiler
+namespace TestsCompiler.Unit
 {
     //todo test errors
     public class ParserTests
