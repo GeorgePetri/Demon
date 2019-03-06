@@ -39,17 +39,19 @@ within")]
         }
 
         [Theory]
-        [InlineData("(and)")]
-        [InlineData("( and )")]
+        [InlineData("or(and)or")]
+        [InlineData("or ( and ) or")]
         void AnalysesParensWithoutWhitespace(string expression)
         {
             //act
             var tokens = Lexer.AnalyseExpression(expression).ToList();
 
             //assert
-            Assert.IsType<LeftParenToken>(tokens[0]);
-            Assert.IsType<AndAlsoToken>(tokens[1]);
-            Assert.IsType<RightParenToken>(tokens[2]);
+            Assert.IsType<OrElseToken>(tokens[0]);
+            Assert.IsType<LeftParenToken>(tokens[1]);
+            Assert.IsType<AndAlsoToken>(tokens[2]);
+            Assert.IsType<RightParenToken>(tokens[3]);
+            Assert.IsType<OrElseToken>(tokens[4]);
         }
 
         [Fact]
