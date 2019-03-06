@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
+using DemonWeaver.ExpressionCompiler.Data;
 using Mono.Cecil;
 using Environment = DemonWeaver.ExpressionCompiler.Data.Environment;
-using PointcutExpression = DemonWeaver.PointcutExpressionCompiler.Data.PointcutExpression;
 
 namespace DemonWeaver.ExpressionCompiler
 {

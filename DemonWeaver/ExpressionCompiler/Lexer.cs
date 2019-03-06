@@ -12,7 +12,7 @@ namespace DemonWeaver.ExpressionCompiler
         static readonly Regex SymbolRegex = new Regex(@"^[a-zA-Z*][\w.*]*$", RegexOptions.Compiled);
 
         //todo unit test this
-        static readonly Regex StringRegex = new Regex(@"^@(\S)\w+$", RegexOptions.Compiled);
+        static readonly Regex StringRegex = new Regex(@"^@[\w.*]*$", RegexOptions.Compiled);
 
         public static IEnumerable<IToken> AnalyseExpression(string expression)
         {
@@ -47,7 +47,7 @@ namespace DemonWeaver.ExpressionCompiler
                 case var _ when StringRegex.IsMatch(value):
                     return new StringToken(value.Remove(0, 1));
                 default:
-                    throw new WeavingException("Invalid expression.");
+                    throw new WeavingException($"Invalid expression. Failed at {value}");
             }
         }
     }
