@@ -62,17 +62,14 @@ namespace DemonWeaver.ExpressionCompiler
             }
         }
 
-        void AndAlso()
-        {
-            throw new System.NotImplementedException();
-        }
+        void AndAlso() => HandleBinaryOperation(Expression.AndAlso);
 
         void Not()
         {
             var previous = Pop();
 
             var not = Expression.Not(previous);
-            
+
             Push(not);
         }
 
@@ -115,5 +112,8 @@ namespace DemonWeaver.ExpressionCompiler
         Expression Pop() => _stack.Pop();
 
         static string GetString(Expression expression) => (string) ((ConstantExpression) expression).Value;
+
+        void HandleBinaryOperation(Func<Expression, Expression, Expression> func) =>
+            Push(func(Pop(), Pop()));
     }
 }

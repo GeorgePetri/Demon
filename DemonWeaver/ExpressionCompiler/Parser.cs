@@ -73,6 +73,9 @@ namespace DemonWeaver.ExpressionCompiler
             var firstStack = new Stack<ISym>();
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
+            
+            if ((Peek() is RightParenToken))
+                throw new WeavingException("(and x) error"); //todo nicer message
 
             Parse(Pop());
 
@@ -128,6 +131,9 @@ namespace DemonWeaver.ExpressionCompiler
             var firstStack = new Stack<ISym>();
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
+                        
+            if ((Peek() is RightParenToken))
+                throw new WeavingException("(or x) error"); //todo nicer message
 
             Parse(Pop());
 
