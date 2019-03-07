@@ -73,10 +73,7 @@ namespace DemonWeaver.ExpressionCompiler
             Push(not);
         }
 
-        void OrElse()
-        {
-            throw new System.NotImplementedException();
-        }
+        void OrElse() => HandleBinaryOperation(Expression.OrElse);
 
         void String(StringSym stringSym) => Push(Expression.Constant(stringSym.Value));
 
