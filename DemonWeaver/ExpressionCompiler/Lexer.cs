@@ -9,10 +9,10 @@ namespace DemonWeaver.ExpressionCompiler
     public static class Lexer
     {
         //todo unit test this
-        static readonly Regex SymbolRegex = new Regex(@"^[a-zA-Z*][\w.*]*$", RegexOptions.Compiled);
+        static readonly Regex SymbolRegex = new Regex(@"^[a-zA-Z*][\w.*-]*$", RegexOptions.Compiled);
 
         //todo unit test this
-        static readonly Regex StringRegex = new Regex(@"^@[\w.*]*$", RegexOptions.Compiled);
+        static readonly Regex StringRegex = new Regex(@"^@[\w.*-]*$", RegexOptions.Compiled);
 
         public static IEnumerable<IToken> AnalyseExpression(string expression)
         {
