@@ -50,6 +50,9 @@ namespace DemonWeaver.ExpressionCompiler
                 case OrElseToken _:
                     OrElse();
                     break;
+                case SymbolToken symbol:
+                    Symbol(symbol.Value);
+                    break;
                 case WithinToken _:
                     Within();
                     break;
@@ -74,7 +77,7 @@ namespace DemonWeaver.ExpressionCompiler
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
             
-            if ((Peek() is RightParenToken))
+            if (Peek() is RightParenToken)
                 throw new WeavingException("(and x) error"); //todo nicer message
 
             Parse(Pop());
@@ -132,7 +135,7 @@ namespace DemonWeaver.ExpressionCompiler
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
                         
-            if ((Peek() is RightParenToken))
+            if (Peek() is RightParenToken)
                 throw new WeavingException("(or x) error"); //todo nicer message
 
             Parse(Pop());
@@ -143,6 +146,8 @@ namespace DemonWeaver.ExpressionCompiler
             if (!(Peek() is RightParenToken))
                 throw new WeavingException("(or x y kdoawda99 error"); //todo nicer message
         }
+
+        void Symbol(string value) => _stack.Push(new SymbolSym(value));
 
         //todo generalize to function call by arity
         void Within()
@@ -170,6 +175,3 @@ namespace DemonWeaver.ExpressionCompiler
         IToken Peek() => _tokens.First();
     }
 }
-
-//( and ( within **.get* ) endpoints )
-//endpoints = ( within x.y.controllers.*.* )
