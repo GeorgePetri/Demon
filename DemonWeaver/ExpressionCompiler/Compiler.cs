@@ -18,6 +18,7 @@ namespace DemonWeaver.ExpressionCompiler
         public static Func<MethodDefinition, bool> Compile(PointcutExpression expression, Environment environment) =>
             new Compiler(expression, environment).Compile();
 
+        //todo the code can e ordered weirdly for complex expressions
         public Func<MethodDefinition, bool> Compile()
         {
             var tokens = Lexer.AnalyseExpression(_expression.String).ToList();
