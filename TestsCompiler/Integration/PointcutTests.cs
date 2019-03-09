@@ -11,7 +11,7 @@ namespace TestsCompiler.Integration
     {
         readonly ModuleDefinition _module = ModuleDefinition.ReadModule("TestDataForCompiler.dll");
 
-//        [Fact]
+        [Fact]
         public void SimpleWithin()
         {
             //arrange

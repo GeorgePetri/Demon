@@ -53,8 +53,8 @@ namespace DemonWeaver.ExpressionCompiler
                 case StringSym stringSym:
                     String(stringSym);
                     break;
-                case SymbolSym _:
-                    Symbol();
+                case SymbolSym symbol:
+                    Symbol(symbol.Value);
                     break;
                 case WithinSym _:
                     Within();
@@ -77,9 +77,11 @@ namespace DemonWeaver.ExpressionCompiler
 
         void String(StringSym stringSym) => Push(Expression.Constant(stringSym.Value));
 
-        void Symbol()
+        void Symbol(string value)
         {
-            throw new System.NotImplementedException();
+            var func = _environment.Resolve(value);
+
+            Push(Expression.Invoke(Expression.Constant(func), LinqExpressions.Target));
         }
 
         void Within()
