@@ -21,9 +21,9 @@ namespace TestsCompiler.Unit
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
-            Assert.IsType<WithinSym>(result.Pop());
-            Assert.Empty(result);
+            Assert.Equal("**.Get*", ((StringSym) result[0]).Value);
+            Assert.IsType<WithinSym>(result[1]);
+            Assert.Equal(2, result.Count);
         }
 
         [Fact]
@@ -46,11 +46,12 @@ namespace TestsCompiler.Unit
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
-            Assert.IsType<WithinSym>(result.Pop());
-            Assert.IsType<NotSym>(result.Pop());
-            Assert.Empty(result);
+            Assert.Equal("**.Get*", ((StringSym) result[0]).Value);
+            Assert.IsType<WithinSym>(result[1]);
+            Assert.IsType<NotSym>(result[2]);
+            Assert.Equal(3, result.Count);
         }
+
 
         //todo copy pasted
         [Fact]
@@ -77,12 +78,12 @@ namespace TestsCompiler.Unit
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
-            Assert.IsType<WithinSym>(result.Pop());
-            Assert.Equal("**.Set*", ((StringSym) result.Pop()).Value);
-            Assert.IsType<WithinSym>(result.Pop());
-            Assert.IsType<OrElseSym>(result.Pop());
-            Assert.Empty(result);
+            Assert.Equal("**.Get*", ((StringSym) result[0]).Value);
+            Assert.IsType<WithinSym>(result[1]);
+            Assert.Equal("**.Set*", ((StringSym) result[2]).Value);
+            Assert.IsType<WithinSym>(result[3]);
+            Assert.IsType<OrElseSym>(result[4]);
+            Assert.Equal(5,result.Count);
         }
 
         [Fact]
@@ -109,12 +110,12 @@ namespace TestsCompiler.Unit
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Equal("**.Get*", ((StringSym) result.Pop()).Value);
-            Assert.IsType<WithinSym>(result.Pop());
-            Assert.Equal("**.Set*", ((StringSym) result.Pop()).Value);
-            Assert.IsType<WithinSym>(result.Pop());
-            Assert.IsType<AndAlsoSym>(result.Pop());
-            Assert.Empty(result);
+            Assert.Equal("**.Get*", ((StringSym) result[0]).Value);
+            Assert.IsType<WithinSym>(result[1]);
+            Assert.Equal("**.Set*", ((StringSym) result[2]).Value);
+            Assert.IsType<WithinSym>(result[3]);
+            Assert.IsType<AndAlsoSym>(result[4]);
+            Assert.Equal(5,result.Count);
         }
 
         [Fact]
@@ -127,8 +128,8 @@ namespace TestsCompiler.Unit
             var result = new Parser(tokens).Parse();
 
             //assert
-            Assert.Equal("endpoints", ((SymbolSym) result.Pop()).Value);
-            Assert.Empty(result);
+            Assert.Equal("endpoints", ((SymbolSym) result[0]).Value);
+            Assert.Single(result);
         }
     }
 }

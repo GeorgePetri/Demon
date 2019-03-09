@@ -13,16 +13,16 @@ namespace DemonWeaver.ExpressionCompiler
 {
     public class CodeGenerator
     {
-        readonly Stack<ISym> _syms;
+        readonly List<ISym> _syms;
         readonly MethodDefinition _definingMethod;
         readonly Environment _environment;
 
         readonly Stack<Expression> _stack = new Stack<Expression>();
 
-        public CodeGenerator(Stack<ISym> syms, MethodDefinition definingMethod, Environment environment) =>
+        public CodeGenerator(List<ISym> syms, MethodDefinition definingMethod, Environment environment) =>
             (_syms, _definingMethod, _environment) = (syms, definingMethod, environment);
 
-        public static Func<MethodDefinition, bool> Generate(Stack<ISym> syms, MethodDefinition definingMethod, Environment environment) =>
+        public static Func<MethodDefinition, bool> Generate(List<ISym> syms, MethodDefinition definingMethod, Environment environment) =>
             new CodeGenerator(syms, definingMethod, environment).Generate();
 
         public Func<MethodDefinition, bool> Generate()
@@ -39,7 +39,11 @@ namespace DemonWeaver.ExpressionCompiler
 
         void GenerateNext()
         {
-            switch (_syms.Pop())
+            var value = _syms.First();
+
+            _syms.RemoveAt(0);
+
+            switch (value)
             {
                 case AndAlsoSym _:
                     AndAlso();

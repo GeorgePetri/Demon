@@ -11,15 +11,14 @@ namespace DemonWeaver.ExpressionCompiler
     {
         readonly List<IToken> _tokens;
 
-        readonly Stack<ISym> _stack = new Stack<ISym>();
         readonly List<ISym> _syms = new List<ISym>();
 
         //todo idea: poincuts are funcs with arity
         public Parser(List<IToken> tokens) => _tokens = tokens;
 
-        public static Stack<ISym> Parse(List<IToken> tokens) => new Parser(tokens).Parse();
+        public static List<ISym> Parse(List<IToken> tokens) => new Parser(tokens).Parse();
 
-        public Stack<ISym> Parse()
+        public List<ISym> Parse()
         {
             var first = PopToken();
 
@@ -28,7 +27,9 @@ namespace DemonWeaver.ExpressionCompiler
             else
                 throw new WeavingException("Expression must start with \"(\".");
 
-            return _stack;
+            _syms.Reverse();
+
+            return _syms;
         }
 
         void Parse(IToken token)
@@ -62,38 +63,15 @@ namespace DemonWeaver.ExpressionCompiler
             }
         }
 
-        //todo copy pasted
-        //todo impl varargs
-        //todo remove hacky reordering between args 
-        void AndAlso()
+        //todo nicer message
+        void AndAlso() =>
+            HandleAndOr(new AndAlsoSym(), "(and) error", "(and x) error", "(and x y error");
+
+        //todo this should reverse stuff after
+        void Args()
         {
-            if (PeekToken() is RightParenToken)
-                throw new WeavingException("(and) error"); //todo nicer message
-
-            _stack.Push(new AndAlsoSym());
-
-            var stackCountBeforeFirst = _stack.Count;
-
-            Parse(PopToken());
-
-            var firstStack = new Stack<ISym>();
-            while (_stack.Count > stackCountBeforeFirst)
-                firstStack.Push(_stack.Pop());
-
-            if (PeekToken() is RightParenToken)
-                throw new WeavingException("(and x) error"); //todo nicer message
-
-            Parse(PopToken());
-
-            while (firstStack.Any())
-                _stack.Push(firstStack.Pop());
-
-            if (!(PeekToken() is RightParenToken))
-                throw new WeavingException("(and x y kdoawda99 error"); //todo nicer message
+            
         }
-
-        //todo do logic here instead?
-        void Args() => _stack.Push(new ArgsSym());
 
         void Eof()
         {
@@ -120,40 +98,14 @@ namespace DemonWeaver.ExpressionCompiler
             if (PeekToken() is RightParenToken)
                 throw new WeavingException("(not) error"); //todo nicer message
 
-            _stack.Push(new NotSym());
+            PushSym(new NotSym());
         }
 
-        //todo copy pasted
-        //todo impl varargs
-        //todo remove hacky reordering between args 
-        void OrElse()
-        {
-            if (PeekToken() is RightParenToken)
-                throw new WeavingException("(or) error"); //todo nicer message
+        //todo nicer message
+        void OrElse() =>
+            HandleAndOr(new OrElseSym(), "(or) error", "(or x) error", "(or x y error");
 
-            _stack.Push(new OrElseSym());
-
-            var stackCountBeforeFirst = _stack.Count;
-
-            Parse(PopToken());
-
-            var firstStack = new Stack<ISym>();
-            while (_stack.Count > stackCountBeforeFirst)
-                firstStack.Push(_stack.Pop());
-
-            if (PeekToken() is RightParenToken)
-                throw new WeavingException("(or x) error"); //todo nicer message
-
-            Parse(PopToken());
-
-            while (firstStack.Any())
-                _stack.Push(firstStack.Pop());
-
-            if (!(PeekToken() is RightParenToken))
-                throw new WeavingException("(or x y kdoawda99 error"); //todo nicer message
-        }
-
-        void Symbol(string value) => _stack.Push(new SymbolSym(value));
+        void Symbol(string value) => PushSym(new SymbolSym(value));
 
         //todo generalize to function call by arity
         void Within()
@@ -162,8 +114,8 @@ namespace DemonWeaver.ExpressionCompiler
 
             if (popped is StringToken token)
             {
-                _stack.Push(new WithinSym());
-                _stack.Push(new StringSym(token.Value));
+                PushSym(new WithinSym());
+                PushSym(new StringSym(token.Value));
             }
             else
                 throw new WeavingException("\"within\" expects a string");
@@ -179,5 +131,33 @@ namespace DemonWeaver.ExpressionCompiler
         }
 
         IToken PeekToken() => _tokens.First();
+
+        void PushSym(ISym sym) => _syms.Add(sym);
+
+        //todo vararity
+        void HandleAndOr(ISym andOrSym, string errorArity0, string errorArity1, string errorArityMoreThan2)
+        {
+            if (PeekToken() is RightParenToken)
+                throw new WeavingException(errorArity0);
+
+            PushSym(andOrSym);
+
+            var beforeLength = _syms.Count;
+
+            Parse(PopToken());
+
+            if (PeekToken() is RightParenToken)
+                throw new WeavingException(errorArity1);
+
+            var added = _syms.GetRange(beforeLength, _syms.Count - beforeLength);
+            _syms.RemoveRange(beforeLength, _syms.Count - beforeLength);
+
+            Parse(PopToken());
+
+            _syms.AddRange(added);
+
+            if (!(PeekToken() is RightParenToken))
+                throw new WeavingException(errorArityMoreThan2);
+        }
     }
 }
