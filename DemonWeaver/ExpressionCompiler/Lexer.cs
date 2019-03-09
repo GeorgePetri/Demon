@@ -42,6 +42,8 @@ namespace DemonWeaver.ExpressionCompiler
                     return new NotToken();
                 case "within":
                     return new WithinToken();
+                case "args":
+                    return new ArgsToken();
                 case var _ when SymbolRegex.IsMatch(value):
                     return new SymbolToken(value);
                 case var _ when StringRegex.IsMatch(value):

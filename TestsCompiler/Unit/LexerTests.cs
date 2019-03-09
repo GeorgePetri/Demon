@@ -9,11 +9,12 @@ namespace TestsCompiler.Unit
     public class LexerTests
     {
         [Theory]
-        [InlineData(@"and ( not or ) @string whatever within")]
-        [InlineData(@" and ( not or ) @string whatever within ")]
-        [InlineData(@"and  (  not  or  )  @string  whatever  within")]
+        [InlineData(@"and args ( not or ) @string whatever within")]
+        [InlineData(@" and args ( not or ) @string whatever within ")]
+        [InlineData(@"and  args  (  not  or  )  @string  whatever  within")]
         [InlineData(@"
 and
+args
 (
 not
 or
@@ -28,14 +29,15 @@ within")]
 
             //assert
             Assert.IsType<AndAlsoToken>(tokens[0]);
-            Assert.IsType<LeftParenToken>(tokens[1]);
-            Assert.IsType<NotToken>(tokens[2]);
-            Assert.IsType<OrElseToken>(tokens[3]);
-            Assert.IsType<RightParenToken>(tokens[4]);
-            Assert.IsType<StringToken>(tokens[5]);
-            Assert.IsType<SymbolToken>(tokens[6]);
-            Assert.IsType<WithinToken>(tokens[7]);
-            Assert.IsType<EofToken>(tokens[8]);
+            Assert.IsType<ArgsToken>(tokens[1]);
+            Assert.IsType<LeftParenToken>(tokens[2]);
+            Assert.IsType<NotToken>(tokens[3]);
+            Assert.IsType<OrElseToken>(tokens[4]);
+            Assert.IsType<RightParenToken>(tokens[5]);
+            Assert.IsType<StringToken>(tokens[6]);
+            Assert.IsType<SymbolToken>(tokens[7]);
+            Assert.IsType<WithinToken>(tokens[8]);
+            Assert.IsType<EofToken>(tokens[9]);
         }
 
         [Theory]
