@@ -11,8 +11,8 @@ namespace DemonWeaver.ExpressionCompiler
     {
         readonly List<IToken> _tokens;
 
-        //todo should probably replace with a simple list here and in code gen
         readonly Stack<ISym> _stack = new Stack<ISym>();
+        readonly List<ISym> _syms = new List<ISym>();
 
         //todo idea: poincuts are funcs with arity
         public Parser(List<IToken> tokens) => _tokens = tokens;
@@ -21,7 +21,7 @@ namespace DemonWeaver.ExpressionCompiler
 
         public Stack<ISym> Parse()
         {
-            var first = Pop();
+            var first = PopToken();
 
             if (first is LeftParenToken)
                 LeftParen();
@@ -67,28 +67,28 @@ namespace DemonWeaver.ExpressionCompiler
         //todo remove hacky reordering between args 
         void AndAlso()
         {
-            if (Peek() is RightParenToken)
+            if (PeekToken() is RightParenToken)
                 throw new WeavingException("(and) error"); //todo nicer message
 
             _stack.Push(new AndAlsoSym());
 
             var stackCountBeforeFirst = _stack.Count;
 
-            Parse(Pop());
+            Parse(PopToken());
 
             var firstStack = new Stack<ISym>();
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
 
-            if (Peek() is RightParenToken)
+            if (PeekToken() is RightParenToken)
                 throw new WeavingException("(and x) error"); //todo nicer message
 
-            Parse(Pop());
+            Parse(PopToken());
 
             while (firstStack.Any())
                 _stack.Push(firstStack.Pop());
 
-            if (!(Peek() is RightParenToken))
+            if (!(PeekToken() is RightParenToken))
                 throw new WeavingException("(and x y kdoawda99 error"); //todo nicer message
         }
 
@@ -101,12 +101,12 @@ namespace DemonWeaver.ExpressionCompiler
 
         void LeftParen()
         {
-            if (Peek() is RightParenToken)
+            if (PeekToken() is RightParenToken)
                 throw new WeavingException("() error"); //todo nicer message
 
             while (true)
             {
-                var popped = Pop();
+                var popped = PopToken();
 
                 if (popped is RightParenToken)
                     break;
@@ -117,7 +117,7 @@ namespace DemonWeaver.ExpressionCompiler
 
         void Not()
         {
-            if (Peek() is RightParenToken)
+            if (PeekToken() is RightParenToken)
                 throw new WeavingException("(not) error"); //todo nicer message
 
             _stack.Push(new NotSym());
@@ -128,28 +128,28 @@ namespace DemonWeaver.ExpressionCompiler
         //todo remove hacky reordering between args 
         void OrElse()
         {
-            if (Peek() is RightParenToken)
+            if (PeekToken() is RightParenToken)
                 throw new WeavingException("(or) error"); //todo nicer message
 
             _stack.Push(new OrElseSym());
 
             var stackCountBeforeFirst = _stack.Count;
 
-            Parse(Pop());
+            Parse(PopToken());
 
             var firstStack = new Stack<ISym>();
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
 
-            if (Peek() is RightParenToken)
+            if (PeekToken() is RightParenToken)
                 throw new WeavingException("(or x) error"); //todo nicer message
 
-            Parse(Pop());
+            Parse(PopToken());
 
             while (firstStack.Any())
                 _stack.Push(firstStack.Pop());
 
-            if (!(Peek() is RightParenToken))
+            if (!(PeekToken() is RightParenToken))
                 throw new WeavingException("(or x y kdoawda99 error"); //todo nicer message
         }
 
@@ -158,7 +158,7 @@ namespace DemonWeaver.ExpressionCompiler
         //todo generalize to function call by arity
         void Within()
         {
-            var popped = Pop();
+            var popped = PopToken();
 
             if (popped is StringToken token)
             {
@@ -169,7 +169,7 @@ namespace DemonWeaver.ExpressionCompiler
                 throw new WeavingException("\"within\" expects a string");
         }
 
-        IToken Pop()
+        IToken PopToken()
         {
             var result = _tokens.First();
 
@@ -178,6 +178,6 @@ namespace DemonWeaver.ExpressionCompiler
             return result;
         }
 
-        IToken Peek() => _tokens.First();
+        IToken PeekToken() => _tokens.First();
     }
 }
