@@ -6,6 +6,7 @@ using Environment = DemonWeaver.ExpressionCompiler.Data.Environment;
 
 namespace DemonWeaver.ExpressionCompiler
 {
+    //todo should functions with no argument require parentheses?
     public class Compiler
     {
         readonly PointcutExpression _expression;
