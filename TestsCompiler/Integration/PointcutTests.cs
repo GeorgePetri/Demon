@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+using System.Linq;
+using DemonWeaver;
 using DemonWeaver.ExpressionCompiler;
 using DemonWeaver.ExpressionCompiler.Data;
 using Mono.Cecil;
@@ -15,15 +16,10 @@ namespace TestsCompiler.Integration
         public void SimpleWithin()
         {
             //arrange
-            const string pointcutExpression = @"(within @TestDataForCompiler.Services.UserService.Get)";
-            const string pointcutKey = "user-service";
-            const string expression = "(" + pointcutKey + ")";
-
-            var definitions = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};
-            var context = new Environment(definitions);
+            var env = CreateEnvironment(("user-service", @"(within @TestDataForCompiler.Services.UserService.Get)"));
 
             //act
-            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
+            var func = Compiler.Compile(new PointcutExpression("(user-service)", null), env);
 
             var result = _module.FilterModule(func);
 
@@ -36,15 +32,10 @@ namespace TestsCompiler.Integration
         public void SimpleNegatedWithin()
         {
             //arrange
-            const string pointcutExpression = @"(not (within @TestDataForCompiler.Services.UserService.Get))";
-            const string pointcutKey = "user-service";
-            const string expression = "(" + pointcutKey + ")";
-
-            var definitions = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};
-            var context = new Environment(definitions);
+            var env = CreateEnvironment(("user-service", @"(not (within @TestDataForCompiler.Services.UserService.Get))"));
 
             //act
-            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
+            var func = Compiler.Compile(new PointcutExpression("(user-service)", null), env);
 
             var result = _module.FilterModule(func);
 
@@ -55,42 +46,27 @@ namespace TestsCompiler.Integration
         [Fact]
         public void SimpleNegatedPointcutWithin()
         {
-            //arrange
-            const string pointcutExpression = @"(within @TestDataForCompiler.Services.UserService.Get)";
-            const string pointcutKey = "user-service";
-            const string expression = "(not (" + pointcutKey + "))";
-
-            var definitions = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};
-            var context = new Environment(definitions);
+            var env = CreateEnvironment(("user-service", @"(within @TestDataForCompiler.Services.UserService.Get)"));
 
             //act
-            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
+            var func = Compiler.Compile(new PointcutExpression("(not (user-service))", null), env);
 
             var result = _module.FilterModule(func);
 
             //assert  
             Assert.DoesNotContain(result, m => m.Name == "Get" && m.DeclaringType.Name == "UserService");
         }
-        
+
         [Fact]
         public void NestedWithin()
         {
             //arrange
-            const string pointcutInnerExpression = @"(within @TestDataForCompiler.Services.UserService.Get)";
-            const string pointcutInnerKey = "user-service";
-            const string pointcutOuterExpression = "(" + pointcutInnerKey + ")";
-            const string pointcutOuterKey = "user-service-call";
-            const string expression = "(" + pointcutOuterKey + ")";
-
-            var definitions = new Dictionary<string, PointcutExpression>
-            {
-                {pointcutInnerKey, new PointcutExpression(pointcutInnerExpression, null)},
-                {pointcutOuterKey, new PointcutExpression(pointcutOuterExpression, null)}
-            };
-            var context = new Environment(definitions);
+            var env = CreateEnvironment(
+                ("user-service", @"(within @TestDataForCompiler.Services.UserService.Get)"),
+                ("user-service-call", "(user-service)"));
 
             //act
-            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
+            var func = Compiler.Compile(new PointcutExpression("(user-service-call)", null), env);
 
             var result = _module.FilterModule(func);
 
@@ -103,24 +79,13 @@ namespace TestsCompiler.Integration
         public void NestedMultipleComplexWithin()
         {
             //arrange
-            const string pointcutInner1Expression = @"(within @TestDataForCompiler.Controllers.UserController.*)";
-            const string pointcutInner1Key = "user-controller";
-            const string pointcutInner2Expression = @"(within @**.Post)";
-            const string pointcutInner2Key = "post";
-            const string pointcutOuterExpression = "(and (" +pointcutInner1Key + ")" + "(not(" + pointcutInner2Key + ")))";
-            const string pointcutOuterKey = "user-controller-and-not-post";
-            const string expression = "(" + pointcutOuterKey + ")";
-
-            var definitions = new Dictionary<string, PointcutExpression>
-            {
-                {pointcutInner1Key, new PointcutExpression(pointcutInner1Expression, null)},
-                {pointcutInner2Key, new PointcutExpression(pointcutInner2Expression, null)},
-                {pointcutOuterKey, new PointcutExpression(pointcutOuterExpression, null)}
-            };
-            var context = new Environment(definitions);
+            var env = CreateEnvironment(
+                ("user-controller", @"(within @TestDataForCompiler.Controllers.UserController.*)"),
+                ("post", @"(within @**.Post)"),
+                ("user-controller-and-not-post", "(and (user-controller) (not (post)))"));
 
             //act
-            var func = Compiler.Compile(new PointcutExpression(expression, null), context);
+            var func = Compiler.Compile(new PointcutExpression("(user-controller-and-not-post)", null), env);
 
             var result = _module.FilterModule(func);
 
@@ -128,5 +93,9 @@ namespace TestsCompiler.Integration
             Assert.Single(result);
             Assert.Equal("Get", result[0].Name);
         }
+
+        static Environment CreateEnvironment(params (string key, string expression)[] expressions) =>
+            expressions.ToDictionary(t => t.key, t => new PointcutExpression(t.expression, null))
+                .Let(d => new Environment(d));
     }
 }
