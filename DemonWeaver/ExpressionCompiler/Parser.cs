@@ -38,6 +38,9 @@ namespace DemonWeaver.ExpressionCompiler
                 case AndAlsoToken _:
                     AndAlso();
                     break;
+                case ArgsToken _:
+                    Args();
+                    break;
                 case EofToken _:
                     Eof();
                     break;
@@ -76,7 +79,7 @@ namespace DemonWeaver.ExpressionCompiler
             var firstStack = new Stack<ISym>();
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
-            
+
             if (Peek() is RightParenToken)
                 throw new WeavingException("(and x) error"); //todo nicer message
 
@@ -88,6 +91,9 @@ namespace DemonWeaver.ExpressionCompiler
             if (!(Peek() is RightParenToken))
                 throw new WeavingException("(and x y kdoawda99 error"); //todo nicer message
         }
+
+        //todo do logic here instead?
+        void Args() => _stack.Push(new ArgsSym());
 
         void Eof()
         {
@@ -134,7 +140,7 @@ namespace DemonWeaver.ExpressionCompiler
             var firstStack = new Stack<ISym>();
             while (_stack.Count > stackCountBeforeFirst)
                 firstStack.Push(_stack.Pop());
-                        
+
             if (Peek() is RightParenToken)
                 throw new WeavingException("(or x) error"); //todo nicer message
 
