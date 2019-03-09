@@ -16,7 +16,7 @@ namespace TestsCompiler.Integration
         {
             //arrange
             const string pointcutExpression = @"(within @TestDataForCompiler.Services.UserService.Get)";
-            const string pointcutKey = "UserService";
+            const string pointcutKey = "user-service";
             const string expression = "(" + pointcutKey + ")";
 
             var definitions = new Dictionary<string, PointcutExpression> {{pointcutKey, new PointcutExpression(pointcutExpression, null)}};

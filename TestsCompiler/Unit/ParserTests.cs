@@ -8,6 +8,7 @@ using Xunit;
 namespace TestsCompiler.Unit
 {
     //todo test errors
+    //todo validate symbol
     public class ParserTests
     {
         [Fact]
@@ -113,6 +114,20 @@ namespace TestsCompiler.Unit
             Assert.Equal("**.Set*", ((StringSym) result.Pop()).Value);
             Assert.IsType<WithinSym>(result.Pop());
             Assert.IsType<AndAlsoSym>(result.Pop());
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        void SimpleSymbol()
+        {
+            //arrange
+            var tokens = new List<IToken> {new LeftParenToken(), new SymbolToken("endpoints"), new RightParenToken(), new EofToken()};
+
+            //act
+            var result = new Parser(tokens).Parse();
+
+            //assert
+            Assert.Equal("endpoints", ((SymbolSym) result.Pop()).Value);
             Assert.Empty(result);
         }
     }
