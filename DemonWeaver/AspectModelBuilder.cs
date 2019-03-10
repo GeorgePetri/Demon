@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DemonWeaver.Data;
 using DemonWeaver.ExpressionCompiler;
@@ -42,7 +43,6 @@ namespace DemonWeaver
         }
 
         //todo this is kinda copy paste, fix 
-        //todo transforms to kebab case
         void AddMethodToDictionariesIfNeeded(MethodDefinition method)
         {
             foreach (var attribute in method.CustomAttributes)
@@ -51,7 +51,7 @@ namespace DemonWeaver
                 {
                     var pointcutExpression = (string) attribute.ConstructorArguments[0].Value;
 
-                    var addedSuccessfully = _pointcutDefinitions.TryAdd(method.Name, new PointcutExpression(pointcutExpression, method));
+                    var addedSuccessfully = _pointcutDefinitions.TryAdd(ToKebabCase(method.Name), new PointcutExpression(pointcutExpression, method));
 
                     if (!addedSuccessfully)
                         throw new WeavingException($"More than one pointcut with the name {method.Name} found.");
@@ -75,6 +75,14 @@ namespace DemonWeaver
                     break;
                 }
             }
+        }
+
+        //todo unit test this
+        string ToKebabCase(string pascalCased)
+        {
+            var camelCased = char.ToLowerInvariant(pascalCased[0]) + pascalCased.Substring(1);
+            
+            return Regex.Replace(camelCased, "(?<=.)([A-Z])", m => $"-{m.Value.ToLower()}", RegexOptions.Compiled);
         }
 
         List<AdviceModel> ProcessAdvice()

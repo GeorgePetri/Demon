@@ -18,25 +18,25 @@ namespace TestDataForWeaving.Args
         {
         }
 
-        [Before("(and (WithinArgsTarget) (args @i))")]
+        [Before("(and (within-args-target) (args @i))")]
         public void SingleInt(int i)
         {
             LastBoundInt = i;
         }
 
-        [Before("(and (WithinArgsTarget) (args))")]
+        [Before("(and (within-args-target) (args))")]
         public void Empty()
         {
             EmptyCalled = true;
         }
 
-        [Before("(and (WithinArgsTarget) (or (args @s @*) (args)))")]
+        [Before("(and (within-args-target) (or (args @s @*) (args)))")]
         public void OptionalStringBinding(string s)
         {
             LastBoundString = s;
         }
         
-        [Before("(and (WithinArgsTarget) (or (args @c) (args)))")]
+        [Before("(and (within-args-target) (or (args @c) (args)))")]
         public void OptionalComplex(ComplexClass c)
         {
             LastBoundComplex = c;
