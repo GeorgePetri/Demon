@@ -8,7 +8,7 @@ namespace TestDataForWeavingDependency
     {
         public bool AdviceCalled { get; set; }
 
-        [Before("Within(TestDataForWeaving.DependencyAspectTarget.Target.*)")]
+        [Before("(within @TestDataForWeaving.DependencyAspectTarget.Target.*)")]
         public void TargetInt(int i)
         {
             AdviceCalled = true;

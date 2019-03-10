@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DemonWeaver.Data;
-using DemonWeaver.PointcutExpressionCompiler;
-using DemonWeaver.PointcutExpressionCompiler.Data;
+using DemonWeaver.ExpressionCompiler;
+using DemonWeaver.ExpressionCompiler.Data;
 using Mono.Cecil;
+using Environment = DemonWeaver.ExpressionCompiler.Data.Environment;
 
 namespace DemonWeaver
 {
@@ -78,7 +79,7 @@ namespace DemonWeaver
 
         List<AdviceModel> ProcessAdvice()
         {
-            var pointcutContext = new PointcutContext(_pointcutDefinitions);
+            var environment = new Environment(_pointcutDefinitions);
 
             IEnumerable<AdviceModel> CompileAdvice
             (
@@ -90,7 +91,7 @@ namespace DemonWeaver
                     {
                         try
                         {
-                            var compiledFunc = Compiler.Compile(d, pointcutContext);
+                            var compiledFunc = Compiler.Compile(d, environment);
                             return func(d, compiledFunc);
                         }
                         catch (WeavingException e)

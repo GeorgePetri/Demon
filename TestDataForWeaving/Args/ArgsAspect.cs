@@ -13,30 +13,30 @@ namespace TestDataForWeaving.Args
 
         public bool EmptyCalled { get; set; }
 
-        [Pointcut("Within(TestDataForWeaving.Args.ArgsTarget.*)")]
+        [Pointcut("(within @TestDataForWeaving.Args.ArgsTarget.*)")]
         void WithinArgsTarget()
         {
         }
 
-        [Before("WithinArgsTarget() Args(i) &&")]
+        [Before("(and (WithinArgsTarget) (args @i))")]
         public void SingleInt(int i)
         {
             LastBoundInt = i;
         }
 
-        [Before("WithinArgsTarget() Args() &&")]
+        [Before("(and (WithinArgsTarget) (args))")]
         public void Empty()
         {
             EmptyCalled = true;
         }
 
-        [Before("WithinArgsTarget() Args(s,*) Args() || &&")]
+        [Before("(and (WithinArgsTarget) (or (args @s @*) (args)))")]
         public void OptionalStringBinding(string s)
         {
             LastBoundString = s;
         }
         
-        [Before("WithinArgsTarget() Args(c) Args() || &&")]
+        [Before("(and (WithinArgsTarget) (or (args @c) (args)))")]
         public void OptionalComplex(ComplexClass c)
         {
             LastBoundComplex = c;

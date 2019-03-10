@@ -7,7 +7,7 @@ namespace TestDataForWeaving.Before.StaticTargetStaticAspect
     [Aspect]
     public static class Aspect
     {
-        [Before("Within(TestDataForWeaving.Before.StaticTargetStaticAspect.Target.OneInt)")]
+        [Before("(within @TestDataForWeaving.Before.StaticTargetStaticAspect.Target.OneInt)")]
         public static void Before()
         {
             throw new Exception("Weaved");

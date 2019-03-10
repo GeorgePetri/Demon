@@ -7,12 +7,12 @@ namespace TestDataForWeaving.TypeJoinPoint
     {
         public Demon.JoinPoint.TypeJoinPoint BoundTypeJoinPoint { get; private set; } 
             
-        [Pointcut("Within(TestDataForWeaving.TypeJoinPoint.Target.*)")]
+        [Pointcut("(within @TestDataForWeaving.TypeJoinPoint.Target.*)")]
         void WithinTypeJoinPoint()
         {
         }
 
-        [Before("WithinTypeJoinPoint() Args() &&")]
+        [Before("(and (WithinTypeJoinPoint) (args))")]
         public void SingleInt(Demon.JoinPoint.TypeJoinPoint point)
         {
             BoundTypeJoinPoint = point;
