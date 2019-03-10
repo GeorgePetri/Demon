@@ -13,7 +13,6 @@ namespace DemonWeaver.ExpressionCompiler
 
         readonly List<ISym> _syms = new List<ISym>();
 
-        //todo idea: poincuts are funcs with arity
         public Parser(List<IToken> tokens) => _tokens = tokens;
 
         public static List<ISym> Parse(List<IToken> tokens) => new Parser(tokens).Parse();
@@ -67,10 +66,23 @@ namespace DemonWeaver.ExpressionCompiler
         void AndAlso() =>
             HandleAndOr(new AndAlsoSym(), "(and) error", "(and x) error", "(and x y error");
 
-        //todo this should reverse stuff after
         void Args()
         {
-            
+            var stringArgs = new List<StringSym>();
+
+            while (true)
+            {
+                if (PeekToken() is RightParenToken)
+                    break;
+
+                if (PopToken() is StringToken token)
+                    stringArgs.Add(new StringSym(token.Value));
+                else
+                    throw new WeavingException("Args must have only string parameters");
+            }
+
+            PushSym(new ArgsSym(stringArgs.Count));
+            _syms.AddRange(stringArgs);
         }
 
         void Eof()
