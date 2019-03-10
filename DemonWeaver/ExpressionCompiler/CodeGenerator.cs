@@ -147,7 +147,7 @@ namespace DemonWeaver.ExpressionCompiler
 
             var regexInstance = Expression.Constant(CreateWithinPredicateRegex(withinParameter));
 
-            Push(Expression.Call(regexInstance, Methods.RegexIsMatchMethod, LinqExpressions.TargetFullName));
+            Push(Expression.Call(regexInstance, Methods.Regex_IsMatch, LinqExpressions.TargetFullName));
         }
 
         static Regex CreateWithinPredicateRegex(string value)
