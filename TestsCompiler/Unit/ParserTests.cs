@@ -83,7 +83,7 @@ namespace TestsCompiler.Unit
             Assert.Equal("**.Set*", ((StringSym) result[2]).Value);
             Assert.IsType<WithinSym>(result[3]);
             Assert.IsType<OrElseSym>(result[4]);
-            Assert.Equal(5,result.Count);
+            Assert.Equal(5, result.Count);
         }
 
         [Fact]
@@ -115,7 +115,7 @@ namespace TestsCompiler.Unit
             Assert.Equal("**.Set*", ((StringSym) result[2]).Value);
             Assert.IsType<WithinSym>(result[3]);
             Assert.IsType<AndAlsoSym>(result[4]);
-            Assert.Equal(5,result.Count);
+            Assert.Equal(5, result.Count);
         }
 
         [Fact]
@@ -130,6 +130,51 @@ namespace TestsCompiler.Unit
             //assert
             Assert.Equal("endpoints", ((SymbolSym) result[0]).Value);
             Assert.Single(result);
+        }
+
+        [Fact]
+        void ArgsEmpty()
+        {
+            //arrange
+            var tokens = new List<IToken> {new LeftParenToken(), new ArgsToken(), new RightParenToken(), new EofToken()};
+
+            //act
+            var result = new Parser(tokens).Parse();
+
+            //assert
+            Assert.Equal(0, ((ArgsSym) result[0]).Arity);
+            Assert.Single(result);
+        }
+
+        [Fact]
+        void ArgsOne()
+        {
+            //arrange
+            var tokens = new List<IToken> {new LeftParenToken(), new ArgsToken(), new StringToken("i"), new RightParenToken(), new EofToken()};
+
+            //act
+            var result = new Parser(tokens).Parse();
+
+            //assert
+            Assert.Equal("i", ((StringSym) result[0]).Value);
+            Assert.Equal(1, ((ArgsSym) result[1]).Arity);
+            Assert.Equal(2, result.Count);
+        }
+
+        [Fact]
+        void ArgsTwo()
+        {
+            //arrange
+            var tokens = new List<IToken> {new LeftParenToken(), new ArgsToken(), new StringToken("i"), new StringToken("s"), new RightParenToken(), new EofToken()};
+
+            //act
+            var result = new Parser(tokens).Parse();
+
+            //assert
+            Assert.Equal("i", ((StringSym) result[0]).Value);
+            Assert.Equal("s", ((StringSym) result[1]).Value);
+            Assert.Equal(2, ((ArgsSym) result[2]).Arity);
+            Assert.Equal(3, result.Count);
         }
     }
 }

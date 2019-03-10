@@ -7,6 +7,8 @@ using DemonWeaver.ExpressionCompiler.Token.Interface;
 
 namespace DemonWeaver.ExpressionCompiler
 {
+    //todo try getting rid of weird reverses, by using tress
+    //todo idea: impl proper functions with proper calling order?
     public class Parser
     {
         readonly List<IToken> _tokens;
@@ -82,6 +84,9 @@ namespace DemonWeaver.ExpressionCompiler
             }
 
             PushSym(new ArgsSym(stringArgs.Count));
+
+            stringArgs.Reverse();
+            
             _syms.AddRange(stringArgs);
         }
 
