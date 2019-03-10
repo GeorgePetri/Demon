@@ -41,6 +41,7 @@ namespace DemonWeaver
         }
 
         //todo this is kinda copy paste, fix 
+        //todo transforms to kebab case
         void AddMethodToDictionariesIfNeeded(MethodDefinition method)
         {
             foreach (var attribute in method.CustomAttributes)

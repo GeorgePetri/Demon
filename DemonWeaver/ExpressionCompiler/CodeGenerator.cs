@@ -48,6 +48,9 @@ namespace DemonWeaver.ExpressionCompiler
                 case AndAlsoSym _:
                     AndAlso();
                     break;
+                case ArgsSym args:
+                    Args(args.Arity);
+                    break;
                 case NotSym _:
                     Not();
                     break;
@@ -67,6 +70,12 @@ namespace DemonWeaver.ExpressionCompiler
         }
 
         void AndAlso() => HandleBinaryOperation(Expression.AndAlso);
+
+        void Args(int arity)
+        {
+            if (arity == 0)
+                Push(Expression.Not(LinqExpressions.HasParameters));
+        }
 
         void Not()
         {
