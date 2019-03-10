@@ -71,10 +71,54 @@ namespace DemonWeaver.ExpressionCompiler
 
         void AndAlso() => HandleBinaryOperation(Expression.AndAlso);
 
+        //todo move exceptions and defining method logic to parser
         void Args(int arity)
         {
             if (arity == 0)
                 Push(Expression.Not(LinqExpressions.HasParameters));
+            else
+            {
+                var strings = new List<string>();
+                for (var i = 0; i < arity; i++) 
+                    strings.Add(GetString(Pop()));
+
+                var toBeBound = new HashSet<(string name, TypeReference type)>();
+                var argCountMustBeAtLeast = 0;
+                var argCountHasUpperBound = true;
+                foreach (var argument in strings)
+                {
+                    argCountMustBeAtLeast++;
+
+                    if (argument == @"**")
+                    {
+                        argCountHasUpperBound = false;
+                        continue;
+                    }
+
+                    if (argument == @"*")
+                        continue;
+
+                    var parameterDefinition = _definingMethod
+                                                  .Parameters
+                                                  .FirstOrDefault(p => p.Name == argument)
+                                              ?? throw new WeavingException($"{argument} is not found in the defining method");
+
+                    toBeBound.Add((argument, parameterDefinition.ParameterType));
+                }
+
+                Push(argCountHasUpperBound
+                    ? LinqExpressions.TargetParameterEqual(argCountMustBeAtLeast)
+                    : LinqExpressions.TargetParameterGreaterThanOrEqual(argCountMustBeAtLeast));
+
+                if (toBeBound.Any())
+                {
+                    var previous = Pop();
+
+                    var targetHasParametersOfType = LinqExpressions.TargetHasParametersOfType(toBeBound.Select(t => t.type));
+
+                    Push(Expression.AndAlso(previous, targetHasParametersOfType));
+                }
+            }
         }
 
         void Not()
