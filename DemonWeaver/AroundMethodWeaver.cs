@@ -34,9 +34,11 @@ namespace DemonWeaver
             throw new NotImplementedException();
         }
 
+        //todo target should be sync, filter 
         void WeaveSync(ParameterDefinition parameterDefinition)
         {
-            
+            //todo copy the target method to a new delegate that is inside proceed
+            //todo then the target only delegates to proceed
         }
 
         bool IsSync(ParameterDefinition parameterDefinition)
