@@ -79,14 +79,14 @@ namespace DemonWeaver
             var importedAdvice = target.Module.ImportReference(advice);
 
             if (advice.IsStatic)
-                new AroundMethodWeaver(this, target, importedAdvice, null).Weave();
+                new AroundMethodWeaver(_demonTypes, target, importedAdvice, null).Weave();
             else
             {
                 var field = GetOrAddFieldIfNeeded(importedAdvice.DeclaringType);
 
                 AddToConstructorIfNeeded(importedAdvice.DeclaringType, field);
 
-                new AroundMethodWeaver(this, target, importedAdvice, field).Weave();
+                new AroundMethodWeaver(_demonTypes, target, importedAdvice, field).Weave();
             }
         }
 

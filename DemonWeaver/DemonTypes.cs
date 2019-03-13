@@ -38,6 +38,9 @@ namespace DemonWeaver
             public const string AroundAttribute = "Demon.Aspect.AroundAttribute";
             
             public const string TypeJoinPoint = "Demon.JoinPoint.TypeJoinPoint";
+            
+            public const string SyncProceed = "Demon.JoinPoint.Proceed.SyncProceed";
+            public const string AsyncProceed = "Demon.JoinPoint.Proceed.AsyncProceed";
         }
     }
 }
