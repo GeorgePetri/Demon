@@ -27,10 +27,11 @@ namespace DemonWeaver
 
         public void Weave()
         {
-            var proceed = GetProceed();
+            var joinPoint = GetJoinPoint();
             
-            if(IsSync(proceed))
-                WeaveSync(proceed);
+            if(IsSync(joinPoint))
+                WeaveSync(joinPoint);
+            
             throw new NotImplementedException();
         }
 
@@ -45,17 +46,18 @@ namespace DemonWeaver
         {
             switch (parameterDefinition.ParameterType.FullName)
             {
-                case DemonTypes.FullNames.SyncProceed:
-                    return true;
-                case DemonTypes.FullNames.AsyncProceed:
-                    return false;
+//                case DemonTypes.FullNames.SyncProceed:
+//                    return true;
+//                case DemonTypes.FullNames.AsyncProceed:
+//                    return false;
                 default:
                     //todo copy pasted
                     throw new WeavingException("Around advice must have only one parameter, which is a JoinPoint"); //todo add context if missing, make nicer
             }
         }
 
-        ParameterDefinition GetProceed()
+        //todo allow a typejoinpoint, either inside the joinPoint or as a separate parameter in the aspect
+        ParameterDefinition GetJoinPoint()
         {
             if (_advice.Parameters.Count == 1)
                 return _advice.Parameters[0];
