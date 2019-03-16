@@ -7,7 +7,6 @@ namespace Demon.JoinPoint
     //todo add async variant
     //todo add impls for returns: void, generic, any
     //todo add impls for parameters: none, generic 1 to 8, any
-    //todo naming for impls of returns and parameters
     public sealed class JoinPoint<TParameters, TReturn>
         where TParameters : IJoinPointParameters
         where TReturn : IJoinPointReturn
