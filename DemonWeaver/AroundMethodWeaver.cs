@@ -38,18 +38,15 @@ namespace DemonWeaver
         //todo target should be sync, filter 
         void WeaveSync(ParameterDefinition parameterDefinition)
         {
-            //todo copy the target method to a new delegate that is inside proceed
-            //todo then the target only delegates to proceed
+            //todo impl
         }
 
         bool IsSync(ParameterDefinition parameterDefinition)
         {
             switch (parameterDefinition.ParameterType.FullName)
             {
-//                case DemonTypes.FullNames.SyncProceed:
-//                    return true;
-//                case DemonTypes.FullNames.AsyncProceed:
-//                    return false;
+                case DemonTypes.FullNames.JoinPoint:
+                    return true;
                 default:
                     //todo copy pasted
                     throw new WeavingException("Around advice must have only one parameter, which is a JoinPoint"); //todo add context if missing, make nicer

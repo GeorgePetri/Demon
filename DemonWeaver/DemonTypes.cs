@@ -6,28 +6,35 @@ namespace DemonWeaver
 {
     public class DemonTypes
     {
-        DemonTypes(TypeDefinition typeJoinPoint, MethodDefinition typeJoinPointConstructor)
+        DemonTypes(MethodDefinition joinPointConstructor, TypeDefinition typeJoinPoint, MethodDefinition typeJoinPointConstructor)
         {
+            JoinPointConstructor = joinPointConstructor;
             TypeJoinPoint = typeJoinPoint;
             TypeJoinPointConstructor = typeJoinPointConstructor;
         }
 
+        public MethodDefinition JoinPointConstructor { get; }
         public TypeDefinition TypeJoinPoint { get; }
         public MethodDefinition TypeJoinPointConstructor { get; }
 
         public static DemonTypes FromModule(ModuleDefinition module)
         {
+            TypeDefinition joinPoint = default;
             TypeDefinition typeJoinPoint = default;
             foreach (var type in module.Types)
             {
-                if (type.FullName == FullNames.TypeJoinPoint)
+                switch (type.FullName)
                 {
-                    typeJoinPoint = type;
-                    break;
+                    case FullNames.TypeJoinPoint:
+                        typeJoinPoint = type;
+                        break;
+                    case FullNames.JoinPoint:
+                        joinPoint = type;
+                        break;
                 }
             }
 
-            return new DemonTypes(typeJoinPoint, typeJoinPoint.GetConstructors().First());
+            return new DemonTypes(joinPoint.GetConstructors().First(), typeJoinPoint, typeJoinPoint.GetConstructors().First());
         }
 
         public static class FullNames
@@ -36,9 +43,9 @@ namespace DemonWeaver
             public const string PointcutAttribute = "Demon.Aspect.PointcutAttribute";
             public const string BeforeAttribute = "Demon.Aspect.BeforeAttribute";
             public const string AroundAttribute = "Demon.Aspect.AroundAttribute";
-            
+
             public const string TypeJoinPoint = "Demon.JoinPoint.TypeJoinPoint";
-            
+            public const string JoinPoint = "Demon.JoinPoint.JoinPoint";
         }
     }
 }
