@@ -44,8 +44,8 @@ namespace DemonWeaver
             public const string BeforeAttribute = "Demon.Aspect.BeforeAttribute";
             public const string AroundAttribute = "Demon.Aspect.AroundAttribute";
 
+            public const string JoinPoint = "Demon.JoinPoint.JoinPoint`2";
             public const string TypeJoinPoint = "Demon.JoinPoint.TypeJoinPoint";
-            public const string JoinPoint = "Demon.JoinPoint.JoinPoint";
         }
     }
 }
