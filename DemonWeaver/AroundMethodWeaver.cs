@@ -43,12 +43,12 @@ namespace DemonWeaver
             _target.Body.Instructions.Clear();
 
             _il.Append(_il.Create(OpCodes.Ldnull));
-            _il.Append(_il.Create(OpCodes.Ldnull));
+            InsertLoadReturn(joinPointType.GenericArguments[1]);
             _il.Append(_il.Create(OpCodes.Ldnull));
             _il.Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(ctor)));
             _il.Append(_il.Create(OpCodes.Ldarg_0));
             _il.Append(_il.Create(OpCodes.Ldfld, _adviceField));
-            _il.Append(_il.Create(OpCodes.Call, _advice));        //todo callvirt if needed 
+            _il.Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
             _il.Append(_il.Create(OpCodes.Ldnull));
             _il.Append(_il.Create(OpCodes.Ret));
         }
@@ -59,6 +59,30 @@ namespace DemonWeaver
             if (_advice.Parameters.Count == 1)
                 return _advice.Parameters[0];
             throw new WeavingException("Around advice must have only one parameter, which is a JoinPoint"); //todo add context if missing, make nicer
+        }
+
+        //todo unit test all cases
+        void InsertLoadReturn(TypeReference reference)
+        {
+            MethodReference constructor = default;
+
+            switch (reference.GetElementType().FullName)
+            {
+                case DemonTypes.FullNames.ReturnFullNames.Any:
+                    constructor = _demonTypes.Returns.AnyConstructor;
+                    break;
+                case DemonTypes.FullNames.ReturnFullNames.Generic:
+                {
+                    var genericReturnType = ((GenericInstanceType) reference).GenericArguments[0];
+                    constructor = _demonTypes.Returns.GenericConstructor.MakeGeneric(genericReturnType);
+                    break;
+                }
+                case DemonTypes.FullNames.ReturnFullNames.Void:
+                    constructor = _demonTypes.Returns.VoidConstructor;
+                    break;
+            }
+
+            _il.Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(constructor)));
         }
     }
 }
