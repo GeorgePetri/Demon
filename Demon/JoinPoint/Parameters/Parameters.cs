@@ -1,6 +1,8 @@
+using Demon.JoinPoint.Parameters.Interface;
+
 namespace Demon.JoinPoint.Parameters
 {
-    public class Parameters<T>
+    public class Parameters<T> : IJoinPointParameters
     {
         public Parameters(T value, string name)
         {
@@ -9,7 +11,7 @@ namespace Demon.JoinPoint.Parameters
         }
 
         public T Value { get; set; }
-        
+
         public string Name { get; }
     }
 }
