@@ -42,5 +42,28 @@ namespace TestsCompiler.Unit
         [InlineData("b&")]
         void Invalid_Symbols(string value) => 
             Assert.DoesNotMatch(SymbolRegex, value);
+        
+        [Theory]
+        [InlineData("@b")]
+        [InlineData("@B")]
+        [InlineData("@*")]
+        [InlineData("@-")]
+        [InlineData("@.")]
+        [InlineData("@1")]
+        [InlineData("@qwertyuiop-asdfghjkl-ZXCVBNM*123456789")]
+        void Valid_Strings(string value) => 
+            Assert.Matches(StringsRegex, value);  
+                
+        [Theory]
+        [InlineData("b")]
+        [InlineData("@`")]
+        [InlineData("@@")]
+        [InlineData("@#")]
+        [InlineData("@$")]
+        [InlineData("@%")]
+        [InlineData("@^")]
+        [InlineData("@&")]
+        void Invalid_Strings(string value) => 
+            Assert.DoesNotMatch(StringsRegex, value);
     }
 }
