@@ -11,15 +11,14 @@ namespace Demon.JoinPoint
         where TParameters : IJoinPointParameters
         where TReturn : IJoinPointReturn
     {
-        readonly Func<TParameters, TReturn> _body;
+        readonly Action<TParameters, TReturn> _body;
 
-        public JoinPoint(TParameters parameters, Func<TParameters, TReturn> body) =>
-            (Parameters, _body) = (parameters, body);
+        public JoinPoint(TParameters parameters, TReturn @return, Action<TParameters, TReturn> body) =>
+            (Parameters, _body, Return) = (parameters, body, @return);
 
         public TParameters Parameters { get; }
-        public TReturn Return { get; private set; }
+        public TReturn Return { get; }
 
-        public void Proceed() =>
-            Return = _body(Parameters);
+        public void Proceed() => _body(Parameters, Return);
     }
 }
