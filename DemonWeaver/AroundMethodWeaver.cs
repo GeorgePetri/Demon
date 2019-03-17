@@ -1,4 +1,4 @@
-using System;
+using DemonWeaver.Extensions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -31,8 +31,6 @@ namespace DemonWeaver
 
             var joinPointType = (GenericInstanceType) joinPoint.ParameterType;
 
-//            _target.Module.ImportReference(joinPointType);
-
             if (joinPointType.GetElementType().FullName == DemonTypes.FullNames.JoinPoint)
                 WeaveSync(joinPointType);
         }
@@ -40,7 +38,7 @@ namespace DemonWeaver
         //todo target should be sync, filter 
         void WeaveSync(GenericInstanceType joinPointType)
         {
-            var ctor = MakeGeneric(_demonTypes.JoinPointConstructor, joinPointType.GenericArguments[0], joinPointType.GenericArguments[1]);
+            var ctor = _demonTypes.JoinPointConstructor.MakeGeneric(joinPointType.GenericArguments[0], joinPointType.GenericArguments[1]);
 
             _target.Body.Instructions.Clear();
 
@@ -60,53 +58,6 @@ namespace DemonWeaver
             if (_advice.Parameters.Count == 1)
                 return _advice.Parameters[0];
             throw new WeavingException("Around advice must have only one parameter, which is a JoinPoint"); //todo add context if missing, make nicer
-        }
-
-        //todo make extension method
-        public static MethodReference MakeGeneric(MethodReference self, params TypeReference[] arguments)
-        {
-            var reference = new MethodReference(self.Name, self.ReturnType)
-            {
-                DeclaringType = MakeGenericType(self.DeclaringType, arguments),
-                HasThis = self.HasThis,
-                ExplicitThis = self.ExplicitThis,
-                CallingConvention = self.CallingConvention,
-            };
-
-            foreach (var parameter in self.Parameters)
-                reference.Parameters.Add(new ParameterDefinition(parameter.ParameterType));
-
-            foreach (var generic_parameter in self.GenericParameters)
-                reference.GenericParameters.Add(new GenericParameter(generic_parameter.Name, reference));
-
-            return reference;
-        }
-
-        //todo make extension method
-
-        public static MethodReference MakeGenericMethod(MethodReference self, params TypeReference[] arguments)
-        {
-            if (self.GenericParameters.Count != arguments.Length)
-                throw new ArgumentException();
-
-            var instance = new GenericInstanceMethod(self);
-            foreach (var argument in arguments)
-                instance.GenericArguments.Add(argument);
-
-            return instance;
-        }
-
-        //todo make extension method
-        public static TypeReference MakeGenericType(TypeReference self, params TypeReference[] arguments)
-        {
-            if (self.GenericParameters.Count != arguments.Length)
-                throw new ArgumentException();
-
-            var instance = new GenericInstanceType(self);
-            foreach (var argument in arguments)
-                instance.GenericArguments.Add(argument);
-
-            return instance;
         }
     }
 }
