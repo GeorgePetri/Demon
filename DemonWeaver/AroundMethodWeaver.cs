@@ -48,7 +48,7 @@ namespace DemonWeaver
             _il.Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(ctor)));
             _il.Append(_il.Create(OpCodes.Ldarg_0));
             _il.Append(_il.Create(OpCodes.Ldfld, _adviceField));
-            _il.Append(_il.Create(OpCodes.Call, _advice));
+            _il.Append(_il.Create(OpCodes.Call, _advice));        //todo callvirt if needed 
             _il.Append(_il.Create(OpCodes.Ldnull));
             _il.Append(_il.Create(OpCodes.Ret));
         }
