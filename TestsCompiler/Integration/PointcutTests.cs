@@ -1,7 +1,7 @@
 using System.Linq;
-using DemonWeaver;
 using DemonWeaver.ExpressionCompiler;
 using DemonWeaver.ExpressionCompiler.Data;
+using DemonWeaver.Extensions;
 using Mono.Cecil;
 using TestsCompiler.Helpers;
 using Xunit;

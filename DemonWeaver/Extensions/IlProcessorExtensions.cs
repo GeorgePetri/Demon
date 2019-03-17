@@ -2,7 +2,7 @@ using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
-namespace DemonWeaver
+namespace DemonWeaver.Extensions
 {
     public static class IlProcessorExtensions
     {

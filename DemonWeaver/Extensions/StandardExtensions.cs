@@ -1,6 +1,6 @@
 using System;
 
-namespace DemonWeaver
+namespace DemonWeaver.Extensions
 {
     public static class StandardExtensions
     {
