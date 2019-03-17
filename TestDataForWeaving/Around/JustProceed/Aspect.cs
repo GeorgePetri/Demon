@@ -5,7 +5,7 @@ using Demon.JoinPoint.Return;
 
 namespace TestDataForWeaving.Around.JustProceed
 {
-//    [Aspect]
+    [Aspect]
     public class Aspect
     {
         public bool Called { get; set; }
