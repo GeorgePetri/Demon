@@ -77,8 +77,7 @@ namespace DemonWeaver
             }
         }
 
-        //todo unit test this
-        string ToKebabCase(string pascalCased)
+        static string ToKebabCase(string pascalCased)
         {
             var camelCased = char.ToLowerInvariant(pascalCased[0]) + pascalCased.Substring(1);
             
