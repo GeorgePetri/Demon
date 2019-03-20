@@ -64,9 +64,9 @@ namespace DemonWeaver
             Append(_il.Create(OpCodes.Ldnull));
             Append(_il.Create(OpCodes.Newobj, joinPointConstructor));
             Append(_il.Create(OpCodes.Stloc_0));
-            Append(_il.Create(OpCodes.Ldloc_0));
             Append(_il.Create(OpCodes.Ldarg_0));
             Append(_il.Create(OpCodes.Ldfld, _adviceField));
+            Append(_il.Create(OpCodes.Ldloc_0));
             Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
             InsertRetWithReturnValue(parameterGeneric, returnGeneric);
         }

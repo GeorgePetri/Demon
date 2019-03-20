@@ -29,5 +29,24 @@ namespace TestsWeaving
             //assert
             Assert.True(aspectInstance.Called);
         }
+
+        //todo check parmeters from aspect joinpoint
+        [Fact]
+        void ParametersInt_ReturnString_NoProceed()
+        {
+            //arrange
+            var aspectType = _assembly.GetType("TestDataForWeaving.Around.NoProceed.Aspect");
+            var aspectInstance = (dynamic) Activator.CreateInstance(aspectType);
+
+            var targetType = _assembly.GetType("TestDataForWeaving.Around.NoProceed.Target");
+            var targetInstance = Activator.CreateInstance(targetType, aspectInstance);
+
+            //act
+            targetInstance.OneInt(5);
+            
+            //assert
+            Assert.True(aspectInstance.Called);
+            Assert.Null(aspectInstance.JoinPointReturn.Value);
+        }
     }
 }
