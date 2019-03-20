@@ -48,7 +48,7 @@ namespace DemonWeaver
         {
             var ctor = _demonTypes.JoinPointConstructor.MakeGeneric(joinPointType.GenericArguments[0], joinPointType.GenericArguments[1]);
 
-            _target.Body.Instructions.Clear();
+            ClearBody();
 
             Append(_il.Create(OpCodes.Ldnull));
             InsertLoadReturn(joinPointType.GenericArguments[1]);
@@ -59,6 +59,13 @@ namespace DemonWeaver
             Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
             Append(_il.Create(OpCodes.Ldnull));
             Append(_il.Create(OpCodes.Ret));
+        }
+
+//todo does anything else need clearing?
+        void ClearBody()
+        {
+            _target.Body.Variables.Clear();
+            _target.Body.Instructions.Clear();
         }
 
         //todo unit test all cases
