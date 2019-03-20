@@ -107,7 +107,7 @@ namespace DemonWeaver
         {
             if (returnGeneric.GetElementType().FullName == DemonTypes.FullNames.ReturnFullNames.Void)
             {
-                Append(_il.Create(OpCodes.Ldnull)); //is this needed?
+                Append(_il.Create(OpCodes.Ldnull)); //todo is this needed?
             }
             else
             {
