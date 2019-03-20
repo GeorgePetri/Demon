@@ -35,6 +35,14 @@ namespace DemonWeaver
                 WeaveSync(joinPointType);
         }
 
+        //todo allow a typejoinpoint, either inside the joinPoint or as a separate parameter in the aspect
+        ParameterDefinition GetJoinPoint()
+        {
+            if (_advice.Parameters.Count == 1)
+                return _advice.Parameters[0];
+            throw new WeavingException("Around advice must have only one parameter, which is a JoinPoint"); //todo add context if missing, make nicer
+        }
+
         //todo target should be sync, filter 
         void WeaveSync(GenericInstanceType joinPointType)
         {
@@ -42,23 +50,15 @@ namespace DemonWeaver
 
             _target.Body.Instructions.Clear();
 
-            _il.Append(_il.Create(OpCodes.Ldnull));
+            Append(_il.Create(OpCodes.Ldnull));
             InsertLoadReturn(joinPointType.GenericArguments[1]);
-            _il.Append(_il.Create(OpCodes.Ldnull));
-            _il.Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(ctor)));
-            _il.Append(_il.Create(OpCodes.Ldarg_0));
-            _il.Append(_il.Create(OpCodes.Ldfld, _adviceField));
-            _il.Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
-            _il.Append(_il.Create(OpCodes.Ldnull));
-            _il.Append(_il.Create(OpCodes.Ret));
-        }
-
-        //todo allow a typejoinpoint, either inside the joinPoint or as a separate parameter in the aspect
-        ParameterDefinition GetJoinPoint()
-        {
-            if (_advice.Parameters.Count == 1)
-                return _advice.Parameters[0];
-            throw new WeavingException("Around advice must have only one parameter, which is a JoinPoint"); //todo add context if missing, make nicer
+            Append(_il.Create(OpCodes.Ldnull));
+            Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(ctor)));
+            Append(_il.Create(OpCodes.Ldarg_0));
+            Append(_il.Create(OpCodes.Ldfld, _adviceField));
+            Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
+            Append(_il.Create(OpCodes.Ldnull));
+            Append(_il.Create(OpCodes.Ret));
         }
 
         //todo unit test all cases
@@ -82,7 +82,9 @@ namespace DemonWeaver
                     break;
             }
 
-            _il.Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(constructor)));
+            Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(constructor)));
         }
+
+        void Append(Instruction instruction) => _il.Append(instruction);
     }
 }
