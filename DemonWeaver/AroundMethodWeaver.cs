@@ -46,14 +46,22 @@ namespace DemonWeaver
         //todo target should be sync, filter 
         void WeaveSync(GenericInstanceType joinPointType)
         {
-            var ctor = _demonTypes.JoinPointConstructor.MakeGeneric(joinPointType.GenericArguments[0], joinPointType.GenericArguments[1]);
+            var parameterGeneric = joinPointType.GenericArguments[0];
+            var returnGeneric = joinPointType.GenericArguments[1];
+
+            var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericType(parameterGeneric, returnGeneric));
+            var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parameterGeneric, returnGeneric));
 
             ClearBody();
 
+            var joinPointVariable = new VariableDefinition(joinPoint);
+
+            _target.Body.Variables.Add(joinPointVariable);
+
             Append(_il.Create(OpCodes.Ldnull));
-            InsertLoadReturn(joinPointType.GenericArguments[1]);
+            InsertLoadReturn(returnGeneric);
             Append(_il.Create(OpCodes.Ldnull));
-            Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(ctor)));
+            Append(_il.Create(OpCodes.Newobj, joinPointConstructor));
             Append(_il.Create(OpCodes.Ldarg_0));
             Append(_il.Create(OpCodes.Ldfld, _adviceField));
             Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 

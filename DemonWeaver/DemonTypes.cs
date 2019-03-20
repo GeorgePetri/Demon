@@ -6,14 +6,23 @@ namespace DemonWeaver
 {
     public class DemonTypes
     {
-        DemonTypes(MethodDefinition joinPointConstructor, TypeDefinition typeJoinPoint, MethodDefinition typeJoinPointConstructor, ReturnTypes returns)
+        DemonTypes
+        (
+            TypeDefinition joinPoint,
+            MethodDefinition joinPointConstructor,
+            TypeDefinition typeJoinPoint,
+            MethodDefinition typeJoinPointConstructor,
+            ReturnTypes returns
+        )
         {
+            JoinPoint = joinPoint;
             JoinPointConstructor = joinPointConstructor;
             TypeJoinPoint = typeJoinPoint;
             TypeJoinPointConstructor = typeJoinPointConstructor;
             Returns = returns;
         }
 
+        public TypeDefinition JoinPoint { get; }
         public MethodDefinition JoinPointConstructor { get; }
         public TypeDefinition TypeJoinPoint { get; }
         public MethodDefinition TypeJoinPointConstructor { get; }
@@ -52,6 +61,7 @@ namespace DemonWeaver
             }
 
             return new DemonTypes(
+                joinPoint,
                 joinPoint.GetConstructors().First(),
                 typeJoinPoint,
                 typeJoinPoint.GetConstructors().First(),
