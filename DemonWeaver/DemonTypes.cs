@@ -62,14 +62,16 @@ namespace DemonWeaver
 
             return new DemonTypes(
                 joinPoint,
-                joinPoint.GetConstructors().First(),
+                FirstConstructor(joinPoint),
                 typeJoinPoint,
-                typeJoinPoint.GetConstructors().First(),
+                FirstConstructor(typeJoinPoint),
                 new ReturnTypes(
-                    returnAny.GetConstructors().First(),
-                    returnGeneric.GetConstructors().First(),
-                    returnVoid.GetConstructors().First()));
+                    FirstConstructor(returnAny),
+                    FirstConstructor(returnGeneric),
+                    FirstConstructor(returnVoid)));
         }
+
+        static MethodDefinition FirstConstructor(TypeDefinition type) => type.GetConstructors().First();
 
         public class ReturnTypes
         {
