@@ -1,3 +1,4 @@
+using System.Linq;
 using DemonWeaver.Extensions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -67,8 +68,7 @@ namespace DemonWeaver
             Append(_il.Create(OpCodes.Ldarg_0));
             Append(_il.Create(OpCodes.Ldfld, _adviceField));
             Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
-            Append(_il.Create(OpCodes.Ldnull));
-            Append(_il.Create(OpCodes.Ret));
+            InsertRetWithReturnValue(parameterGeneric, returnGeneric);
         }
 
 //todo does anything else need clearing?
@@ -100,6 +100,42 @@ namespace DemonWeaver
             }
 
             Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(constructor)));
+        }
+
+        //todo test this
+        void InsertRetWithReturnValue(TypeReference parameterGeneric, TypeReference returnGeneric)
+        {
+            if (returnGeneric.GetElementType().FullName == DemonTypes.FullNames.ReturnFullNames.Void)
+            {
+                Append(_il.Create(OpCodes.Ldnull)); //is this needed?
+            }
+            else
+            {
+                //todo get rid of getting the methodrefs here
+                var accessReturn = _demonTypes
+                    .JoinPoint
+                    .Properties
+                    .First(m => m.Name == "Return")
+                    .GetMethod
+                    .MakeGeneric(parameterGeneric, returnGeneric)
+                    .Let(_target.Module.ImportReference);
+
+                var returnGenericGeneric = ((GenericInstanceType) returnGeneric).GenericArguments[0];
+
+                var accessValue = returnGeneric
+                    .Resolve()
+                    .Properties
+                    .First(p => p.Name == "Value")
+                    .GetMethod
+                    .MakeGeneric(returnGenericGeneric)
+                    .Let(_target.Module.ImportReference);
+
+                Append(_il.Create(OpCodes.Ldloc_0));
+                Append(_il.Create(OpCodes.Call, accessReturn));
+                Append(_il.Create(OpCodes.Call, accessValue));
+            }
+
+            Append(_il.Create(OpCodes.Ret));
         }
 
         void Append(Instruction instruction) => _il.Append(instruction);
