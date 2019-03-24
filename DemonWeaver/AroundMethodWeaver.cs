@@ -84,8 +84,8 @@ namespace DemonWeaver
         {
             var firstParameter = _target.Parameters.First();
             
-            Append(_il.Create(OpCodes.Ldstr, firstParameter.Name));
             Append(_il.GetEfficientLoadInstruction(firstParameter));
+            Append(_il.Create(OpCodes.Ldstr, firstParameter.Name));
 
             var parametersTypeGeneric = ((GenericInstanceType) parametersType).GenericArguments[0];
 

@@ -25,12 +25,11 @@ namespace TestsWeaving
 
             //act
             targetInstance.OneInt(5);
-            
+
             //assert
             Assert.True(aspectInstance.Called);
         }
 
-        //todo check parmeters from aspect joinpoint
         [Fact]
         void ParametersInt_ReturnString_NoProceed()
         {
@@ -43,9 +42,11 @@ namespace TestsWeaving
 
             //act
             targetInstance.OneInt(5);
-            
+
             //assert
             Assert.True(aspectInstance.Called);
+            Assert.Equal(5, aspectInstance.JoinPointParameters.Value);
+            Assert.Equal("parameter", aspectInstance.JoinPointParameters.Name);
             Assert.Null(aspectInstance.JoinPointReturn.Value);
         }
     }
