@@ -59,7 +59,7 @@ namespace DemonWeaver
 
             _target.Body.Variables.Add(joinPointVariable);
 
-            Append(_il.Create(OpCodes.Ldnull));
+            InsertLoadParameters(parameterGeneric);
             InsertLoadReturn(returnGeneric);
             Append(_il.Create(OpCodes.Ldnull));
             Append(_il.Create(OpCodes.Newobj, joinPointConstructor));
@@ -76,6 +76,24 @@ namespace DemonWeaver
         {
             _target.Body.Variables.Clear();
             _target.Body.Instructions.Clear();
+        }
+
+        //todo unit test all cases
+        //todo impl others beside generic1
+        void InsertLoadParameters(TypeReference parametersType)
+        {
+            var firstParameter = _target.Parameters.First();
+            
+            Append(_il.Create(OpCodes.Ldstr, firstParameter.Name));
+            Append(_il.GetEfficientLoadInstruction(firstParameter));
+
+            var parametersTypeGeneric = ((GenericInstanceType) parametersType).GenericArguments[0];
+
+            var constructor = _demonTypes.Parameters.GenericConstructor1
+                .MakeGeneric(parametersTypeGeneric)
+                .Let(_target.Module.ImportReference);
+
+            Append(_il.Create(OpCodes.Newobj, constructor));
         }
 
         //todo unit test all cases
