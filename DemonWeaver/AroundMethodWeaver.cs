@@ -14,7 +14,6 @@ namespace DemonWeaver
         readonly MethodReference _advice;
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
-        readonly Instruction _originalFirstInstruction;
 
         public AroundMethodWeaver(DemonTypes demonTypes, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
@@ -23,7 +22,6 @@ namespace DemonWeaver
             _advice = advice;
             _adviceField = adviceField;
             _il = target.Body.GetILProcessor();
-            _originalFirstInstruction = target.Body.Instructions[0];
         }
 
         public void Weave()
@@ -45,6 +43,8 @@ namespace DemonWeaver
         }
 
         //todo target should be sync, filter 
+        //todo test params[]
+        //todo is in, out, ref hard to impl
         void WeaveSync(GenericInstanceType joinPointType)
         {
             var parameterGeneric = joinPointType.GenericArguments[0];

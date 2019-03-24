@@ -12,6 +12,7 @@ namespace DemonWeaver
             MethodDefinition joinPointConstructor,
             TypeDefinition typeJoinPoint,
             MethodDefinition typeJoinPointConstructor,
+            ParametersTypes parameters,
             ReturnTypes returns
         )
         {
@@ -19,6 +20,7 @@ namespace DemonWeaver
             JoinPointConstructor = joinPointConstructor;
             TypeJoinPoint = typeJoinPoint;
             TypeJoinPointConstructor = typeJoinPointConstructor;
+            Parameters = parameters;
             Returns = returns;
         }
 
@@ -26,6 +28,7 @@ namespace DemonWeaver
         public MethodDefinition JoinPointConstructor { get; }
         public TypeDefinition TypeJoinPoint { get; }
         public MethodDefinition TypeJoinPointConstructor { get; }
+        public ParametersTypes Parameters { get; }
         public ReturnTypes Returns { get; }
 
         //todo refac, kinda ugly
@@ -33,6 +36,8 @@ namespace DemonWeaver
         {
             TypeDefinition joinPoint = default;
             TypeDefinition typeJoinPoint = default;
+
+            TypeDefinition parametersGeneric1 = default;
 
             TypeDefinition returnAny = default;
             TypeDefinition returnGeneric = default;
@@ -47,6 +52,9 @@ namespace DemonWeaver
                         break;
                     case FullNames.JoinPoint:
                         joinPoint = type;
+                        break;
+                    case FullNames.ParametersFullNames.Generic1:
+                        parametersGeneric1 = type;
                         break;
                     case FullNames.ReturnFullNames.Any:
                         returnAny = type;
@@ -65,6 +73,8 @@ namespace DemonWeaver
                 FirstConstructor(joinPoint),
                 typeJoinPoint,
                 FirstConstructor(typeJoinPoint),
+                new ParametersTypes(
+                    FirstConstructor(parametersGeneric1)),
                 new ReturnTypes(
                     FirstConstructor(returnAny),
                     FirstConstructor(returnGeneric),
@@ -72,6 +82,16 @@ namespace DemonWeaver
         }
 
         static MethodDefinition FirstConstructor(TypeDefinition type) => type.GetConstructors().First();
+
+        public class ParametersTypes
+        {
+            public ParametersTypes(MethodDefinition genericConstructor1)
+            {
+                GenericConstructor1 = genericConstructor1;
+            }
+
+            public MethodDefinition GenericConstructor1 { get; }
+        }
 
         public class ReturnTypes
         {
@@ -102,6 +122,11 @@ namespace DemonWeaver
                 public const string Any = "Demon.JoinPoint.Return.ReturnAny";
                 public const string Generic = "Demon.JoinPoint.Return.Return`1";
                 public const string Void = "Demon.JoinPoint.Return.ReturnVoid";
+            }
+
+            public static class ParametersFullNames
+            {
+                public const string Generic1 = "Demon.JoinPoint.Parameters.Parameters`1";
             }
         }
     }
