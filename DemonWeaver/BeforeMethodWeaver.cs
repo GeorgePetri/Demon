@@ -1,6 +1,6 @@
 using System.Linq;
-using DemonWeaver.Emitter;
 using DemonWeaver.Extensions;
+using DemonWeaver.IlEmitter;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -14,7 +14,7 @@ namespace DemonWeaver
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
         readonly Instruction _originalFirstInstruction;
-        readonly Emitter.Emitter _emitter;
+        readonly Emitter _emitter;
 
         public BeforeMethodWeaver(DemonTypes demonTypes, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {

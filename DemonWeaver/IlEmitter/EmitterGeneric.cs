@@ -1,7 +1,7 @@
 using System;
 using Mono.Cecil.Cil;
 
-namespace DemonWeaver.Emitter
+namespace DemonWeaver.IlEmitter
 {
     public class Emitter<TReturn>
     {
