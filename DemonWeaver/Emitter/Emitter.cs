@@ -2,7 +2,7 @@ using Mono.Cecil.Cil;
 
 namespace DemonWeaver.Emitter
 {
-    public class Emitter : IEmitter<Instruction>
+    public class Emitter
     {
         readonly ILProcessor _il;
 
