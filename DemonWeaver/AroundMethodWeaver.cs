@@ -1,5 +1,6 @@
 using System.Linq;
 using DemonWeaver.Extensions;
+using DemonWeaver.IlEmitter;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 
@@ -14,6 +15,7 @@ namespace DemonWeaver
         readonly MethodReference _advice;
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
+        readonly Emitter _emitter;
 
         public AroundMethodWeaver(DemonTypes demonTypes, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
@@ -22,6 +24,7 @@ namespace DemonWeaver
             _advice = advice;
             _adviceField = adviceField;
             _il = target.Body.GetILProcessor();
+            _emitter = EmitterFactory.GetAppend(_il);
         }
 
         public void Weave()
@@ -61,13 +64,13 @@ namespace DemonWeaver
 
             InsertLoadParameters(parameterGeneric);
             InsertLoadReturn(returnGeneric);
-            Append(_il.Create(OpCodes.Ldnull));
-            Append(_il.Create(OpCodes.Newobj, joinPointConstructor));
-            Append(_il.Create(OpCodes.Stloc_0));
-            Append(_il.Create(OpCodes.Ldarg_0));
-            Append(_il.Create(OpCodes.Ldfld, _adviceField));
-            Append(_il.Create(OpCodes.Ldloc_0));
-            Append(_il.Create(OpCodes.Call, _advice)); //todo callvirt if needed 
+            _emitter.Ldnull();
+            _emitter.Newobj(joinPointConstructor);
+            _emitter.Stloc_0();
+            _emitter.Ldarg_0();
+            _emitter.Ldfld(_adviceField);
+            _emitter.Ldloc_0();
+            _emitter.Call(_advice); //todo callvirt if needed 
             InsertRetWithReturnValue(parameterGeneric, returnGeneric);
         }
 
@@ -83,9 +86,9 @@ namespace DemonWeaver
         void InsertLoadParameters(TypeReference parametersType)
         {
             var firstParameter = _target.Parameters.First();
-            
+
             Append(_il.GetEfficientLoadInstruction(firstParameter));
-            Append(_il.Create(OpCodes.Ldstr, firstParameter.Name));
+            _emitter.Ldstr(firstParameter.Name);
 
             var parametersTypeGeneric = ((GenericInstanceType) parametersType).GenericArguments[0];
 
@@ -93,7 +96,7 @@ namespace DemonWeaver
                 .MakeGeneric(parametersTypeGeneric)
                 .Let(_target.Module.ImportReference);
 
-            Append(_il.Create(OpCodes.Newobj, constructor));
+            _emitter.Newobj(constructor);
         }
 
         //todo unit test all cases
@@ -117,7 +120,7 @@ namespace DemonWeaver
                     break;
             }
 
-            Append(_il.Create(OpCodes.Newobj, _target.Module.ImportReference(constructor)));
+            _emitter.Newobj(_target.Module.ImportReference(constructor));
         }
 
         //todo test this
@@ -125,7 +128,7 @@ namespace DemonWeaver
         {
             if (returnGeneric.GetElementType().FullName == DemonTypes.FullNames.ReturnFullNames.Void)
             {
-                Append(_il.Create(OpCodes.Ldnull)); //todo is this needed?
+                _emitter.Ldnull(); //todo is this needed?
             }
             else
             {
@@ -148,12 +151,12 @@ namespace DemonWeaver
                     .MakeGeneric(returnGenericGeneric)
                     .Let(_target.Module.ImportReference);
 
-                Append(_il.Create(OpCodes.Ldloc_0));
-                Append(_il.Create(OpCodes.Call, accessReturn));
-                Append(_il.Create(OpCodes.Call, accessValue));
+                _emitter.Ldloc_0();
+                _emitter.Call(accessReturn);
+                _emitter.Call(accessValue);
             }
 
-            Append(_il.Create(OpCodes.Ret));
+            _emitter.Ret();
         }
 
         void Append(Instruction instruction) => _il.Append(instruction);
