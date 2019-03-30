@@ -1,4 +1,5 @@
 using System.Linq;
+using DemonWeaver.Emitter;
 using DemonWeaver.Extensions;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
@@ -13,6 +14,7 @@ namespace DemonWeaver
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
         readonly Instruction _originalFirstInstruction;
+        readonly Emitter.Emitter _emitter;
 
         public BeforeMethodWeaver(DemonTypes demonTypes, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
@@ -22,6 +24,7 @@ namespace DemonWeaver
             _adviceField = adviceField;
             _il = target.Body.GetILProcessor();
             _originalFirstInstruction = target.Body.Instructions[0];
+            _emitter = EmitterFactory.Get(_il, i => _il.InsertBefore(_originalFirstInstruction,i));
         }
 
         public void Weave()
