@@ -1,4 +1,5 @@
 using System;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace DemonWeaver.IlEmitter
@@ -127,8 +128,8 @@ namespace DemonWeaver.IlEmitter
         public TReturn Jmp() =>
             _func(_il.Create(OpCodes.Jmp));
 
-        public TReturn Call() =>
-            _func(_il.Create(OpCodes.Call));
+        public TReturn Call(MethodReference method) =>
+            _func(_il.Create(OpCodes.Call, method));
 
         public TReturn Calli() =>
             _func(_il.Create(OpCodes.Calli));
@@ -349,11 +350,11 @@ namespace DemonWeaver.IlEmitter
         public TReturn Ldobj() =>
             _func(_il.Create(OpCodes.Ldobj));
 
-        public TReturn Ldstr() =>
-            _func(_il.Create(OpCodes.Ldstr));
+        public TReturn Ldstr(string value) =>
+            _func(_il.Create(OpCodes.Ldstr, value));
 
-        public TReturn Newobj() =>
-            _func(_il.Create(OpCodes.Newobj));
+        public TReturn Newobj(MethodReference method) =>
+            _func(_il.Create(OpCodes.Newobj, method));
 
         public TReturn Castclass() =>
             _func(_il.Create(OpCodes.Castclass));
@@ -370,8 +371,8 @@ namespace DemonWeaver.IlEmitter
         public TReturn Throw() =>
             _func(_il.Create(OpCodes.Throw));
 
-        public TReturn Ldfld() =>
-            _func(_il.Create(OpCodes.Ldfld));
+        public TReturn Ldfld(FieldReference field) =>
+            _func(_il.Create(OpCodes.Ldfld, field));
 
         public TReturn Ldflda() =>
             _func(_il.Create(OpCodes.Ldflda));

@@ -4,6 +4,7 @@ using Mono.Cecil.Cil;
 
 namespace DemonWeaver.Extensions
 {
+    //todo add higher level emitter like class for these
     public static class IlProcessorExtensions
     {
         public static Instruction GetEfficientLoadInstruction(this ILProcessor il, ParameterDefinition parameterDefinition)

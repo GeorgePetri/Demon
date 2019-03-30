@@ -24,7 +24,7 @@ namespace DemonWeaver
             _adviceField = adviceField;
             _il = target.Body.GetILProcessor();
             _originalFirstInstruction = target.Body.Instructions[0];
-            _emitter = EmitterFactory.Get(_il, i => _il.InsertBefore(_originalFirstInstruction,i));
+            _emitter = EmitterFactory.Get(_il, i => _il.InsertBefore(_originalFirstInstruction, i));
         }
 
         public void Weave()
@@ -32,8 +32,7 @@ namespace DemonWeaver
             InsertLoadAspectIfNeeded();
             InsertLoadAdviceParametersIfNeeded();
 
-            var callAspect = _il.Create(OpCodes.Call, _advice);
-            InsertBeforeOriginalFirst(callAspect);
+            _emitter.Call(_advice);
         }
 
         void InsertLoadAspectIfNeeded()
@@ -41,11 +40,8 @@ namespace DemonWeaver
             if (_adviceField == null)
                 return;
 
-            var loadClass = _il.Create(OpCodes.Ldarg_0);
-            var loadAspect = _il.Create(OpCodes.Ldfld, _adviceField);
-
-            InsertBeforeOriginalFirst(loadClass);
-            InsertBeforeOriginalFirst(loadAspect);
+            _emitter.Ldarg_0();
+            _emitter.Ldfld(_adviceField);
         }
 
         //todo this tries to bind everything implicitly, is it good design?
@@ -64,12 +60,9 @@ namespace DemonWeaver
                 }
                 else if (parameter.ParameterType.FullName == DemonTypes.FullNames.TypeJoinPoint)
                 {
-                    var loadName = _il.Create(OpCodes.Ldstr, _target.Name);
-                    var loadFullName = _il.Create(OpCodes.Ldstr, _target.FullName);
-                    var createTypeJoinPoint = _il.Create(OpCodes.Newobj, _target.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
-                    InsertBeforeOriginalFirst(loadName);
-                    InsertBeforeOriginalFirst(loadFullName);
-                    InsertBeforeOriginalFirst(createTypeJoinPoint);
+                    _emitter.Ldstr(_target.Name);
+                    _emitter.Ldstr(_target.FullName);
+                    _emitter.Newobj(_target.Module.ImportReference(_demonTypes.TypeJoinPointConstructor));
                 }
                 else
                 {

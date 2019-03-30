@@ -1,4 +1,5 @@
 using System;
+using Mono.Cecil;
 using Mono.Cecil.Cil;
 
 namespace DemonWeaver.IlEmitter
@@ -127,8 +128,8 @@ namespace DemonWeaver.IlEmitter
         public void Jmp() =>
             _func(_il.Create(OpCodes.Jmp));
 
-        public void Call() =>
-            _func(_il.Create(OpCodes.Call));
+        public void Call(MethodReference method) =>
+            _func(_il.Create(OpCodes.Call, method));
 
         public void Calli() =>
             _func(_il.Create(OpCodes.Calli));
@@ -349,11 +350,11 @@ namespace DemonWeaver.IlEmitter
         public void Ldobj() =>
             _func(_il.Create(OpCodes.Ldobj));
 
-        public void Ldstr() =>
-            _func(_il.Create(OpCodes.Ldstr));
+        public void Ldstr(string value) =>
+            _func(_il.Create(OpCodes.Ldstr, value));
 
-        public void Newobj() =>
-            _func(_il.Create(OpCodes.Newobj));
+        public void Newobj(MethodReference method) =>
+            _func(_il.Create(OpCodes.Newobj, method));
 
         public void Castclass() =>
             _func(_il.Create(OpCodes.Castclass));
@@ -370,8 +371,8 @@ namespace DemonWeaver.IlEmitter
         public void Throw() =>
             _func(_il.Create(OpCodes.Throw));
 
-        public void Ldfld() =>
-            _func(_il.Create(OpCodes.Ldfld));
+        public void Ldfld(FieldReference field) =>
+            _func(_il.Create(OpCodes.Ldfld, field));
 
         public void Ldflda() =>
             _func(_il.Create(OpCodes.Ldflda));
