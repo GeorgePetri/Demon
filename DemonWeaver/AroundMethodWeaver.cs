@@ -56,6 +56,8 @@ namespace DemonWeaver
             var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericType(parameterGeneric, returnGeneric));
             var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parameterGeneric, returnGeneric));
 
+            CreateLambdaType();
+
             ClearBody();
 
             var joinPointVariable = new VariableDefinition(joinPoint);
@@ -72,6 +74,22 @@ namespace DemonWeaver
             _emitter.Ldloc_0();
             _emitter.Call(_advice); //todo callvirt if needed 
             InsertRetWithReturnValue(parameterGeneric, returnGeneric);
+        }
+
+        //todo hardcoded name, might be conflicts
+        //todo rev eng lambdas in situations such as: multiple lambdas of the same type, closures
+        //todo can lambds be shared?
+        //todo rev eng do TypeAttributes ever differ?
+        void CreateLambdaType()
+        {
+            //todo add System.Runtime.CompilerServices.CompilerGeneratedAttribute
+            var type = new TypeDefinition(
+                "",
+                "<>c",
+                TypeAttributes.Public | TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit,
+                _target.Module.ImportReference(typeof(object)));
+
+            _target.DeclaringType.NestedTypes.Add(type);
         }
 
 //todo does anything else need clearing?
