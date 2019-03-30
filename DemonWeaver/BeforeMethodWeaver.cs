@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using DemonWeaver.Extensions;
 using DemonWeaver.IlEmitter;
@@ -13,8 +14,8 @@ namespace DemonWeaver
         readonly MethodReference _advice;
         readonly FieldDefinition _adviceField;
         readonly ILProcessor _il;
-        readonly Instruction _originalFirstInstruction;
         readonly Emitter _emitter;
+        readonly Action<Instruction> _insertBeforeOriginalFirst;
 
         public BeforeMethodWeaver(DemonTypes demonTypes, MethodDefinition target, MethodReference advice, FieldDefinition adviceField)
         {
@@ -23,8 +24,10 @@ namespace DemonWeaver
             _advice = advice;
             _adviceField = adviceField;
             _il = target.Body.GetILProcessor();
-            _originalFirstInstruction = target.Body.Instructions[0];
-            _emitter = EmitterFactory.Get(_il, i => _il.InsertBefore(_originalFirstInstruction, i));
+
+            var originalFirstInstruction = target.Body.Instructions[0];
+            _emitter = EmitterFactory.Get(_il, i => _il.InsertBefore(originalFirstInstruction, i));
+            _insertBeforeOriginalFirst = i => _il.InsertBefore(originalFirstInstruction, i);
         }
 
         public void Weave()
@@ -56,7 +59,7 @@ namespace DemonWeaver
                 if (parameterToLoad != null)
                 {
                     var loadParameter = _il.GetEfficientLoadInstruction(parameterToLoad);
-                    InsertBeforeOriginalFirst(loadParameter);
+                    _insertBeforeOriginalFirst(loadParameter);
                 }
                 else if (parameter.ParameterType.FullName == DemonTypes.FullNames.TypeJoinPoint)
                 {
@@ -68,12 +71,9 @@ namespace DemonWeaver
                 {
                     //todo add nicer error message when GetLoadForDefault throws
                     var loadDefault = _il.GetLoadForDefault(parameter.ParameterType);
-                    InsertBeforeOriginalFirst(loadDefault);
+                    _insertBeforeOriginalFirst(loadDefault);
                 }
             }
         }
-
-        void InsertBeforeOriginalFirst(Instruction instruction) =>
-            _il.InsertBefore(_originalFirstInstruction, instruction);
     }
 }
