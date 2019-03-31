@@ -377,8 +377,8 @@ namespace DemonWeaver.IlEmitter
         public void Ldflda() =>
             _func(_il.Create(OpCodes.Ldflda));
 
-        public void Stfld() =>
-            _func(_il.Create(OpCodes.Stfld));
+        public void Stfld(FieldReference field) =>
+            _func(_il.Create(OpCodes.Stfld, field));
 
         public void Ldsfld() =>
             _func(_il.Create(OpCodes.Ldsfld));

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using DemonWeaver.Data;
 using DemonWeaver.Extensions;
+using DemonWeaver.IlEmitter;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
 using Mono.Cecil.Rocks;
 using Mono.Collections.Generic;
 
@@ -136,17 +136,13 @@ namespace DemonWeaver
 
             var il = constructor.Body.GetILProcessor();
 
-            var ldarg0 = il.Create(OpCodes.Ldarg_0);
-
-            var ldAspect = il.GetEfficientLoadInstruction(parameter);
-
-            var stfld = il.Create(OpCodes.Stfld, field);
-
             var originalRet = constructor.Body.Instructions.Last();
 
-            il.InsertBefore(originalRet, ldarg0);
-            il.InsertBefore(originalRet, ldAspect);
-            il.InsertBefore(originalRet, stfld);
+            var emitter = EmitterFactory.Get(il, i => il.InsertBefore(originalRet,i));
+            
+            emitter.Ldarg_0();
+            il.InsertBefore(originalRet,il.GetEfficientLoadInstruction(parameter) );
+            emitter.Stfld(field);
         }
     }
 }
