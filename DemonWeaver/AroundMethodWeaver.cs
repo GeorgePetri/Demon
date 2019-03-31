@@ -114,11 +114,23 @@ namespace DemonWeaver
                 _target.Module.TypeSystem.Void);
 
             var ctorEmitter = ctor.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
-            
+
             ctorEmitter.Ldarg_0();
             ctorEmitter.Call(_target.Module.ImportReference(typeof(object).GetConstructors().First()));
             ctorEmitter.Ret();
+
             type.Methods.Add(ctor);
+
+            var cctor = new MethodDefinition(
+                ".cctor",
+                MethodAttributes.Private | MethodAttributes.Static | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                _target.Module.TypeSystem.Void);
+
+            var cctorEmitter = cctor.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
+
+            cctorEmitter.Newobj(ctor);
+            cctorEmitter.Stsfld(cachedDelegateField);
+            cctorEmitter.Ret();
 
 
             _target.DeclaringType.NestedTypes.Add(type);

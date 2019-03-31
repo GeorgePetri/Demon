@@ -386,8 +386,8 @@ namespace DemonWeaver.IlEmitter
         public TReturn Ldsflda() =>
             _func(_il.Create(OpCodes.Ldsflda));
 
-        public TReturn Stsfld() =>
-            _func(_il.Create(OpCodes.Stsfld));
+        public TReturn Stsfld(FieldReference field) =>
+            _func(_il.Create(OpCodes.Stsfld, field));
 
         public TReturn Stobj() =>
             _func(_il.Create(OpCodes.Stobj));
