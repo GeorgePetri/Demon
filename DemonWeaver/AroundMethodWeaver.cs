@@ -91,7 +91,7 @@ namespace DemonWeaver
                 "",
                 "<Demon<>c",
                 TypeAttributes.Public | TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit,
-                _target.Module.ImportReference(typeof(object)));
+                _target.Module.TypeSystem.Object);
 
             //todo move somewhere if used more
             var compilerGeneratedAttributeConstructor = _target.Module.ImportReference(
@@ -111,14 +111,13 @@ namespace DemonWeaver
             var ctor = new MethodDefinition(
                 ".ctor",
                 MethodAttributes.FamORAssem | MethodAttributes.Family | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
-                _target.Module.ImportReference(typeof(void)));
+                _target.Module.TypeSystem.Void);
 
             var ctorEmitter = ctor.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
             
             ctorEmitter.Ldarg_0();
             ctorEmitter.Call(_target.Module.ImportReference(typeof(object).GetConstructors().First()));
             ctorEmitter.Ret();
-            
             type.Methods.Add(ctor);
 
 
