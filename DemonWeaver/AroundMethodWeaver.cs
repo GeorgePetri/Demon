@@ -81,20 +81,30 @@ namespace DemonWeaver
         //todo rev eng lambdas in situations such as: multiple lambdas of the same type, closures
         //todo can lambds be shared?
         //todo rev eng do TypeAttributes ever differ?
+        //todo split in more methods or class 
         void CreateLambdaType()
         {
             var type = new TypeDefinition(
                 "",
-                "<demon<>c",
+                "<Demon<>c",
                 TypeAttributes.Public | TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit,
                 _target.Module.ImportReference(typeof(object)));
 
-            //todo pit somewhere if used more
+            //todo move somewhere if used more
             var compilerGeneratedAttributeConstructor = _target.Module.ImportReference(
                 typeof(CompilerGeneratedAttribute)
                     .GetConstructors().First());
 
             type.CustomAttributes.Add(new CustomAttribute(compilerGeneratedAttributeConstructor));
+
+            //todo do i need to import self?
+            var cachedDelegateField = new FieldDefinition(
+                "<Demon<>9",
+                FieldAttributes.FamANDAssem | FieldAttributes.Family | FieldAttributes.Static | FieldAttributes.InitOnly,
+                type);
+
+            type.Fields.Add(cachedDelegateField);
+
 
             _target.DeclaringType.NestedTypes.Add(type);
         }
