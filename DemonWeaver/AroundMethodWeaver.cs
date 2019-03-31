@@ -77,11 +77,14 @@ namespace DemonWeaver
             InsertRetWithReturnValue(parameterGeneric, returnGeneric);
         }
 
+        //todo idea: naming tool like https://github.com/dotnet/roslyn/blob/master/src/Compilers/CSharp/Portable/Symbols/Synthesized/GeneratedNames.cs?
         //todo hardcoded name, might be conflicts
         //todo rev eng lambdas in situations such as: multiple lambdas of the same type, closures
         //todo can lambds be shared?
         //todo rev eng do TypeAttributes ever differ?
         //todo split in more methods or class 
+        //todo clean this up
+        //todo idea: store common primitives definitions such as type of void, object constructor
         void CreateLambdaType()
         {
             var type = new TypeDefinition(
@@ -104,6 +107,19 @@ namespace DemonWeaver
                 type);
 
             type.Fields.Add(cachedDelegateField);
+
+            var ctor = new MethodDefinition(
+                ".ctor",
+                MethodAttributes.FamORAssem | MethodAttributes.Family | MethodAttributes.HideBySig | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
+                _target.Module.ImportReference(typeof(void)));
+
+            var ctorEmitter = ctor.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
+            
+            ctorEmitter.Ldarg_0();
+            ctorEmitter.Call(_target.Module.ImportReference(typeof(object).GetConstructors().First()));
+            ctorEmitter.Ret();
+            
+            type.Methods.Add(ctor);
 
 
             _target.DeclaringType.NestedTypes.Add(type);
