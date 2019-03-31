@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Runtime.CompilerServices;
 using DemonWeaver.Extensions;
 using DemonWeaver.IlEmitter;
 using Mono.Cecil;
@@ -82,12 +83,18 @@ namespace DemonWeaver
         //todo rev eng do TypeAttributes ever differ?
         void CreateLambdaType()
         {
-            //todo add System.Runtime.CompilerServices.CompilerGeneratedAttribute
             var type = new TypeDefinition(
                 "",
-                "<>c",
+                "<demon<>c",
                 TypeAttributes.Public | TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.Serializable | TypeAttributes.BeforeFieldInit,
                 _target.Module.ImportReference(typeof(object)));
+
+            //todo pit somewhere if used more
+            var compilerGeneratedAttributeConstructor = _target.Module.ImportReference(
+                typeof(CompilerGeneratedAttribute)
+                    .GetConstructors().First());
+
+            type.CustomAttributes.Add(new CustomAttribute(compilerGeneratedAttributeConstructor));
 
             _target.DeclaringType.NestedTypes.Add(type);
         }
