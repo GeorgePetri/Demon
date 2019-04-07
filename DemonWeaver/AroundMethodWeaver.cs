@@ -59,7 +59,7 @@ namespace DemonWeaver
             var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericInstanceType(parameterGeneric, returnGeneric));
             var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parameterGeneric, returnGeneric));
 
-            CreateLambdaType(parameterGeneric, returnGeneric);
+            var (cachedDelegateTypeField, cachedDelegateField) = CreateLambdaType(parameterGeneric, returnGeneric);
 
             ClearBody();
 
@@ -69,7 +69,7 @@ namespace DemonWeaver
 
             InsertLoadParameters(parameterGeneric);
             InsertLoadReturn(returnGeneric);
-            _emitter.Ldnull();
+            InsertLambda(parameterGeneric, returnGeneric, cachedDelegateTypeField, cachedDelegateField);
             _emitter.Newobj(joinPointConstructor);
             _emitter.Stloc_0();
             _emitter.Ldarg_0();
@@ -87,7 +87,8 @@ namespace DemonWeaver
         //todo split in more methods or class 
         //todo clean this up
         //todo idea: store common primitives definitions such as type of void, object constructor
-        void CreateLambdaType(TypeReference parametersType, TypeReference returnType)
+        //todo rename cachedDelegateTypeField and cachedDelegateField since they sound alike
+        (FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField) CreateLambdaType(TypeReference parametersType, TypeReference returnType)
         {
             var type = new TypeDefinition(
                 "",
@@ -170,6 +171,8 @@ namespace DemonWeaver
             type.Methods.Add(delegateMethod);
 
             _target.DeclaringType.NestedTypes.Add(type);
+
+            return (cachedDelegateTypeField, cachedDelegateField);
         }
 
 //todo does anything else need clearing?
@@ -219,6 +222,11 @@ namespace DemonWeaver
             }
 
             _emitter.Newobj(_target.Module.ImportReference(constructor));
+        }
+
+        void InsertLambda(TypeReference parametersType, TypeReference returnType, FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField)
+        {
+            _emitter.Ldnull();
         }
 
         //todo test this
