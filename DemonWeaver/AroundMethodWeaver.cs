@@ -144,6 +144,30 @@ namespace DemonWeaver
 
             type.Fields.Add(cachedDelegateField);
 
+            var delegateMethod = new MethodDefinition(
+                "<Demon<" + _target.Name + ">b__3_0",
+                MethodAttributes.Private | MethodAttributes.FamANDAssem | MethodAttributes.HideBySig,
+                _target.Module.TypeSystem.Void);
+
+            var delegateMethodParametersParameter = new ParameterDefinition(
+                "parameters",
+                ParameterAttributes.None,
+                parametersType);
+
+            var delegateMethodReturnParameter = new ParameterDefinition(
+                "ret",
+                ParameterAttributes.None,
+                returnType);
+
+            delegateMethod.Parameters.Add(delegateMethodParametersParameter);
+            delegateMethod.Parameters.Add(delegateMethodReturnParameter);
+
+            var delegateMethodEmitter = delegateMethod.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
+
+//todo add code from original method here
+            delegateMethodEmitter.Ret();
+
+            type.Methods.Add(delegateMethod);
 
             _target.DeclaringType.NestedTypes.Add(type);
         }
