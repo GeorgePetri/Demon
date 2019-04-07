@@ -1,5 +1,6 @@
 using System;
 using Mono.Cecil;
+using Mono.Cecil.Rocks;
 
 namespace DemonWeaver.Extensions
 {
@@ -9,7 +10,7 @@ namespace DemonWeaver.Extensions
         {
             var reference = new MethodReference(self.Name, self.ReturnType)
             {
-                DeclaringType = self.DeclaringType.MakeGenericType(arguments),
+                DeclaringType = self.DeclaringType.MakeGenericInstanceType(arguments),
                 HasThis = self.HasThis,
                 ExplicitThis = self.ExplicitThis,
                 CallingConvention = self.CallingConvention,

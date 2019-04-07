@@ -56,7 +56,7 @@ namespace DemonWeaver
             var parameterGeneric = joinPointType.GenericArguments[0];
             var returnGeneric = joinPointType.GenericArguments[1];
 
-            var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericType(parameterGeneric, returnGeneric));
+            var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericInstanceType(parameterGeneric, returnGeneric));
             var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parameterGeneric, returnGeneric));
 
             CreateLambdaType(parameterGeneric, returnGeneric);
