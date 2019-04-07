@@ -30,6 +30,7 @@ namespace DemonWeaver
             _insertBeforeOriginalFirst = i => _il.InsertBefore(originalFirstInstruction, i);
         }
 
+        //todo verify if weaving doesn't break short addresses 
         public void Weave()
         {
             InsertLoadAspectIfNeeded();

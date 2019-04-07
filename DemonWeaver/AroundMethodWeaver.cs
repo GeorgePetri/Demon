@@ -30,6 +30,7 @@ namespace DemonWeaver
             _emitter = EmitterFactory.GetAppend(_il);
         }
 
+        //todo verify if weaving doesn't break short addresses 
         public void Weave()
         {
             var joinPoint = GetJoinPoint();
@@ -57,9 +58,8 @@ namespace DemonWeaver
             var returnGeneric = joinPointType.GenericArguments[1];
 
             var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericInstanceType(parameterGeneric, returnGeneric));
-            var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parameterGeneric, returnGeneric));
 
-            var (cachedDelegateTypeField, cachedDelegateField) = CreateLambdaType(parameterGeneric, returnGeneric);
+            var (cachedDelegateTypeField, cachedDelegateField, delegateMethod) = CreateLambdaType(parameterGeneric, returnGeneric);
 
             ClearBody();
 
@@ -69,8 +69,7 @@ namespace DemonWeaver
 
             InsertLoadParameters(parameterGeneric);
             InsertLoadReturn(returnGeneric);
-            InsertLambda(parameterGeneric, returnGeneric, cachedDelegateTypeField, cachedDelegateField);
-            _emitter.Newobj(joinPointConstructor);
+            InsertLambdaAndCreateJoinPoint(parameterGeneric, returnGeneric, cachedDelegateTypeField, cachedDelegateField, delegateMethod);
             _emitter.Stloc_0();
             _emitter.Ldarg_0();
             _emitter.Ldfld(_adviceField);
@@ -88,7 +87,7 @@ namespace DemonWeaver
         //todo clean this up
         //todo idea: store common primitives definitions such as type of void, object constructor
         //todo rename cachedDelegateTypeField and cachedDelegateField since they sound alike
-        (FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField) CreateLambdaType(TypeReference parametersType, TypeReference returnType)
+        (FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField, MethodDefinition delegateMethod) CreateLambdaType(TypeReference parametersType, TypeReference returnType)
         {
             var type = new TypeDefinition(
                 "",
@@ -134,6 +133,8 @@ namespace DemonWeaver
             cctorEmitter.Newobj(ctor);
             cctorEmitter.Stsfld(cachedDelegateTypeField);
             cctorEmitter.Ret();
+            
+            type.Methods.Add(cctor);
 
             var cachedDelegateFieldType = _target.Module.ImportReference(typeof(Action<,>))
                 .MakeGenericInstanceType(parametersType, returnType);
@@ -146,7 +147,7 @@ namespace DemonWeaver
             type.Fields.Add(cachedDelegateField);
 
             var delegateMethod = new MethodDefinition(
-                "<Demon<" + _target.Name + ">b__3_0",
+                $"<Demon<{_target.Name}>b__3_0",
                 MethodAttributes.Private | MethodAttributes.FamANDAssem | MethodAttributes.HideBySig,
                 _target.Module.TypeSystem.Void);
 
@@ -172,7 +173,7 @@ namespace DemonWeaver
 
             _target.DeclaringType.NestedTypes.Add(type);
 
-            return (cachedDelegateTypeField, cachedDelegateField);
+            return (cachedDelegateTypeField, cachedDelegateField, delegateMethod);
         }
 
 //todo does anything else need clearing?
@@ -224,9 +225,39 @@ namespace DemonWeaver
             _emitter.Newobj(_target.Module.ImportReference(constructor));
         }
 
-        void InsertLambda(TypeReference parametersType, TypeReference returnType, FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField)
+        void InsertLambdaAndCreateJoinPoint(
+            TypeReference parametersType,
+            TypeReference returnType,
+            FieldDefinition cachedDelegateTypeField,
+            FieldDefinition cachedDelegateField,
+            MethodDefinition delegateMethod)
         {
-            _emitter.Ldnull();
+            _emitter.Ldsfld(cachedDelegateField);
+            _emitter.Dup();
+
+            var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parametersType, returnType));
+            var createJoinPointInstruction = _il.Create(OpCodes.Newobj, joinPointConstructor);
+
+            _emitter.Brtrue_S(createJoinPointInstruction);
+            _emitter.Pop();
+            _emitter.Ldsfld(cachedDelegateTypeField);
+            _emitter.Ldftn(delegateMethod);
+
+            //todo get rid of getting the methodrefs here
+            //todo MakeGenericInstanceType might not be needed
+            var actionConstructor = _target.Module.ImportReference(typeof(Action<,>))
+                .MakeGenericInstanceType(parametersType, returnType)
+                .Resolve()
+                .GetConstructors()
+                .First()
+                .MakeGeneric(parametersType, returnType)
+                .Let(_target.Module.ImportReference);
+
+            _emitter.Newobj(actionConstructor);
+            _emitter.Dup();
+            _emitter.Stsfld(cachedDelegateField);
+
+            _il.Append(createJoinPointInstruction);
         }
 
         //todo test this

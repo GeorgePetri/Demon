@@ -140,11 +140,11 @@ namespace DemonWeaver.IlEmitter
         public void Br_S() =>
             _func(_il.Create(OpCodes.Br_S));
 
-        public void Brfalse_S() =>
-            _func(_il.Create(OpCodes.Brfalse_S));
+        public void Brfalse_S(Instruction target) =>
+            _func(_il.Create(OpCodes.Brfalse_S, target));
 
-        public void Brtrue_S() =>
-            _func(_il.Create(OpCodes.Brtrue_S));
+        public void Brtrue_S(Instruction target) =>
+            _func(_il.Create(OpCodes.Brtrue_S, target));
 
         public void Beq_S() =>
             _func(_il.Create(OpCodes.Beq_S));
@@ -380,8 +380,8 @@ namespace DemonWeaver.IlEmitter
         public void Stfld(FieldReference field) =>
             _func(_il.Create(OpCodes.Stfld, field));
 
-        public void Ldsfld() =>
-            _func(_il.Create(OpCodes.Ldsfld));
+        public void Ldsfld(FieldReference field) =>
+            _func(_il.Create(OpCodes.Ldsfld, field));
 
         public void Ldsflda() =>
             _func(_il.Create(OpCodes.Ldsflda));
@@ -602,11 +602,11 @@ namespace DemonWeaver.IlEmitter
         public void Clt_Un() =>
             _func(_il.Create(OpCodes.Clt_Un));
 
-        public void Ldftn() =>
-            _func(_il.Create(OpCodes.Ldftn));
+        public void Ldftn(MethodReference method) =>
+            _func(_il.Create(OpCodes.Ldftn, method));
 
-        public void Ldvirtftn() =>
-            _func(_il.Create(OpCodes.Ldvirtftn));
+        public void Ldvirtftn(MethodReference method) =>
+            _func(_il.Create(OpCodes.Ldvirtftn, method));
 
         public void Ldarg() =>
             _func(_il.Create(OpCodes.Ldarg));

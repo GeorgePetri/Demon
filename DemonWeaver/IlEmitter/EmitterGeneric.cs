@@ -140,11 +140,11 @@ namespace DemonWeaver.IlEmitter
         public TReturn Br_S() =>
             _func(_il.Create(OpCodes.Br_S));
 
-        public TReturn Brfalse_S() =>
-            _func(_il.Create(OpCodes.Brfalse_S));
+        public TReturn Brfalse_S(Instruction target) =>
+            _func(_il.Create(OpCodes.Brfalse_S, target));
 
-        public TReturn Brtrue_S() =>
-            _func(_il.Create(OpCodes.Brtrue_S));
+        public TReturn Brtrue_S(Instruction target) =>
+            _func(_il.Create(OpCodes.Brtrue_S, target));
 
         public TReturn Beq_S() =>
             _func(_il.Create(OpCodes.Beq_S));
@@ -380,8 +380,8 @@ namespace DemonWeaver.IlEmitter
         public TReturn Stfld(FieldReference field) =>
             _func(_il.Create(OpCodes.Stfld, field));
 
-        public TReturn Ldsfld() =>
-            _func(_il.Create(OpCodes.Ldsfld));
+        public TReturn Ldsfld(FieldReference field) =>
+            _func(_il.Create(OpCodes.Ldsfld, field));
 
         public TReturn Ldsflda() =>
             _func(_il.Create(OpCodes.Ldsflda));
@@ -602,11 +602,11 @@ namespace DemonWeaver.IlEmitter
         public TReturn Clt_Un() =>
             _func(_il.Create(OpCodes.Clt_Un));
 
-        public TReturn Ldftn() =>
-            _func(_il.Create(OpCodes.Ldftn));
+        public TReturn Ldftn(MethodReference method) =>
+            _func(_il.Create(OpCodes.Ldftn, method));
 
-        public TReturn Ldvirtftn() =>
-            _func(_il.Create(OpCodes.Ldvirtftn));
+        public TReturn Ldvirtftn(MethodReference method) =>
+            _func(_il.Create(OpCodes.Ldvirtftn, method));
 
         public TReturn Ldarg() =>
             _func(_il.Create(OpCodes.Ldarg));
