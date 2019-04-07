@@ -1,9 +1,11 @@
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using DemonWeaver.Extensions;
 using DemonWeaver.IlEmitter;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Mono.Cecil.Rocks;
 
 namespace DemonWeaver
 {
@@ -57,7 +59,7 @@ namespace DemonWeaver
             var joinPoint = _target.Module.ImportReference(_demonTypes.JoinPoint.MakeGenericType(parameterGeneric, returnGeneric));
             var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parameterGeneric, returnGeneric));
 
-            CreateLambdaType();
+            CreateLambdaType(parameterGeneric, returnGeneric);
 
             ClearBody();
 
@@ -85,7 +87,7 @@ namespace DemonWeaver
         //todo split in more methods or class 
         //todo clean this up
         //todo idea: store common primitives definitions such as type of void, object constructor
-        void CreateLambdaType()
+        void CreateLambdaType(TypeReference parametersType, TypeReference returnType)
         {
             var type = new TypeDefinition(
                 "",
@@ -101,12 +103,12 @@ namespace DemonWeaver
             type.CustomAttributes.Add(new CustomAttribute(compilerGeneratedAttributeConstructor));
 
             //todo do i need to import self?
-            var cachedDelegateField = new FieldDefinition(
+            var cachedDelegateTypeField = new FieldDefinition(
                 "<Demon<>9",
                 FieldAttributes.FamANDAssem | FieldAttributes.Family | FieldAttributes.Static | FieldAttributes.InitOnly,
                 type);
 
-            type.Fields.Add(cachedDelegateField);
+            type.Fields.Add(cachedDelegateTypeField);
 
             var ctor = new MethodDefinition(
                 ".ctor",
@@ -129,8 +131,18 @@ namespace DemonWeaver
             var cctorEmitter = cctor.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
 
             cctorEmitter.Newobj(ctor);
-            cctorEmitter.Stsfld(cachedDelegateField);
+            cctorEmitter.Stsfld(cachedDelegateTypeField);
             cctorEmitter.Ret();
+
+            var cachedDelegateFieldType = _target.Module.ImportReference(typeof(Action<,>))
+                .MakeGenericInstanceType(parametersType, returnType);
+
+            var cachedDelegateField = new FieldDefinition(
+                "<Demon<>9__3_0",
+                FieldAttributes.FamANDAssem | FieldAttributes.Family | FieldAttributes.Static,
+                cachedDelegateFieldType);
+
+            type.Fields.Add(cachedDelegateField);
 
 
             _target.DeclaringType.NestedTypes.Add(type);
