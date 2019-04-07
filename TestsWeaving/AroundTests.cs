@@ -13,7 +13,7 @@ namespace TestsWeaving
         public AroundTests(WeavedInMemoryModule fixture) => _assembly = fixture.Assembly;
 
         //also test return is correct
-//        [Fact]
+        [Fact]
         void ParametersInt_ReturnString_JustProceed()
         {
             //arrange

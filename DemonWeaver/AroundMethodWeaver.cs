@@ -87,7 +87,8 @@ namespace DemonWeaver
         //todo clean this up
         //todo idea: store common primitives definitions such as type of void, object constructor
         //todo rename cachedDelegateTypeField and cachedDelegateField since they sound alike
-        (FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField, MethodDefinition delegateMethod) CreateLambdaType(TypeReference parametersType, TypeReference returnType)
+        (FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField, MethodDefinition delegateMethod)
+            CreateLambdaType(TypeReference parametersType, TypeReference returnType)
         {
             var type = new TypeDefinition(
                 "",
@@ -133,7 +134,7 @@ namespace DemonWeaver
             cctorEmitter.Newobj(ctor);
             cctorEmitter.Stsfld(cachedDelegateTypeField);
             cctorEmitter.Ret();
-            
+
             type.Methods.Add(cctor);
 
             var cachedDelegateFieldType = _target.Module.ImportReference(typeof(Action<,>))
