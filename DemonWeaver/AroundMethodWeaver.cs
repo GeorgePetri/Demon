@@ -78,15 +78,12 @@ namespace DemonWeaver
             InsertRetWithReturnValue(parameterGeneric, returnGeneric);
         }
 
+        //todo after rev enging a bit, stateful lambdas are simpler, and don't use the caching mechanism
+        //Investigate further and delete the code, and use only stateful lambda impl, for mvp  
         //todo idea: naming tool like https://github.com/dotnet/roslyn/blob/master/src/Compilers/CSharp/Portable/Symbols/Synthesized/GeneratedNames.cs?
         //todo hardcoded name, might be conflicts
-        //todo rev eng lambdas in situations such as: multiple lambdas of the same type, closures
-        //todo can lambds be shared?
-        //todo rev eng do TypeAttributes ever differ?
-        //todo split in more methods or class 
         //todo clean this up
         //todo idea: store common primitives definitions such as type of void, object constructor
-        //todo rename cachedDelegateTypeField and cachedDelegateField since they sound alike
         (FieldDefinition cachedDelegateTypeField, FieldDefinition cachedDelegateField, MethodDefinition delegateMethod)
             CreateLambdaType(TypeReference parametersType, TypeReference returnType)
         {
