@@ -203,7 +203,7 @@ namespace DemonWeaver
                     .First());
 
             lambdaMethod.CustomAttributes.Add(new CustomAttribute(compilerGeneratedAttributeConstructor));
-            
+
             var emitter = lambdaMethod.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
 
 //todo add code from original method here
@@ -255,6 +255,7 @@ namespace DemonWeaver
                     constructor = _demonTypes.Returns.GenericConstructor.MakeGeneric(genericReturnType);
                     break;
                 }
+
                 case DemonTypes.FullNames.ReturnFullNames.Void:
                     constructor = _demonTypes.Returns.VoidConstructor;
                     break;
@@ -296,6 +297,28 @@ namespace DemonWeaver
             _emitter.Stsfld(cachedDelegateField);
 
             _il.Append(createJoinPointInstruction);
+        }
+
+        void InsertLambdaAndCreateJoinPoint(TypeReference parametersType, TypeReference returnType, MethodDefinition lambdaMethod)
+        {
+            _emitter.Ldarg_0();
+            _emitter.Ldftn(lambdaMethod);
+
+            //todo get rid of getting the methodrefs here
+            //todo MakeGenericInstanceType might not be needed
+            var actionConstructor = _target.Module.ImportReference(typeof(Action<,>))
+                .MakeGenericInstanceType(parametersType, returnType)
+                .Resolve()
+                .GetConstructors()
+                .First()
+                .MakeGeneric(parametersType, returnType)
+                .Let(_target.Module.ImportReference);
+
+            _emitter.Newobj(actionConstructor);
+
+            var joinPointConstructor = _target.Module.ImportReference(_demonTypes.JoinPointConstructor.MakeGeneric(parametersType, returnType));
+
+            _emitter.Newobj(joinPointConstructor);
         }
 
         //todo test this
