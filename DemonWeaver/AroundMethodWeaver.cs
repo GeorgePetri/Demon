@@ -61,6 +61,8 @@ namespace DemonWeaver
 
             var (cachedDelegateTypeField, cachedDelegateField, delegateMethod) = CreateLambdaType(parameterGeneric, returnGeneric);
 
+            var lambda = CreateLambda(parameterGeneric, returnGeneric);
+
             ClearBody();
 
             var joinPointVariable = new VariableDefinition(joinPoint);
@@ -172,6 +174,44 @@ namespace DemonWeaver
             _target.DeclaringType.NestedTypes.Add(type);
 
             return (cachedDelegateTypeField, cachedDelegateField, delegateMethod);
+        }
+
+        MethodReference CreateLambda(TypeReference parametersType, TypeReference returnType)
+        {
+            var lambdaMethod = new MethodDefinition(
+                $"<Demon<{_target.Name}>b__6_0",
+                MethodAttributes.Private | MethodAttributes.HideBySig,
+                _target.Module.TypeSystem.Void);
+
+            var parametersParameter = new ParameterDefinition(
+                "parameters",
+                ParameterAttributes.None,
+                parametersType);
+
+            var returnParameter = new ParameterDefinition(
+                "ret",
+                ParameterAttributes.None,
+                returnType);
+
+            lambdaMethod.Parameters.Add(parametersParameter);
+            lambdaMethod.Parameters.Add(returnParameter);
+
+            //todo move somewhere if used more
+            var compilerGeneratedAttributeConstructor = _target.Module.ImportReference(
+                typeof(CompilerGeneratedAttribute)
+                    .GetConstructors()
+                    .First());
+
+            lambdaMethod.CustomAttributes.Add(new CustomAttribute(compilerGeneratedAttributeConstructor));
+            
+            var emitter = lambdaMethod.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
+
+//todo add code from original method here
+            emitter.Ret();
+
+            _target.DeclaringType.Methods.Add(lambdaMethod);
+
+            return lambdaMethod;
         }
 
 //todo does anything else need clearing?
