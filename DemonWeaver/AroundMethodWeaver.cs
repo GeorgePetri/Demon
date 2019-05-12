@@ -112,7 +112,7 @@ namespace DemonWeaver
 
             var emitter = lambdaMethod.Body.GetILProcessor().Let(EmitterFactory.GetAppend);
 
-//todo add code from original method here
+            //todo crete a clone of the original method and call it here
             emitter.Ret();
 
             _target.DeclaringType.Methods.Add(lambdaMethod);
@@ -120,11 +120,88 @@ namespace DemonWeaver
             return lambdaMethod;
         }
 
-//todo does anything else need clearing?
+        //todo naming
+        //todo would target ever be static here?
+        //todo check static
+        //todo make private
+        //todo check debug information
+        MethodDefinition CloneTarget()
+        {
+            var cloned = new MethodDefinition(
+                $"<Demon<{_target.Name}>Original",
+                _target.Attributes,
+                _target.MethodReturnType.ReturnType)
+            {
+                HasThis = _target.HasThis,
+                ExplicitThis = _target.ExplicitThis,
+                CallingConvention = _target.CallingConvention
+            };
+
+            foreach (var parameter in _target.Parameters)
+                cloned.Parameters.Add(parameter);
+
+            foreach (var variable in _target.Body.Variables)
+                cloned.Body.Variables.Add(variable);
+
+            foreach (var variable in _target.Body.ExceptionHandlers)
+                cloned.Body.ExceptionHandlers.Add(variable);
+
+            var targetProcessor = cloned.Body.GetILProcessor();
+            foreach (var instruction in _target.Body.Instructions)
+                targetProcessor.Append(instruction);
+
+            if (_target.HasGenericParameters)
+            {
+                foreach (var parameter in _target.GenericParameters)
+                {
+                    var clonedParameter = new GenericParameter(parameter.Name, cloned);
+                    if (parameter.HasConstraints)
+                    {
+                        foreach (var parameterConstraint in parameter.Constraints)
+                        {
+                            clonedParameter.Attributes = parameter.Attributes;
+                            clonedParameter.Constraints.Add(parameterConstraint);
+                        }
+                    }
+
+                    if (parameter.HasReferenceTypeConstraint)
+                    {
+                        clonedParameter.Attributes |= GenericParameterAttributes.ReferenceTypeConstraint;
+                        clonedParameter.HasReferenceTypeConstraint = true;
+                    }
+
+                    if (parameter.HasNotNullableValueTypeConstraint)
+                    {
+                        clonedParameter.Attributes |= GenericParameterAttributes.NotNullableValueTypeConstraint;
+                        clonedParameter.HasNotNullableValueTypeConstraint = true;
+                    }
+
+                    if (parameter.HasDefaultConstructorConstraint)
+                    {
+                        clonedParameter.Attributes |= GenericParameterAttributes.DefaultConstructorConstraint;
+                        clonedParameter.HasDefaultConstructorConstraint = true;
+                    }
+
+                    cloned.GenericParameters.Add(clonedParameter);
+                }
+            }
+
+            if (_target.DebugInformation.HasSequencePoints)
+            {
+                foreach (var sequencePoint in _target.DebugInformation.SequencePoints)
+                    cloned.DebugInformation.SequencePoints.Add(sequencePoint);
+            }
+
+            cloned.DebugInformation.Scope = new ScopeDebugInformation(_target.Body.Instructions.First(), _target.Body.Instructions.Last());
+
+            return cloned;
+        }
+
         void ClearBody()
         {
             _target.Body.Variables.Clear();
             _target.Body.Instructions.Clear();
+            _target.Body.ExceptionHandlers.Clear();
         }
 
         //todo unit test all cases
