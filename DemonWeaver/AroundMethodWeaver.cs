@@ -120,6 +120,11 @@ namespace DemonWeaver
             return lambdaMethod;
         }
 
+        //todo impl more parameter types rather than just 1
+        void WeaveCloneAndCall(MethodDefinition lambda, TypeReference parametersType, TypeReference returnType)
+        {
+        }
+
         //todo naming
         //todo would target ever be static here?
         //todo check static
